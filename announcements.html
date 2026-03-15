@@ -165,7 +165,7 @@ to{opacity:0;transform:translateX(110%)}}
 </div>
 <script>
 let currentUser;
-function fmtDate(ts){if(!ts)return'—';return new Date(ts).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
+
 function toast(msg,type='inf'){let c=document.getElementById('toasts');if(!c){c=document.createElement('div');c.id='toasts';c.className='toasts';document.body.appendChild(c);}const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
 // ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
@@ -185,13 +185,15 @@ async function postAnn(){
   btn.disabled=false;btn.textContent=' Post';
   if(error){toast('Failed: '+error.message,'err');return;}
   document.getElementById('annTitle').value='';document.getElementById('annBody').value='';
-  toast('Announcement posted!','ok');await loadAnns();
+  toast('Announcement posted!','ok');
+  setTimeout(()=>location.reload(),700);
 }
 async function delAnn(id){
   if(!confirm('Delete this announcement?'))return;
   const{error}=await sb.from('announcements').delete().eq('id',id);
-  if(error){toast('Failed','err');return;}
-  toast('Deleted','ok');await loadAnns();
+  if(error){toast('Failed: '+error.message,'err');return;}
+  toast('Deleted','ok');
+  setTimeout(()=>location.reload(),700);
 }
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);

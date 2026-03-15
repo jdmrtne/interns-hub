@@ -192,6 +192,39 @@ tr:hover td{background:rgba(255,255,255,.018);}
 </div>
 <script>
 
+let partnerUser=null,lastDate=null,rtChannel=null,currentUserIsAdmin=false;
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function scrollBottom(){const a=document.getElementById('messagesArea');if(a)a.scrollTop=a.scrollHeight;}
+function dateLbl(ts){const _t=(/Z$|[+-]\d{2}:\d{2}$/.test(ts))?ts:ts+'Z';const d=new Date(_t),t=new Date(),y=new Date(t);y.setDate(t.getDate()-1);if(d.toDateString()===t.toDateString())return'Today';if(d.toDateString()===y.toDateString())return'Yesterday';return d.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});}
+function renderMsg(msg,append=true){
+  const area=document.getElementById('messagesArea');
+  if(!area)return;
+  const isMine=msg.sender_id===currentUser.id;
+  const _mts=(/Z$|[+-]\d{2}:\d{2}$/.test(msg.created_at))?msg.created_at:msg.created_at+'Z';
+  const ds=new Date(_mts).toDateString();
+  if(ds!==lastDate){
+    const div=document.createElement('div');
+    div.className='date-div';div.textContent=dateLbl(msg.created_at);
+    if(append)area.appendChild(div);else area.prepend(div);
+    lastDate=ds;
+  }
+  const _ts=(/Z$|[+-]\d{2}:\d{2}$/.test(msg.created_at))?msg.created_at:msg.created_at+'Z';
+  const time=new Date(_ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const el=document.createElement('div');
+  el.className='msg-bubble '+(isMine?'mine':'theirs');
+  el.dataset.msgId=msg.id;
+  const canDelete=isMine||currentUserIsAdmin;
+  const trashIcon=`<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+  const delBtn=canDelete?`<button class="btn-del-msg" title="Delete message" onclick="deleteMsg('${msg.id}',this)">${trashIcon}</button>`:'';
+  if(msg.is_deleted){
+    el.innerHTML=`<div><div class="bubble-content bubble-content--deleted"><span class="bubble-deleted">Message deleted</span></div></div>`;
+  }else{
+    el.innerHTML=`<div><div class="bubble-content">${escHtml(msg.message)}</div><div class="bubble-time">${time}${delBtn}</div></div>`;
+  }
+  if(append){area.appendChild(el);scrollBottom();}else area.prepend(el);
+}
+
 let currentUser;
 function fmtDate(ts){if(!ts)return'—';return new Date(ts).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
 function toast(msg,type='inf'){let c=document.getElementById('toasts');if(!c){c=document.createElement('div');c.id='toasts';c.className='toasts';document.body.appendChild(c);}const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
