@@ -204,7 +204,9 @@ body::before {
   background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--glass-border);
   align-items: center; justify-content: space-between;
-  padding: 0 14px; position: sticky; top: 0; z-index: 310;
+  padding: 0 14px;
+  /* Fixed so it always stays visible while scrolling */
+  position: fixed; top: 0; left: 0; right: 0; z-index: 8500;
 }
 .mob-header.pre-auth { display: none !important; }
 .mob-page-title {
@@ -388,8 +390,8 @@ tr:hover td { background: var(--glass-hover); }
   .sidebar-overlay { z-index: 8000; pointer-events: none; }
   .sidebar-overlay.show { display: block; pointer-events: all; }
 
-  /* Main content full width */
-  .main-content { margin-left: 0 !important; }
+  /* Main content full width, pushed below fixed header */
+  .main-content { margin-left: 0 !important; padding-top: 52px; }
 
   /* Show mobile header */
   .mob-header { display: flex; }
