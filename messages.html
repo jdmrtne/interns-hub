@@ -148,7 +148,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
-  <div class="snav-brand"><div class="snav-brand-icon">◆</div><div><div class="snav-brand-name">THE INTERNS HUB</div><div class="snav-brand-sub">Intern Portal</div></div></div>
+  <div class="snav-brand"><div class="snav-brand-icon" onclick="toggleDesktopNav()" style="cursor:pointer;flex-shrink:0" title="Toggle menu">◆</div><div style="flex:1;min-width:0"><div class="snav-brand-name">THE INTERNS HUB</div><div class="snav-brand-sub">Intern Portal</div></div><button class="collapse-btn" onclick="toggleDesktopNav()" title="Collapse menu">&#8942;</button></div>
   <div class="snav-links" id="navLinks"></div>
   <div class="snav-footer">
     <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
@@ -198,6 +198,22 @@ async function loadConvos(){
   const convos={};
   for(const m of data){const pid=m.sender_id===currentUser.id?m.receiver_id:m.sender_id;const p2=m.sender_id===currentUser.id?m.receiver:m.sender;if(!convos[pid])convos[pid]={partner:p2,msg:m.message,time:m.created_at};}
   cl.innerHTML=Object.entries(convos).map(([pid,c])=>{const name=c.partner?.name||'Unknown';const col=avatarColor(name);return`<a href="chat.html?uid=${pid}" class="convo-item"><div class="avatar avatar-sm" style="background:${col}20;color:${col}">${avatarInitials(name)}</div><div class="convo-info"><div class="convo-name">${escHtml(name)}</div><div class="convo-preview">${escHtml(c.msg)}</div></div><div class="convo-time">${timeAgo(c.time)}</div></a>`;}).join('');
+}
+function toggleDesktopNav(){
+  const nav=document.getElementById('sidebarNav');
+  const main=document.querySelector('.main-content');
+  const collapsed=nav.classList.toggle('collapsed');
+  if(main)main.style.marginLeft=collapsed?'var(--nav-collapsed-w)':'var(--nav-w)';
+  localStorage.setItem('navCollapsed',collapsed?'1':'0');
+}
+function restoreNavState(){
+  if(window.innerWidth<=768)return;
+  if(localStorage.getItem('navCollapsed')==='1'){
+    const nav=document.getElementById('sidebarNav');
+    const main=document.querySelector('.main-content');
+    nav.classList.add('collapsed');
+    if(main)main.style.marginLeft='var(--nav-collapsed-w)';
+  }
 }
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);

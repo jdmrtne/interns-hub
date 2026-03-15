@@ -131,7 +131,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
 <div class="platform-layout">
   <nav class="sidebar-nav" id="sidebarNav">
-    <div class="snav-brand"><div class="snav-brand-icon">◆</div><div><div class="snav-brand-name">THE INTERNS HUB</div><div class="snav-brand-sub">Intern Portal</div></div></div>
+    <div class="snav-brand"><div class="snav-brand-icon" onclick="toggleDesktopNav()" style="cursor:pointer;flex-shrink:0" title="Toggle menu">◆</div><div style="flex:1;min-width:0"><div class="snav-brand-name">THE INTERNS HUB</div><div class="snav-brand-sub">Intern Portal</div></div><button class="collapse-btn" onclick="toggleDesktopNav()" title="Collapse menu">&#8942;</button></div>
     <div class="snav-links" id="navLinks"></div>
     <div class="snav-footer">
       <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
@@ -285,6 +285,22 @@ function applyFilter(){renderTable(allUsers,todayLogs);loadData();}
 function resetToToday(){document.getElementById('dateFilter').value='';loadData();}
 async function refresh(){await loadData();toast('Refreshed','ok');}
 
+function toggleDesktopNav(){
+  const nav=document.getElementById('sidebarNav');
+  const main=document.querySelector('.main-content');
+  const collapsed=nav.classList.toggle('collapsed');
+  if(main)main.style.marginLeft=collapsed?'var(--nav-collapsed-w)':'var(--nav-w)';
+  localStorage.setItem('navCollapsed',collapsed?'1':'0');
+}
+function restoreNavState(){
+  if(window.innerWidth<=768)return;
+  if(localStorage.getItem('navCollapsed')==='1'){
+    const nav=document.getElementById('sidebarNav');
+    const main=document.querySelector('.main-content');
+    nav.classList.add('collapsed');
+    if(main)main.style.marginLeft='var(--nav-collapsed-w)';
+  }
+}
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
   const{data:{session}}=await sb.auth.getSession();

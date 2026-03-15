@@ -440,11 +440,43 @@ tr:hover td { background: var(--glass-hover); }
 .empty-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; }
 .empty-sub   { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; color: var(--text-dim); }
 
+/* ── Desktop sidebar collapse ─────────────────────────────── */
+:root { --nav-collapsed-w: 60px; }
+.sidebar-nav.collapsed { width: var(--nav-collapsed-w); overflow: hidden; }
+.sidebar-nav.collapsed .snav-brand-name,
+.sidebar-nav.collapsed .snav-brand-sub,
+.sidebar-nav.collapsed .snav-label,
+.sidebar-nav.collapsed .snav-user-name,
+.sidebar-nav.collapsed .snav-user-role,
+.sidebar-nav.collapsed .btn-logout-nav { display: none !important; }
+.sidebar-nav.collapsed .snav-brand { justify-content: center; padding: 18px 0; }
+.sidebar-nav.collapsed .snav-links  { padding: 10px 4px; }
+.sidebar-nav.collapsed .snav-item   { justify-content: center; padding: 11px 0; border-radius: 8px; }
+.sidebar-nav.collapsed .snav-user   { justify-content: center; padding: 8px 4px; min-width: 0; }
+.sidebar-nav.collapsed .snav-footer { padding: 8px 4px 14px; }
+.main-content { transition: margin-left .22s ease; }
+.sidebar-nav  { transition: width .22s ease; overflow: hidden; }
+.collapse-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-dim); padding: 4px 6px; border-radius: 7px;
+  font-size: 16px; line-height: 1; transition: background .15s, color .15s; flex-shrink: 0;
+}
+.collapse-btn:hover { background: var(--glass-hover); color: var(--text); }
+/* Hide sub-nav on desktop — navigation is flat */
+.snav-sub { display: none !important; }
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
   :root { --nav-w: 0px; }
-  .sidebar-nav { transform: translateX(-100%); transition: transform .25s; width: 240px; }
+  .sidebar-nav {
+    transform: translateX(-100%); transition: transform .25s;
+    width: 260px;
+    z-index: 500;          /* above overlay */
+  }
   .sidebar-nav.open { transform: translateX(0); }
+  .sidebar-overlay {
+    z-index: 490;          /* below sidebar, above content */
+  }
   .sidebar-overlay.show { display: block; }
   .main-content { margin-left: 0; }
   .mob-header { display: flex; }

@@ -193,21 +193,21 @@
   padding: 28px; margin-bottom: 20px;
   display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center;
 }
-.clock-display {
-  text-align: center;
-  /* Fixed container prevents any layout shift when clock updates */
-  min-width: 0;
-  overflow: hidden;
+.clock-display { text-align: center; min-width: 0; }
+.clock-dayname {
+  font-family: var(--font-display); font-size: clamp(18px,3vw,26px); font-weight: 800;
+  letter-spacing: .18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; line-height: 1;
 }
-.clock-dayname { font-family: var(--font-display); font-size: clamp(20px,3.5vw,28px); font-weight: 800; letter-spacing: .2em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; line-height: 1; }
-.clock-time    {
-  font-family: var(--font-mono); font-size: clamp(46px,7vw,78px); font-weight: 700;
-  color: var(--primary); letter-spacing: .03em; line-height: 1; margin-bottom: 6px;
+.clock-time {
+  /* Use display font but tabular-nums keeps digits same width — no layout shift */
+  font-family: var(--font-display); font-size: clamp(42px,5.5vw,70px); font-weight: 800;
+  color: var(--primary); line-height: 1; margin-bottom: 6px;
   font-variant-numeric: tabular-nums;
-  /* Fixed width prevents layout shift when digits change */
-  min-width: 100%; display: block; white-space: nowrap;
+  letter-spacing: .02em;
+  /* Prevent overflow on small containers */
+  white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
-.clock-date    { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); letter-spacing: .16em; text-transform: uppercase; }
+.clock-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: .16em; text-transform: uppercase; }
 .today-log {
   background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--glass-border-b); border-radius: 12px; padding: 18px;
@@ -447,7 +447,7 @@
 @media(max-width:680px){
   .main-content-wrap .app-header { display: none; }
   .clock-panel { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
-  .clock-time  { font-size: clamp(38px,12vw,56px); }
+  .clock-time  { font-size: clamp(36px,11vw,52px); }
   .btn-grid    { gap: 10px; }
   .clk-btn     { padding: 18px 10px; font-size: 17px; }
   .clk-btn .b-icon { font-size: 22px; }
@@ -550,11 +550,12 @@
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
-    <div class="snav-brand-icon">◆</div>
-    <div>
+    <div class="snav-brand-icon" id="sideNavIconBtn" onclick="toggleDesktopNav()" style="cursor:pointer" title="Toggle menu">◆</div>
+    <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>
     </div>
+    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Collapse menu" id="collapseBtn">&#8942;</button>
   </div>
   <div class="snav-links" id="sideNavLinks"></div>
   <div class="snav-footer">
@@ -1301,27 +1302,24 @@ function setupDesktop(){
 
 // ─── Sidebar clock sub-nav ────────────────────────────────────────────────────
 function renderClockSideNav(isAdmin){
-  const clockGroup=`<div>
-    <a href="index.html" class="snav-item active">
-      <span class="snav-icon">${ICONS.clock}</span>
-      <span class="snav-label">Clock</span>
-    </a>
-    <div class="snav-sub">
-      <button class="snav-subitem active" id="navClock" onclick="gotoPage('clock')">⏱ Time Clock</button>
-      <button class="snav-subitem" id="navLog" onclick="gotoPage('log')">✏ Log Past Day</button>
-      <button class="snav-subitem" id="navHistory" onclick="gotoPage('history')">↺ History</button>
-    </div>
-  </div>`;
-  const rest=[
-    {href:'dashboard.html',    icon:ICONS.dashboard, label:'Dashboard'},
-    {href:'interns.html',      icon:ICONS.users,     label:'Interns'},
-    {href:'messages.html',     icon:ICONS.mail,      label:'Messages'},
-    {href:'announcements.html',icon:ICONS.megaphone, label:'Board'},
-  ].map(n=>`<a href="${n.href}" class="snav-item"><span class="snav-icon">${n.icon}</span><span class="snav-label">${n.label}</span></a>`).join('');
-  document.getElementById('sideNavLinks').innerHTML = clockGroup + rest;
+  // Flat nav — no sub-menu. On desktop all sections visible at once.
+  const links=[
+    {href:'index.html',         icon:ICONS.clock,     label:'Clock',      active:true},
+    {href:'dashboard.html',     icon:ICONS.dashboard, label:'Dashboard'},
+    {href:'interns.html',       icon:ICONS.users,     label:'Interns'},
+    {href:'messages.html',      icon:ICONS.mail,      label:'Messages'},
+    {href:'announcements.html', icon:ICONS.megaphone, label:'Board'},
+  ];
   if(isAdmin){
-    document.getElementById('sideNavLinks').innerHTML += `<a href="admin.html" class="snav-item"><span class="snav-icon">${ICONS.settings}</span><span class="snav-label">Admin</span></a>`;
+    links.unshift({href:'daily-logs.html', icon:ICONS.logs, label:'Daily Logs'});
+    links.push({href:'admin.html', icon:ICONS.settings, label:'Admin'});
   }
+  document.getElementById('sideNavLinks').innerHTML = links.map(n=>
+    `<a href="${n.href}" class="snav-item${n.active?' active':''}">
+      <span class="snav-icon">${n.icon}</span>
+      <span class="snav-label">${n.label}</span>
+    </a>`
+  ).join('');
 }
 
 // ─── Setup sidebar user display ───────────────────────────────────────────────
@@ -1340,10 +1338,29 @@ function setupSidebarUser(name, role, isAdmin){
   if(mh) mh.classList.remove('pre-auth');
 }
 
+function toggleDesktopNav(){
+  const nav = document.getElementById('sidebarNav');
+  const main = document.querySelector('.main-content-wrap');
+  const collapsed = nav.classList.toggle('collapsed');
+  // Adjust main content margin
+  if(main) main.style.marginLeft = collapsed ? 'var(--nav-collapsed-w)' : 'var(--nav-w)';
+  localStorage.setItem('navCollapsed', collapsed ? '1' : '0');
+}
+function restoreNavState(){
+  if(window.innerWidth <= 768) return;
+  if(localStorage.getItem('navCollapsed') === '1'){
+    const nav = document.getElementById('sidebarNav');
+    const main = document.querySelector('.main-content-wrap');
+    nav.classList.add('collapsed');
+    if(main) main.style.marginLeft = 'var(--nav-collapsed-w)';
+  }
+}
+
 // ═══════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════
 (async function boot(){
+  restoreNavState();
   updateConnectionUI();
   showLoading(navigator.onLine?'Connecting…':'Loading…');
   let session=null;
