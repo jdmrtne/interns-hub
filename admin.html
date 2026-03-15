@@ -244,15 +244,14 @@ function closeConfirm() {
   document.getElementById('confirmOv').classList.remove('open');
   cbFn = null;
 }
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('confirmOkBtn').addEventListener('click', async () => {
-    const fn = cbFn;
-    closeConfirm();
-    if (fn) {
-      try { await fn(); }
-      catch(e) { console.error('Action error:', e); toast('Error: ' + e.message, 'err'); }
-    }
-  });
+// Attach directly — script is at bottom of body so DOM is already ready
+document.getElementById('confirmOkBtn').addEventListener('click', async () => {
+  const fn = cbFn;
+  closeConfirm();
+  if (fn) {
+    try { await fn(); }
+    catch(e) { console.error('Action error:', e); toast('Error: ' + e.message, 'err'); }
+  }
 });
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
@@ -427,10 +426,8 @@ async function sendPwReset() {
   toast(`Password reset email sent to ${email}`, 'ok');
   closePwModal();
 }
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pwModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('pwModal')) closePwModal();
-  });
+document.getElementById('pwModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('pwModal')) closePwModal();
 });
 
 // ─── Time Logs ────────────────────────────────────────────────────────────────
@@ -475,12 +472,24 @@ async function postAnn() {
   const title = document.getElementById('adminAnnTitle').value.trim();
   const msg   = document.getElementById('adminAnnBody').value.trim();
   if (!title || !msg) { toast('Fill in both fields', 'err'); return; }
-  const { error } = await sb.from('announcements').insert({ title, message: msg, created_by: currentUser.id });
-  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  const { data: inserted, error } = await sb
+    .from('announcements')
+    .insert({ title, message: msg, created_by: currentUser.id })
+    .select()
+    .single();
+  if (error) {
+    console.error('postAnn error:', JSON.stringify(error));
+    toast('Failed: ' + (error.message || error.code || JSON.stringify(error)), 'err');
+    return;
+  }
+  if (!inserted) {
+    toast('Post blocked — check RLS policy in Supabase', 'err');
+    return;
+  }
   document.getElementById('adminAnnTitle').value = '';
   document.getElementById('adminAnnBody').value = '';
-  toast('Posted! Refreshing…', 'ok');
-  setTimeout(() => location.reload(), 800);
+  toast('Posted!', 'ok');
+  setTimeout(() => location.reload(), 600);
 }
 async function delAnn(id) {
   showConfirm('Delete Announcement', 'Delete this announcement permanently?',
