@@ -193,9 +193,20 @@
   padding: 28px; margin-bottom: 20px;
   display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center;
 }
-.clock-display { text-align: center; }
+.clock-display {
+  text-align: center;
+  /* Fixed container prevents any layout shift when clock updates */
+  min-width: 0;
+  overflow: hidden;
+}
 .clock-dayname { font-family: var(--font-display); font-size: clamp(20px,3.5vw,28px); font-weight: 800; letter-spacing: .2em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; line-height: 1; }
-.clock-time    { font-family: var(--font-display); font-size: clamp(46px,7vw,78px); font-weight: 800; color: var(--primary); letter-spacing: .03em; line-height: 1; margin-bottom: 6px; }
+.clock-time    {
+  font-family: var(--font-mono); font-size: clamp(46px,7vw,78px); font-weight: 700;
+  color: var(--primary); letter-spacing: .03em; line-height: 1; margin-bottom: 6px;
+  font-variant-numeric: tabular-nums;
+  /* Fixed width prevents layout shift when digits change */
+  min-width: 100%; display: block; white-space: nowrap;
+}
 .clock-date    { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); letter-spacing: .16em; text-transform: uppercase; }
 .today-log {
   background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
@@ -436,7 +447,7 @@
 @media(max-width:680px){
   .main-content-wrap .app-header { display: none; }
   .clock-panel { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
-  .clock-time  { font-size: 56px; }
+  .clock-time  { font-size: clamp(38px,12vw,56px); }
   .btn-grid    { gap: 10px; }
   .clk-btn     { padding: 18px 10px; font-size: 17px; }
   .clk-btn .b-icon { font-size: 22px; }

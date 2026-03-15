@@ -212,7 +212,8 @@ body > * { position: relative; z-index: 1; }
 .mob-menu-btn   { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 4px; }
 .sidebar-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 290;
+  background: rgba(0,0,0,0.55); z-index: 290;
+  /* No backdrop-filter here — it was blurring the sidebar itself and eating clicks */
 }
 
 /* ── Page header ──────────────────────────────────────────── */
