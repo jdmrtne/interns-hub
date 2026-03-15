@@ -337,7 +337,7 @@ tr:hover td { background: var(--glass-hover); }
 /* ══════════════════════════════════════════
    MODALS
 ══════════════════════════════════════════ */
-.modal-ov { position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.modal-ov { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; }
 .modal-ov.open { opacity: 1; pointer-events: all; }
 .modal { background: var(--glass-strong); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border-b); border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); animation: modalIn .28s cubic-bezier(.175,.885,.32,1.1); }
 @keyframes modalIn { from { opacity:0; transform: scale(.94) translateY(14px); } to { opacity:1; transform: scale(1) translateY(0); } }
@@ -348,7 +348,7 @@ tr:hover td { background: var(--glass-hover); }
 .mf input:focus { border-color: var(--primary); }
 .mf input::-webkit-calendar-picker-indicator { filter: invert(.5); }
 .modal-acts { display: flex; gap: 9px; justify-content: flex-end; margin-top: 20px; }
-.confirm-ov { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; }
+.confirm-ov { position: fixed; inset: 0; z-index: 9600; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; }
 .confirm-ov.open { display: flex; }
 .confirm-box { background: var(--glass-strong); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border-b); border-radius: 16px; padding: 28px 32px; max-width: 420px; width: 90%; text-align: center; box-shadow: var(--shadow-lg); animation: modalIn .28s cubic-bezier(.175,.885,.32,1.1); }
 .confirm-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }

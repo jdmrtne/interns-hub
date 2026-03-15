@@ -324,46 +324,49 @@ function renderInternTable(list) {
 }
 
 // ─── Promote / Demote ─────────────────────────────────────────────────────────
+// ─── Shared action helper ─────────────────────────────────────────────────────
+async function doUserUpdate(id, updates, successMsg) {
+  const { data, error } = await sb.from('users').update(updates).eq('id', id).select().single();
+  if (error) {
+    console.error('Update error:', error);
+    toast('Error: ' + (error.message || error.code || JSON.stringify(error)), 'err');
+    return false;
+  }
+  toast(successMsg, 'ok');
+  return true;
+}
+
 async function promoteUser(id, name) {
   showConfirm('Promote to Admin', `Promote "${name}" to admin? They will gain full platform access.`,
     async () => {
-      const { error } = await sb.from('users').update({ role: 'admin' }).eq('id', id);
-      if (error) { toast('Failed: ' + error.message, 'err'); return; }
-      toast(`${name} promoted to admin!`, 'ok');
-      setTimeout(() => location.reload(), 1200);
+      if (await doUserUpdate(id, { role: 'admin' }, `${name} promoted to admin!`))
+        setTimeout(() => location.reload(), 1000);
     }, 'Promote', false
   );
 }
 async function demoteUser(id, name) {
   showConfirm('Demote to Intern', `Demote "${name}" back to intern?`,
     async () => {
-      const { error } = await sb.from('users').update({ role: 'intern' }).eq('id', id);
-      if (error) { toast('Failed: ' + error.message, 'err'); return; }
-      toast(`${name} demoted to intern.`, 'ok');
-      setTimeout(() => location.reload(), 1200);
+      if (await doUserUpdate(id, { role: 'intern' }, `${name} demoted to intern.`))
+        setTimeout(() => location.reload(), 1000);
     }
   );
 }
 
 // ─── Disable / Enable ─────────────────────────────────────────────────────────
-async function disableUser(id, name, currentRole) {
+async function disableUser(id, name) {
   showConfirm('Disable Account', `Disable "${name}"'s account? They will be unable to sign in until re-enabled.`,
     async () => {
-      // Store original role before disabling for potential restore
-      const { error } = await sb.from('users').update({ role: 'disabled' }).eq('id', id);
-      if (error) { toast('Failed: ' + error.message, 'err'); return; }
-      toast(`${name}'s account disabled.`, 'ok');
-      setTimeout(() => location.reload(), 1200);
+      if (await doUserUpdate(id, { role: 'disabled' }, `${name}'s account disabled.`))
+        setTimeout(() => location.reload(), 1000);
     }
   );
 }
 async function enableUser(id, name) {
-  showConfirm('Re-enable Account', `Re-enable "${name}"'s account? They will be restored as an intern.`,
+  showConfirm('Re-enable Account', `Re-enable "${name}"'s account? They will be restored as intern.`,
     async () => {
-      const { error } = await sb.from('users').update({ role: 'intern' }).eq('id', id);
-      if (error) { toast('Failed: ' + error.message, 'err'); return; }
-      toast(`${name}'s account re-enabled as intern.`, 'ok');
-      setTimeout(() => location.reload(), 1200);
+      if (await doUserUpdate(id, { role: 'intern' }, `${name}'s account re-enabled.`))
+        setTimeout(() => location.reload(), 1000);
     }, 'Enable', false
   );
 }
@@ -372,13 +375,16 @@ async function enableUser(id, name) {
 async function deleteUser(id, name) {
   showConfirm(
     '⚠ Delete User',
-    `Permanently delete "${name}"'s account? ALL their data — time logs and messages — will also be deleted. This cannot be undone.`,
+    `Permanently delete "${name}"'s account and ALL their data? This cannot be undone.`,
     async () => {
-      // Delete from users table (cascades to time_logs and messages)
       const { error } = await sb.from('users').delete().eq('id', id);
-      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      if (error) {
+        console.error('Delete error:', error);
+        toast('Error: ' + (error.message || JSON.stringify(error)), 'err');
+        return;
+      }
       toast(`${name} deleted.`, 'ok');
-      setTimeout(() => location.reload(), 1400);
+      setTimeout(() => location.reload(), 1000);
     }
   );
 }

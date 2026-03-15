@@ -98,6 +98,9 @@ create policy "users_insert"  on users for insert with check (auth.uid() = id);
 create policy "users_update"  on users for update using (
   auth.uid() = id
   or exists (select 1 from users where id = auth.uid() and role = 'admin')
+) with check (
+  auth.uid() = id
+  or exists (select 1 from users where id = auth.uid() and role = 'admin')
 );
 -- Admins can delete users (cascade handles related data)
 create policy "users_delete"  on users for delete using (
@@ -142,3 +145,16 @@ commit;
 -- ═══════════════════════════════════════════════════════════
 --  DONE — Database is ready for The Interns Hub v2
 -- ═══════════════════════════════════════════════════════════
+
+-- ═══════════════════════════════════════════════════════════
+--  IMPORTANT: Admin user deletion
+-- ═══════════════════════════════════════════════════════════
+-- Deleting from public.users cascades to time_logs and messages.
+-- However, to fully remove the auth.users entry (so they can't re-register
+-- with the same email), run this in SQL Editor as service role:
+--
+--   select auth.admin_delete_user('<user-uuid>');
+--
+-- OR enable the "delete user" edge function in Supabase Dashboard.
+-- The app's delete button removes all data; the auth entry is cleaned up
+-- automatically by Supabase after 30 days of inactivity, or manually above.
