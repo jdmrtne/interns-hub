@@ -4,11 +4,9 @@
 const SUPABASE_URL = 'https://gacthqqzbvjtxnukdnwf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_r39LY-9OtMPIl0C-1btlng_nQcVvGH7';
 
-let sb;
-function initSupabase() {
-  if (!sb) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  return sb;
-}
+// Global sb — pages initialize it via: sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+// This var is declared here so all inline scripts share the same reference
+var sb;
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const ICONS = {

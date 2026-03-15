@@ -1328,6 +1328,7 @@ function setupSidebarUser(name, role, isAdmin){
 //  BOOT
 // ═══════════════════════════════════════════
 (async function boot(){
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   updateConnectionUI();
   showLoading(navigator.onLine?'Connecting…':'Loading…');
   let session=null;
