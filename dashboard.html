@@ -103,7 +103,7 @@ function updateClock(){
 setInterval(updateClock, 1000); updateClock();
 
 async function loadAnnouncements(){
-  const {data} = await sb.from('announcements').select('*,users(name)').order('created_at',{ascending:false}).limit(3);
+  const {data} = await sb.from('announcements').select('*,users!created_by(name)').order('created_at',{ascending:false}).limit(3);
   const el = document.getElementById('annList');
   if (!data || !data.length) return;
   el.innerHTML = data.map(a => `<div class="announcement-item">

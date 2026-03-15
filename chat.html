@@ -235,12 +235,7 @@ async function deleteMsg(id,btn){
   bubble.classList.add('deleting');
   const{error}=await sb.from('messages').update({is_deleted:true,message:''}).eq('id',id);
   if(error){toast('Failed to delete','err');bubble.classList.remove('deleting');return;}
-  const content=bubble.querySelector('.bubble-content');
-  const timeEl=bubble.querySelector('.bubble-time');
-  content.className='bubble-content bubble-content--deleted';
-  content.innerHTML='<span class="bubble-deleted">Message deleted</span>';
-  if(timeEl)timeEl.remove();
-  bubble.classList.remove('deleting');
+  applyDeleteToUI(id);
 }
 async function loadMessages(){
   const area=document.getElementById('messagesArea');area.innerHTML='';lastDate=null;
@@ -279,6 +274,15 @@ function playMsgSound(){
     s.buffer=_chatAudioBuf;s.connect(_chatAudioCtx.destination);s.start(0);
   }catch(e){}
 }
+function applyDeleteToUI(msgId){
+  const bubble=document.querySelector(`[data-msg-id="${msgId}"]`);
+  if(!bubble)return;
+  const content=bubble.querySelector('.bubble-content');
+  const timeEl=bubble.querySelector('.bubble-time');
+  if(content){content.className='bubble-content bubble-content--deleted';content.innerHTML='<span class="bubble-deleted">Message deleted</span>';}
+  if(timeEl)timeEl.remove();
+  bubble.classList.remove('deleting');
+}
 function setupRealtime(){
   rtChannel=sb.channel('chat-'+[currentUser.id,partnerUser.id].sort().join('-'))
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>{
@@ -287,7 +291,14 @@ function setupRealtime(){
         renderMsg(m,true);
         if(m.sender_id!==currentUser.id)playMsgSound();
       }
-    }).subscribe();
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},payload=>{
+      const m=payload.new;
+      if(m.is_deleted&&((m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id))){
+        applyDeleteToUI(m.id);
+      }
+    })
+    .subscribe();
 }
 async function boot(){
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);

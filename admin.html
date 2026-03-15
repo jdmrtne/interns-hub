@@ -547,6 +547,7 @@ async function loadLogs() {
 async function loadAnns() {
   const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false });
   allAnns = data || [];
+  renderAdminAnns();
 }
 
 // ─── Auth + boot ──────────────────────────────────────────────────────────────

@@ -238,7 +238,8 @@ window.HubAnnouncements = {
   async checkOnLogin(sb, userId) {
     this._userId = userId;
     try {
-      const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false });
+      // ascending: true → oldest first so we show them in chronological order
+      const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: true });
       if (!data || !data.length) return;
       const seen = this._getSeen();
       const unseen = data.filter(a => !seen.includes(a.id));
@@ -251,8 +252,9 @@ window.HubAnnouncements = {
   _markAllSeen() { const all = [...new Set([...this._getSeen(), ...this._anns.map(a => a.id)])]; localStorage.setItem('ann_seen_v2_' + this._userId, JSON.stringify(all)); },
   _render() {
     const ann = this._anns[this._idx]; if (!ann) return;
-    const total = this._anns.length, isLast = this._idx === total - 1;
+    const total = this._anns.length, isLast = this._idx === total - 1, isFirst = this._idx === 0;
     const dotsHtml = total > 1 ? `<div class="ann-modal-multi">${this._idx + 1} of ${total} announcements</div><div class="ann-modal-dots">${this._anns.map((_,i) => `<span class="ann-modal-dot${i===this._idx?' active':''}"></span>`).join('')}</div>` : '';
+    const prevBtn = !isFirst ? `<button class="ann-modal-btn ghost" id="_annPrev">← Previous</button>` : '';
     document.getElementById('ann-modal').innerHTML = `
       <div class="ann-modal-badge">📣 Announcement</div>
       <div class="ann-modal-title">${ann.title}</div>
@@ -261,11 +263,15 @@ window.HubAnnouncements = {
       ${dotsHtml}
       <div class="ann-modal-actions">
         <button class="ann-modal-btn ghost" id="_annDismiss">Dismiss All</button>
+        ${prevBtn}
         <button class="ann-modal-btn primary" id="_annNext">${isLast ? 'Got it ✓' : 'Next →'}</button>
       </div>`;
     document.getElementById('_annDismiss').onclick = () => { this._markAllSeen(); this._close(); };
+    if (!isFirst) document.getElementById('_annPrev').onclick = () => { this._idx--; this._render(); };
     document.getElementById('_annNext').onclick = () => { this._markSeen(ann.id); if (isLast) { this._markAllSeen(); this._close(); } else { this._idx++; this._render(); } };
     document.getElementById('ann-modal-ov').classList.remove('hidden');
+    // Play sound every time a new announcement card is shown
+    _playNotifSound();
   },
   _close() { document.getElementById('ann-modal-ov').classList.add('hidden'); }
 };
