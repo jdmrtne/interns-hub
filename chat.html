@@ -233,8 +233,8 @@ async function deleteMsg(id,btn){
   if(!confirm('Delete this message?'))return;
   const bubble=btn.closest('.msg-bubble');
   bubble.classList.add('deleting');
-  const{error}=await sb.from('messages').update({is_deleted:true,message:''}).eq('id',id);
-  if(error){toast('Failed to delete','err');bubble.classList.remove('deleting');return;}
+  const{error}=await sb.from('messages').delete().eq('id',id);
+  if(error){toast('Failed to delete: '+error.message,'err');bubble.classList.remove('deleting');return;}
   applyDeleteToUI(id);
 }
 async function loadMessages(){
@@ -292,11 +292,9 @@ function setupRealtime(){
         if(m.sender_id!==currentUser.id)playMsgSound();
       }
     })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},payload=>{
-      const m=payload.new;
-      if(m.is_deleted&&((m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id))){
-        applyDeleteToUI(m.id);
-      }
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'messages'},payload=>{
+      const m=payload.old;
+      if(m&&m.id)applyDeleteToUI(m.id);
     })
     .subscribe();
 }
