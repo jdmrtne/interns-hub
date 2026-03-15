@@ -1320,7 +1320,7 @@ function renderClockSideNav(isAdmin){
   if(isAdmin) links.push({href:'admin.html', icon:ICONS.settings, label:'Admin'});
   const clockEntry = isAdmin
     ? `<a href="daily-logs.html" class="snav-item"><span class="snav-icon">${ICONS.logs}</span><span class="snav-label">Daily Logs</span></a>`
-    : `<div>
+    : `<div class="snav-group">
         <a href="index.html" class="snav-item active">
           <span class="snav-icon">${ICONS.clock}</span>
           <span class="snav-label">Clock</span>
