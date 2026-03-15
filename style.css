@@ -102,14 +102,13 @@ html, body {
 /* ── Ambient Background ───────────────────────────────────── */
 body::before {
   content: '';
-  position: fixed; inset: 0; z-index: 0;
+  position: fixed; inset: 0; z-index: -1;
   background:
     radial-gradient(ellipse 70% 55% at 15% -5%,  var(--orb-a), transparent 60%),
     radial-gradient(ellipse 60% 60% at 85% 105%, var(--orb-b), transparent 60%),
     radial-gradient(ellipse 50% 40% at 50%  50%, var(--orb-c), transparent 60%);
   pointer-events: none;
 }
-body > * { position: relative; z-index: 1; }
 
 /* ── Glass card mixin ─────────────────────────────────────── */
 .glass {
@@ -209,8 +208,8 @@ body > * { position: relative; z-index: 1; }
   align-items: center; justify-content: space-between;
   padding: 0 18px; position: sticky; top: 0; z-index: 310;
 }
-.mob-brand      { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--primary); letter-spacing: .03em; }
-.mob-menu-btn   { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 4px; }
+.mob-brand      { display: none; }
+.mob-menu-btn   { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; padding: 6px 8px; -webkit-tap-highlight-color: transparent; }
 .sidebar-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.55); z-index: 290;
@@ -423,7 +422,7 @@ tr:hover td { background: var(--glass-hover); }
 
 /* ── Loading Overlay ──────────────────────────────────────── */
 .loading-overlay {
-  position: fixed; inset: 0; z-index: 7000;
+  position: fixed; inset: 0; z-index: 10000;
   background: var(--bg); display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 18px;
 }
@@ -473,15 +472,17 @@ tr:hover td { background: var(--glass-hover); }
 @media (max-width: 768px) {
   :root { --nav-w: 0px; }
   .sidebar-nav {
-    transform: translateX(-100%); transition: transform .25s;
-    width: 260px;
-    z-index: 500;          /* above overlay */
+    transform: translateX(-100%); transition: transform .25s ease;
+    width: 270px;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 9000;
   }
   .sidebar-nav.open { transform: translateX(0); }
   .sidebar-overlay {
-    z-index: 490;          /* below sidebar, above content */
+    z-index: 8000;
+    pointer-events: none;
   }
-  .sidebar-overlay.show { display: block; }
+  .sidebar-overlay.show { display: block; pointer-events: all; }
   .main-content { margin-left: 0; }
   .mob-header { display: flex; }
   .page-body { padding: 16px; }

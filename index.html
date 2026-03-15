@@ -19,7 +19,7 @@
 <style>
 /* ── Login Screen ────────────────────────────────────── */
 .login-screen {
-  position: fixed; inset: 0; z-index: 5000;
+  position: fixed; inset: 0; z-index: 10000;
   display: flex; align-items: center; justify-content: center; padding: 24px;
   animation: fadeIn .4s ease;
   /* Solid cover so app content doesn't bleed through */
@@ -447,8 +447,8 @@
 /* ── Responsive ───────────────────────────────────────── */
 @media(max-width:680px){
   .main-content-wrap .app-header { display: none; }
-  .clock-panel { grid-template-columns: 1fr; gap: 16px; padding: 18px; }
-  .clock-time  { font-size: clamp(32px,9vw,46px); }
+  .clock-panel { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
+  .clock-time  { font-size: clamp(28px,8vw,40px); }
   .btn-grid    { gap: 10px; }
   .clk-btn     { padding: 18px 10px; font-size: 17px; }
   .clk-btn .b-icon { font-size: 22px; }
@@ -543,8 +543,7 @@
 
 <!-- MOBILE HEADER -->
 <header class="mob-header pre-auth" id="mobHeader">
-  <div class="mob-brand">The Interns Hub</div>
-  <button class="mob-menu-btn" onclick="toggleMobileNav()">&#9776;</button>
+  <button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu" style="margin-left:auto">&#9776;</button>
 </header>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
 
