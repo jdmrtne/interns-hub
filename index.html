@@ -190,21 +190,22 @@
 .clock-panel {
   background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--glass-border); border-radius: 16px;
-  padding: 28px; margin-bottom: 20px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center;
+  padding: 24px 28px; margin-bottom: 20px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center;
+  container-type: inline-size;
 }
-.clock-display { text-align: center; min-width: 0; }
+.clock-display { text-align: center; min-width: 0; overflow: hidden; }
 .clock-dayname {
-  font-family: var(--font-display); font-size: clamp(18px,3vw,26px); font-weight: 800;
+  font-family: var(--font-display); font-size: clamp(14px,2.2vw,22px); font-weight: 800;
   letter-spacing: .18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; line-height: 1;
 }
 .clock-time {
-  /* Use display font but tabular-nums keeps digits same width — no layout shift */
-  font-family: var(--font-display); font-size: clamp(42px,5.5vw,70px); font-weight: 800;
-  color: var(--primary); line-height: 1; margin-bottom: 6px;
+  font-family: var(--font-mono); font-weight: 700;
+  /* Responsive size that FITS inside the left half of the panel */
+  font-size: clamp(28px,3.8vw,54px);
+  color: var(--primary); line-height: 1.05; margin-bottom: 6px;
   font-variant-numeric: tabular-nums;
   letter-spacing: .02em;
-  /* Prevent overflow on small containers */
   white-space: nowrap; overflow: hidden; text-overflow: clip;
 }
 .clock-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: .16em; text-transform: uppercase; }
@@ -446,8 +447,8 @@
 /* ── Responsive ───────────────────────────────────────── */
 @media(max-width:680px){
   .main-content-wrap .app-header { display: none; }
-  .clock-panel { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
-  .clock-time  { font-size: clamp(36px,11vw,52px); }
+  .clock-panel { grid-template-columns: 1fr; gap: 16px; padding: 18px; }
+  .clock-time  { font-size: clamp(32px,9vw,46px); }
   .btn-grid    { gap: 10px; }
   .clk-btn     { padding: 18px 10px; font-size: 17px; }
   .clk-btn .b-icon { font-size: 22px; }
@@ -555,7 +556,7 @@
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>
     </div>
-    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Collapse menu" id="collapseBtn">&#8942;</button>
+    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Collapse menu" id="collapseBtn">&#9776;</button>
   </div>
   <div class="snav-links" id="sideNavLinks"></div>
   <div class="snav-footer">
