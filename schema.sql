@@ -122,12 +122,22 @@ create policy "messages_all" on messages for all
   with check (auth.uid() = sender_id);
 
 -- ANNOUNCEMENTS: All can read; admins manage
-drop policy if exists "ann_select" on announcements;
-drop policy if exists "ann_admin"  on announcements;
-create policy "ann_select" on announcements for select using (auth.uid() is not null);
-create policy "ann_admin"  on announcements for all
+drop policy if exists "ann_select"  on announcements;
+drop policy if exists "ann_admin"   on announcements;
+drop policy if exists "ann_insert"  on announcements;
+drop policy if exists "ann_update"  on announcements;
+drop policy if exists "ann_delete"  on announcements;
+-- All logged-in users can read announcements
+create policy "ann_select" on announcements for select
+  using (auth.uid() is not null);
+-- Only admins can insert/update/delete
+create policy "ann_insert" on announcements for insert
+  with check (exists (select 1 from users where id = auth.uid() and role = 'admin'));
+create policy "ann_update" on announcements for update
   using      (exists (select 1 from users where id = auth.uid() and role = 'admin'))
   with check (exists (select 1 from users where id = auth.uid() and role = 'admin'));
+create policy "ann_delete" on announcements for delete
+  using (exists (select 1 from users where id = auth.uid() and role = 'admin'));
 
 -- ANNOUNCEMENT READS: Own reads
 drop policy if exists "annreads_all" on announcement_reads;
