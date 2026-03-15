@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme:light)">
+<link rel="manifest" href="./manifest.json"><link rel="icon" href="./favicon.ico"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+<title>Dashboard — The Interns Hub</title>
+<style>
+.welcome-bar{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--glass-border);border-radius:16px;padding:26px 30px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.welcome-text h2{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--primary);margin-bottom:4px;}
+.welcome-text p{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;}
+.welcome-time{font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--primary);letter-spacing:.04em;}
+.quicklinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:22px;}
+.ql-card{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--glass-border);border-radius:14px;padding:20px 18px;text-decoration:none;display:flex;flex-direction:column;gap:9px;transition:border-color .2s,transform .15s,box-shadow .2s;}
+.ql-card:hover{border-color:var(--glass-border-b);transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+.ql-icon{font-size:28px;line-height:1;}
+.ql-title{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text);}
+.ql-desc{font-family:var(--font-mono);font-size:9px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;}
+.ql-card.clock   .ql-title{color:var(--primary);}
+.ql-card.interns .ql-title{color:var(--blue);}
+.ql-card.messages.ql-title{color:var(--green);}
+.ql-card.board   .ql-title{color:var(--purple);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.announcement-item{padding:14px 0;border-bottom:1px solid var(--glass-border);}
+.announcement-item:last-child{border-bottom:none;}
+.ann-title{font-family:var(--font-mono);font-size:12.5px;color:var(--text);margin-bottom:6px;}
+.ann-body{font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:6px;}
+.ann-meta{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;}
+.msg-preview{display:flex;align-items:center;gap:12px;padding:11px 10px;margin:0 -10px;border-radius:8px;cursor:pointer;transition:background .15s;text-decoration:none;}
+.msg-preview:hover{background:var(--glass-hover);}
+.msg-preview-info{flex:1;overflow:hidden;}
+.msg-preview-name{font-family:var(--font-mono);font-size:12px;color:var(--text);margin-bottom:3px;}
+.msg-preview-text{font-family:var(--font-body);font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.msg-preview-time{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading Dashboard…</div></div>
+<div class="toasts" id="toasts"></div>
+<header class="mob-header" id="mobHeader"><div class="mob-brand">The Interns Hub</div><button class="mob-menu-btn" onclick="toggleMobileNav()">&#9776;</button></header>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+<div class="platform-layout">
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="snav-brand"><div class="snav-brand-icon">◆</div><div><div class="snav-brand-name">The Interns Hub</div><div class="snav-brand-sub">Intern Portal</div></div></div>
+    <div class="snav-links" id="navLinks"></div>
+    <div class="snav-footer">
+      <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden;min-width:0"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
+      <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+    </div>
+  </nav>
+  <main class="main-content">
+    <div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-subtitle" id="pageDate">—</div></div></div>
+    <div class="page-body">
+      <div class="welcome-bar">
+        <div class="welcome-text"><h2 id="welcomeName">Welcome back</h2><p id="welcomeDept">The Interns Hub</p></div>
+        <div class="welcome-time" id="dashTime">--:--</div>
+      </div>
+      <div class="quicklinks">
+        <a href="index.html"         class="ql-card clock"   id="qlClock"><div class="ql-icon">⏱</div><div class="ql-title">Time Clock</div><div class="ql-desc">Log your attendance</div></a>
+        <a href="interns.html"       class="ql-card interns"             ><div class="ql-icon">👥</div><div class="ql-title">Interns</div>    <div class="ql-desc">Search co-interns</div></a>
+        <a href="messages.html"      class="ql-card messages"            ><div class="ql-icon">💬</div><div class="ql-title">Messages</div>   <div class="ql-desc" id="msgBadge">Private messaging</div></a>
+        <a href="announcements.html" class="ql-card board"               ><div class="ql-icon">📣</div><div class="ql-title">Board</div>      <div class="ql-desc">Announcements</div></a>
+      </div>
+      <div class="stat-grid" id="statsRow" style="margin-bottom:22px"></div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Announcements</div><a href="announcements.html" class="btn btn-ghost btn-sm">View All</a></div>
+          <div class="card-body" id="annList"><div class="empty-state"><div class="empty-icon">📣</div><div class="empty-sub">No announcements yet</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Messages</div><a href="messages.html" class="btn btn-ghost btn-sm">View All</a></div>
+          <div class="card-body" id="msgList"><div class="empty-state"><div class="empty-icon">💬</div><div class="empty-sub">No messages yet</div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script src="./notifications.js"></script>
+<script>
+let currentUser, userProfile;
+
+function updateClock(){
+  const now = new Date();
+  document.getElementById('dashTime').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  document.getElementById('pageDate').textContent = now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+setInterval(updateClock, 1000); updateClock();
+
+async function loadAnnouncements(){
+  const {data} = await sb.from('announcements').select('*,users(name)').order('created_at',{ascending:false}).limit(3);
+  const el = document.getElementById('annList');
+  if (!data || !data.length) return;
+  el.innerHTML = data.map(a => `<div class="announcement-item">
+    <div class="ann-title">${escHtml(a.title)}</div>
+    <div class="ann-body">${escHtml(a.message)}</div>
+    <div class="ann-meta">${escHtml(a.users?.name||'Admin')} · ${timeAgo(a.created_at)}</div>
+  </div>`).join('');
+}
+
+async function loadRecentMessages(){
+  const {data} = await sb.from('messages')
+    .select('*,sender:sender_id(name),receiver:receiver_id(name)')
+    .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+    .order('created_at',{ascending:false}).limit(8);
+  const el = document.getElementById('msgList');
+  if (!data || !data.length) return;
+  const seen = {};
+  for (const m of data) {
+    const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
+    const otherName = m.sender_id === currentUser.id ? m.receiver?.name : m.sender?.name;
+    if (!seen[otherId]) seen[otherId] = {name:otherName||'?', text:m.message, time:m.created_at, id:otherId};
+  }
+  el.innerHTML = Object.values(seen).slice(0,5).map(i => {
+    const col = avatarColor(i.name);
+    return `<a href="messages.html?uid=${i.id}" class="msg-preview">
+      <div class="avatar avatar-sm" style="background:${col}22;color:${col}">${avatarInitials(i.name)}</div>
+      <div class="msg-preview-info">
+        <div class="msg-preview-name">${escHtml(i.name)}</div>
+        <div class="msg-preview-text">${escHtml(i.text)}</div>
+      </div>
+      <div class="msg-preview-time">${timeAgo(i.time)}</div>
+    </a>`;
+  }).join('');
+}
+
+async function loadStats(){
+  const today = new Date().toISOString().split('T')[0];
+  const [{data:users},{data:todayLog},{data:allLogs}] = await Promise.all([
+    sb.from('users').select('id,role'),
+    sb.from('time_logs').select('*').eq('user_id',currentUser.id).eq('date',today).maybeSingle(),
+    sb.from('time_logs').select('am_in,am_out,pm_in,pm_out').eq('user_id',currentUser.id)
+  ]);
+  const activeUsers = (users||[]).filter(u=>u.role!=='disabled').length;
+  let totalMins = 0;
+  (allLogs||[]).forEach(l => {
+    const toM = t => {if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);};
+    const ai=toM(l.am_in),ao=toM(l.am_out),pi=toM(l.pm_in),po=toM(l.pm_out);
+    if(ai&&ao&&ao>ai)totalMins+=ao-ai;
+    if(pi&&po&&po>pi)totalMins+=po-pi;
+  });
+  const fmtM = m => `${Math.floor(m/60)}h ${m%60}m`;
+  const todayStatus = todayLog ? (todayLog.pm_out ? '✓ Complete' : todayLog.am_in ? 'Clocked In' : 'Not started') : 'Not started';
+  const statusColor = todayLog?.pm_out ? 'var(--green)' : todayLog?.am_in ? 'var(--primary)' : 'var(--text-muted)';
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Today's Status</div><div class="stat-value" style="font-size:22px;color:${statusColor}">${todayStatus}</div></div>
+    <div class="stat-card"><div class="stat-label">Total Hours Logged</div><div class="stat-value">${totalMins>0?fmtM(totalMins):'0h'}</div></div>
+    <div class="stat-card"><div class="stat-label">Days Logged</div><div class="stat-value">${(allLogs||[]).length}</div></div>
+    <div class="stat-card"><div class="stat-label">Active Users</div><div class="stat-value" style="color:var(--blue)">${activeUsers}</div></div>
+  `;
+}
+
+async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }
+
+async function boot(){
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const {data:{session}} = await sb.auth.getSession();
+  if (!session) { window.location.href='index.html'; return; }
+  currentUser = session.user;
+  const {data:p} = await sb.from('users').select('*').eq('id',currentUser.id).single();
+  userProfile = p;
+  const name = p?.name || currentUser.email?.split('@')[0] || 'Intern';
+  const isAdmin = p?.role === 'admin';
+  document.getElementById('navLinks').innerHTML = renderNav('dashboard', isAdmin);
+  setupSidebarUser(name, p?.role||'intern', isAdmin);
+  document.getElementById('welcomeName').textContent = 'Welcome back, ' + name.split(' ')[0];
+  document.getElementById('welcomeDept').textContent = p?.department || 'The Interns Hub';
+  if (isAdmin) {
+    document.getElementById('qlClock').href = 'daily-logs.html';
+    document.getElementById('qlClock').querySelector('.ql-title').textContent = 'Daily Logs';
+    document.getElementById('qlClock').querySelector('.ql-desc').textContent = 'View intern attendance';
+    document.getElementById('qlClock').querySelector('.ql-icon').textContent = '📋';
+  }
+  await Promise.all([loadAnnouncements(), loadRecentMessages(), loadStats()]);
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  await HubAnnouncements.checkOnLogin(sb, currentUser.id);
+  HubMsgPoller.start(sb, currentUser.id);
+}
+boot();
+</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
+</body>
+</html>

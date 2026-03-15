@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#070b14" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme: light)">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./favicon.ico">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+<title>Admin — The Interns Hub</title>
+<style>
+/* ── Admin-page extras ───────────────────────────────── */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 44px; }
+.pw-toggle {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  font-size: 15px; padding: 4px; transition: color .15s;
+}
+.pw-toggle:hover { color: var(--primary); }
+
+.pw-info {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--primary-g); border: 1px solid rgba(56,189,248,.2);
+  border-radius: 9px; padding: 12px 14px; margin-bottom: 16px;
+  font-family: var(--font-mono); font-size: 10px; line-height: 1.6; color: var(--text-muted);
+}
+.pw-info svg { flex-shrink: 0; margin-top: 1px; }
+
+.action-legend {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-dim);
+}
+.action-legend span { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Loading Admin Panel…</div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-ov" id="confirmOv">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">Confirm</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-acts">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-ov" id="pwModal">
+  <div class="modal" style="max-width:420px">
+    <h3>Change Password</h3>
+    <div id="pwUserInfo" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;">
+      <div id="pwAvatar" class="avatar avatar-sm"></div>
+      <div>
+        <div id="pwUserName" style="font-family:var(--font-mono);font-size:12px;color:var(--text)"></div>
+        <div id="pwUserEmail" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted)"></div>
+      </div>
+    </div>
+    <div class="pw-info">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      A password reset email will be sent to the user's registered email address. The user must click the link in the email to set their new password.
+    </div>
+    <div id="pwManualSection">
+      <div class="mf">
+        <label>Or send to specific email (leave blank to use account email)</label>
+        <input type="email" id="pwOverrideEmail" placeholder="Override email address…">
+      </div>
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closePwModal()">Cancel</button>
+      <button class="btn btn-primary" id="pwSendBtn" onclick="sendPwReset()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Send Reset Email
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="platform-layout">
+  <!-- Mobile Header -->
+  <header class="mob-header" id="mobHeader">
+    <div class="mob-brand">The Interns Hub</div>
+    <button class="mob-menu-btn" onclick="toggleMobileNav()">&#9776;</button>
+  </header>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="snav-brand">
+      <div class="snav-brand-icon">◆</div>
+      <div>
+        <div class="snav-brand-name">The Interns Hub</div>
+        <div class="snav-brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <div class="snav-links" id="navLinks"></div>
+    <div class="snav-footer">
+      <div class="snav-user">
+        <div class="snav-user-avatar" id="navAvatar"></div>
+        <div style="overflow:hidden;min-width:0">
+          <div class="snav-user-name" id="navUserName">Loading…</div>
+          <div class="snav-user-role" id="navUserRole">admin</div>
+        </div>
+      </div>
+      <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Admin Panel</div>
+        <div class="page-subtitle">Platform management &amp; user control</div>
+      </div>
+      <span class="badge badge-admin" style="font-size:11px;padding:6px 14px">⚙ ADMIN</span>
+    </div>
+
+    <div class="page-body">
+      <div class="stat-grid" id="statsRow"></div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('interns',this)">👥 Users</button>
+        <button class="admin-tab" onclick="switchTab('timelogs',this)">⏱ Time Logs</button>
+        <button class="admin-tab" onclick="switchTab('announcements',this)">📣 Announcements</button>
+      </div>
+
+      <!-- USERS TAB -->
+      <div class="tab-panel active" id="tab-interns">
+        <div class="filter-row">
+          <input class="fi" id="internSearch" placeholder="Search by name or email…" oninput="filterInternTable()" style="flex:1;min-width:180px">
+          <input class="fi" id="internRoleFilter" placeholder="Filter by role…" oninput="filterInternTable()" style="min-width:140px">
+        </div>
+        <div class="action-legend">
+          <span><span class="legend-dot" style="background:var(--purple)"></span>Promote / Demote</span>
+          <span><span class="legend-dot" style="background:var(--primary)"></span>Change Password</span>
+          <span><span class="legend-dot" style="background:var(--amber)"></span>Disable Account</span>
+          <span><span class="legend-dot" style="background:var(--red)"></span>Delete Account</span>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll">
+            <table id="internTable">
+              <thead><tr>
+                <th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Joined</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="internTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIME LOGS TAB -->
+      <div class="tab-panel" id="tab-timelogs">
+        <div class="filter-row">
+          <input class="fi" id="logSearch" placeholder="Search by name…" oninput="filterLogs()" style="flex:1">
+          <input class="fi" type="date" id="logDate" onchange="filterLogs()">
+          <input class="fi" type="month" id="logMonth" onchange="filterLogs()">
+          <button class="btn btn-ghost btn-sm" onclick="clearLogFilters()">Clear</button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th>Name</th><th>Date</th><th>AM IN</th><th>AM OUT</th><th>PM IN</th><th>PM OUT</th><th>Total</th>
+              </tr></thead>
+              <tbody id="logTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS TAB -->
+      <div class="tab-panel" id="tab-announcements">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+          <div id="adminAnnList"></div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Post Announcement</div></div>
+            <div class="card-body">
+              <div class="field"><label>Title</label><input type="text" id="adminAnnTitle" placeholder="Announcement title…"></div>
+              <div class="field"><label>Message</label><textarea id="adminAnnBody" rows="5" placeholder="Write your message…"></textarea></div>
+              <button class="btn btn-primary" style="width:100%" onclick="postAnn()">📣 Post Announcement</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </main>
+</div><!-- /platform-layout -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script src="./notifications.js"></script>
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentUser, allUsers = [], allLogs = [], allAnns = [], cbFn = null;
+let pwTargetUser = null;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function toMins(t) {
+  if (!t) return null;
+  const [h, m] = (t + ':00').split(':').map(Number);
+  return h * 60 + (m || 0);
+}
+function calcLogHours(l) {
+  if (l.total_hours) return l.total_hours;
+  let tot = 0;
+  const ai = toMins(l.am_in), ao = toMins(l.am_out);
+  const pi = toMins(l.pm_in), po = toMins(l.pm_out);
+  if (ai !== null && ao !== null && ao > ai) tot += ao - ai;
+  if (pi !== null && po !== null && po > pi) tot += po - pi;
+  return tot > 0 ? tot / 60 : null;
+}
+function fmtHours(h) {
+  if (h === null || h === undefined) return '—';
+  return Math.floor(h) + 'h ' + String(Math.round((h % 1) * 60)).padStart(2, '0') + 'm';
+}
+
+// ─── Confirm dialog ───────────────────────────────────────────────────────────
+function showConfirm(title, msg, cb, okLabel = 'Confirm', isDanger = true) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.textContent = okLabel;
+  btn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
+  cbFn = cb;
+  document.getElementById('confirmOv').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirmOv').classList.remove('open');
+  cbFn = null;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('confirmOkBtn').addEventListener('click', () => {
+    closeConfirm();
+    if (cbFn) cbFn();
+  });
+});
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'announcements') renderAdminAnns();
+}
+
+// ─── User table ───────────────────────────────────────────────────────────────
+function filterInternTable() {
+  const q = document.getElementById('internSearch').value.toLowerCase();
+  const r = document.getElementById('internRoleFilter').value.toLowerCase();
+  renderInternTable(allUsers.filter(u =>
+    (!q || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q)) &&
+    (!r || (u.role || '').toLowerCase().includes(r))
+  ));
+}
+
+function handleAction(action, id) {
+  const u = allUsers.find(x => x.id === id);
+  if (!u) { toast('User not found', 'err'); return; }
+  const name = u.name || u.email || id;
+  if      (action === 'promote')  promoteUser(id, name);
+  else if (action === 'demote')   demoteUser(id, name);
+  else if (action === 'disable')  disableUser(id, name, u.role);
+  else if (action === 'enable')   enableUser(id, name);
+  else if (action === 'delete')   deleteUser(id, name);
+  else if (action === 'resetpw')  openPwModal(u);
+}
+
+function renderInternTable(list) {
+  const tb = document.getElementById('internTbody');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="6" class="empty-state" style="padding:30px"><p class="empty-sub">No users found</p></td></tr>`;
+    return;
+  }
+
+  // Guard: don't show actions for self
+  tb.innerHTML = list.map(u => {
+    const col = avatarColor(u.name);
+    const isAdm = u.role === 'admin';
+    const isDis = u.role === 'disabled';
+    const isSelf = u.id === currentUser?.id;
+    const id = u.id;
+
+    const promoteBtn = (!isAdm && !isDis) ? `<button class="act-btn promote" onclick="handleAction('promote','${id}')">↑ Admin</button>` : '';
+    const demoteBtn  = (isAdm && !isSelf) ? `<button class="act-btn"         onclick="handleAction('demote','${id}')">↓ Intern</button>` : '';
+    const disableBtn = (!isDis && !isSelf) ? `<button class="act-btn warn"    onclick="handleAction('disable','${id}')">⊘ Disable</button>` : '';
+    const enableBtn  = isDis               ? `<button class="act-btn"         onclick="handleAction('enable','${id}')">✓ Enable</button>` : '';
+    const pwBtn      = !isSelf             ? `<button class="act-btn"         onclick="handleAction('resetpw','${id}')">🔑 PW</button>` : '';
+    const delBtn     = !isSelf             ? `<button class="act-btn danger"   onclick="handleAction('delete','${id}')">🗑 Delete</button>` : '';
+
+    const badge = isAdm ? 'badge-admin' : isDis ? 'badge-disabled' : 'badge-intern';
+
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:9px">
+        <div class="avatar avatar-sm" style="background:${col}22;color:${col}">${avatarInitials(u.name)}</div>
+        <span style="color:var(--text);font-weight:500">${escHtml(u.name || '—')}</span>
+        ${isSelf ? '<span style="font-size:8px;color:var(--text-dim);margin-left:3px">(you)</span>' : ''}
+      </div></td>
+      <td style="color:var(--text-muted)">${escHtml(u.email || '—')}</td>
+      <td style="color:var(--blue)">${escHtml(u.department || '—')}</td>
+      <td><span class="badge ${badge}">${u.role || 'intern'}</span></td>
+      <td style="color:var(--text-dim)">${fmtDate(u.created_at)}</td>
+      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+        ${demoteBtn}${promoteBtn}${pwBtn}${disableBtn}${enableBtn}${delBtn}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── Promote / Demote ─────────────────────────────────────────────────────────
+async function promoteUser(id, name) {
+  showConfirm('Promote to Admin', `Promote "${name}" to admin? They will gain full platform access.`,
+    async () => {
+      const { error } = await sb.from('users').update({ role: 'admin' }).eq('id', id);
+      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      toast(`${name} promoted to admin!`, 'ok');
+      setTimeout(() => location.reload(), 1200);
+    }, 'Promote', false
+  );
+}
+async function demoteUser(id, name) {
+  showConfirm('Demote to Intern', `Demote "${name}" back to intern?`,
+    async () => {
+      const { error } = await sb.from('users').update({ role: 'intern' }).eq('id', id);
+      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      toast(`${name} demoted to intern.`, 'ok');
+      setTimeout(() => location.reload(), 1200);
+    }
+  );
+}
+
+// ─── Disable / Enable ─────────────────────────────────────────────────────────
+async function disableUser(id, name, currentRole) {
+  showConfirm('Disable Account', `Disable "${name}"'s account? They will be unable to sign in until re-enabled.`,
+    async () => {
+      // Store original role before disabling for potential restore
+      const { error } = await sb.from('users').update({ role: 'disabled' }).eq('id', id);
+      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      toast(`${name}'s account disabled.`, 'ok');
+      setTimeout(() => location.reload(), 1200);
+    }
+  );
+}
+async function enableUser(id, name) {
+  showConfirm('Re-enable Account', `Re-enable "${name}"'s account? They will be restored as an intern.`,
+    async () => {
+      const { error } = await sb.from('users').update({ role: 'intern' }).eq('id', id);
+      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      toast(`${name}'s account re-enabled as intern.`, 'ok');
+      setTimeout(() => location.reload(), 1200);
+    }, 'Enable', false
+  );
+}
+
+// ─── Delete ───────────────────────────────────────────────────────────────────
+async function deleteUser(id, name) {
+  showConfirm(
+    '⚠ Delete User',
+    `Permanently delete "${name}"'s account? ALL their data — time logs and messages — will also be deleted. This cannot be undone.`,
+    async () => {
+      // Delete from users table (cascades to time_logs and messages)
+      const { error } = await sb.from('users').delete().eq('id', id);
+      if (error) { toast('Failed: ' + error.message, 'err'); return; }
+      toast(`${name} deleted.`, 'ok');
+      setTimeout(() => location.reload(), 1400);
+    }
+  );
+}
+
+// ─── Change Password ──────────────────────────────────────────────────────────
+function openPwModal(u) {
+  pwTargetUser = u;
+  const col = avatarColor(u.name);
+  const av = document.getElementById('pwAvatar');
+  av.style.background = col + '22'; av.style.color = col;
+  av.textContent = avatarInitials(u.name);
+  document.getElementById('pwUserName').textContent = u.name || '—';
+  document.getElementById('pwUserEmail').textContent = u.email || '—';
+  document.getElementById('pwOverrideEmail').value = '';
+  document.getElementById('pwModal').classList.add('open');
+}
+function closePwModal() {
+  document.getElementById('pwModal').classList.remove('open');
+  pwTargetUser = null;
+}
+async function sendPwReset() {
+  if (!pwTargetUser) return;
+  const override = document.getElementById('pwOverrideEmail').value.trim();
+  const email = override || pwTargetUser.email;
+  const btn = document.getElementById('pwSendBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/index.html'
+  });
+  btn.disabled = false; btn.textContent = 'Send Reset Email';
+  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  toast(`Password reset email sent to ${email}`, 'ok');
+  closePwModal();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('pwModal')) closePwModal();
+  });
+});
+
+// ─── Time Logs ────────────────────────────────────────────────────────────────
+function filterLogs() {
+  const q  = document.getElementById('logSearch').value.toLowerCase();
+  const dt = document.getElementById('logDate').value;
+  const mo = document.getElementById('logMonth').value;
+  renderLogs(allLogs.filter(l =>
+    (!q  || (l.users?.name || '').toLowerCase().includes(q)) &&
+    (!dt || l.date === dt) &&
+    (!mo || l.date?.startsWith(mo))
+  ));
+}
+function clearLogFilters() {
+  document.getElementById('logSearch').value = '';
+  document.getElementById('logDate').value = '';
+  document.getElementById('logMonth').value = '';
+  renderLogs(allLogs);
+}
+function renderLogs(list) {
+  const tb = document.getElementById('logTbody');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No logs found</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(l => {
+    const h = fmtHours(calcLogHours(l));
+    return `<tr>
+      <td style="color:var(--text)">${escHtml(l.users?.name || '—')}</td>
+      <td style="color:var(--text-muted)">${l.date || '—'}</td>
+      <td style="color:var(--blue)">${l.am_in || '—'}</td>
+      <td style="color:var(--blue)">${l.am_out || '—'}</td>
+      <td style="color:var(--primary)">${l.pm_in || '—'}</td>
+      <td style="color:var(--primary)">${l.pm_out || '—'}</td>
+      <td style="color:var(--green);font-weight:700">${h}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── Announcements ────────────────────────────────────────────────────────────
+async function postAnn() {
+  const title = document.getElementById('adminAnnTitle').value.trim();
+  const msg   = document.getElementById('adminAnnBody').value.trim();
+  if (!title || !msg) { toast('Fill in both fields', 'err'); return; }
+  const { error } = await sb.from('announcements').insert({ title, message: msg, created_by: currentUser.id });
+  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  document.getElementById('adminAnnTitle').value = '';
+  document.getElementById('adminAnnBody').value = '';
+  toast('Posted!', 'ok');
+  await loadAnns();
+  renderAdminAnns();
+}
+async function delAnn(id) {
+  showConfirm('Delete Announcement', 'Delete this announcement permanently?',
+    async () => {
+      await sb.from('announcements').delete().eq('id', id);
+      toast('Deleted', 'ok');
+      await loadAnns();
+      renderAdminAnns();
+    }
+  );
+}
+function renderAdminAnns() {
+  const c = document.getElementById('adminAnnList');
+  if (!allAnns.length) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-sub">No announcements yet</div></div>`;
+    return;
+  }
+  c.innerHTML = allAnns.map(a => `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header">
+        <div class="card-title" style="font-size:11px">${escHtml(a.title)}</div>
+        <button class="act-btn danger" onclick="delAnn('${a.id}')">✕ Delete</button>
+      </div>
+      <div class="card-body">
+        <p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.65">${escHtml(a.message)}</p>
+        <p style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:10px">${fmtDate(a.created_at)} · ${timeAgo(a.created_at)}</p>
+      </div>
+    </div>`).join('');
+}
+
+// ─── Load data ────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  const { data } = await sb.from('users').select('*').order('created_at', { ascending: false });
+  allUsers = data || [];
+  renderInternTable(allUsers);
+
+  const total  = allUsers.length;
+  const interns = allUsers.filter(u => u.role === 'intern').length;
+  const admins  = allUsers.filter(u => u.role === 'admin').length;
+  const disabled = allUsers.filter(u => u.role === 'disabled').length;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Interns</div><div class="stat-value" style="color:var(--blue)">${interns}</div></div>
+    <div class="stat-card"><div class="stat-label">Admins</div><div class="stat-value" style="color:var(--purple)">${admins}</div></div>
+    <div class="stat-card"><div class="stat-label">Disabled</div><div class="stat-value" style="color:var(--red)">${disabled}</div></div>
+    <div class="stat-card"><div class="stat-label">Time Logs</div><div class="stat-value" style="color:var(--green)">${allLogs.length}</div></div>
+  `;
+}
+async function loadLogs() {
+  const { data } = await sb.from('time_logs').select('*,users(name)').order('date', { ascending: false });
+  allLogs = data || [];
+  renderLogs(allLogs);
+}
+async function loadAnns() {
+  const { data } = await sb.from('announcements').select('*,users(name)').order('created_at', { ascending: false });
+  allAnns = data || [];
+}
+
+// ─── Auth + boot ──────────────────────────────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+async function boot() {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+  currentUser = session.user;
+
+  const { data: p } = await sb.from('users').select('*').eq('id', currentUser.id).single();
+  if (p?.role !== 'admin') {
+    toast('Admin access required', 'err');
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    return;
+  }
+
+  // Render nav
+  document.getElementById('navLinks').innerHTML = renderNav('admin', true);
+  setupSidebarUser(p.name || currentUser.email?.split('@')[0] || 'Admin', p.role, true);
+
+  await Promise.all([loadLogs(), loadAnns()]);
+  await loadUsers();
+  document.getElementById('loadingOverlay').classList.add('hidden');
+
+  if (typeof HubMsgPoller !== 'undefined') HubMsgPoller.start(sb, currentUser.id);
+}
+boot();
+</script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});</script>
+</body>
+</html>

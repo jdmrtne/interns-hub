@@ -1,0 +1,111 @@
+{
+  "name": "The Interns Hub",
+  "short_name": "Interns Hub",
+  "description": "Time clock, messaging & announcements for interns",
+  "start_url": "/interns-hub/",
+  "scope": "/interns-hub/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "lang": "en",
+  "categories": [
+    "productivity",
+    "utilities",
+    "social"
+  ],
+  "icons": [
+    {
+      "src": "/interns-hub/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/interns-hub/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/interns-hub/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Time Clock",
+      "short_name": "Clock",
+      "url": "/interns-hub/index.html",
+      "description": "Clock in and out",
+      "icons": [
+        {
+          "src": "/interns-hub/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "url": "/interns-hub/dashboard.html",
+      "description": "Go to dashboard",
+      "icons": [
+        {
+          "src": "/interns-hub/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "url": "/interns-hub/messages.html",
+      "description": "View messages",
+      "icons": [
+        {
+          "src": "/interns-hub/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "short_name": "Board",
+      "url": "/interns-hub/announcements.html",
+      "description": "View announcements",
+      "icons": [
+        {
+          "src": "/interns-hub/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
