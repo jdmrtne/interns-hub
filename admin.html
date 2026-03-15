@@ -545,7 +545,7 @@ async function loadLogs() {
   renderLogs(allLogs);
 }
 async function loadAnns() {
-  const { data } = await sb.from('announcements').select('*,users(name)').order('created_at', { ascending: false });
+  const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false });
   allAnns = data || [];
 }
 

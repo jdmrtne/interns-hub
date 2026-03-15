@@ -172,10 +172,34 @@ async function doLogout(){await sb.auth.signOut();window.location.href='index.ht
 function setupUser(p,active){const isAdmin=p?.role==='admin';document.getElementById('navLinks').innerHTML=renderNav(active,isAdmin);const name=p?.name||currentUser.email?.split('@')[0]||'Intern';document.getElementById('navUserName').textContent=name;document.getElementById('navUserRole').textContent=p?.role||'intern';const av=document.getElementById('navAvatar');const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);}
 let userProfile=null;
 async function loadAnns(){
-  const{data}=await sb.from('announcements').select('*,users(name)').order('created_at',{ascending:false});
+  const{data, error}=await sb.from('announcements').select('*').order('created_at',{ascending:false});
+  if(error){ console.error('loadAnns error:', error); }
   const c=document.getElementById('annList');const isAdmin=userProfile?.role==='admin';
-  if(!data||!data.length){c.innerHTML='<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No Announcements</div><div class="empty-sub">'+(isAdmin?'Post the first announcement.':'Check back later.')+'</div></div>';return;}
-  c.innerHTML=data.map((a,i)=>{const name=a.users?.name||'Admin';const col=avatarColor(name);return`<div class="ann-card" style="animation-delay:${i*50}ms"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;"><div class="ann-card-title">${escHtml(a.title)}</div>${isAdmin?`<button class="btn-del" onclick="delAnn('${a.id}')" title="Delete">✕</button>`:''}</div><div class="ann-card-body">${escHtml(a.message)}</div><div class="ann-meta"><div class="ann-av" style="background:${col}20;color:${col}">${avatarInitials(name)}</div><span>${escHtml(name)}</span><span>·</span><span>${fmtDate(a.created_at)}</span><span>·</span><span>${timeAgo(a.created_at)}</span></div></div>`;}).join('');
+  if(!data||!data.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-title">No Announcements</div><div class="empty-sub">'+(isAdmin?'Post the first announcement below.':'Check back later.')+'</div></div>';return;}
+  // Load author names separately to avoid join issues
+  const authorIds=[...new Set(data.filter(a=>a.created_by).map(a=>a.created_by))];
+  let authorMap={};
+  if(authorIds.length){
+    const{data:authors}=await sb.from('users').select('id,name').in('id',authorIds);
+    if(authors) authors.forEach(u=>{authorMap[u.id]=u.name;});
+  }
+  c.innerHTML=data.map((a,i)=>{
+    const name=authorMap[a.created_by]||'Admin';
+    const col=avatarColor(name);
+    return`<div class="ann-card" style="animation-delay:${i*50}ms">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;">
+        <div class="ann-card-title">${escHtml(a.title)}</div>
+        ${isAdmin?`<button class="btn-del" onclick="delAnn('${a.id}')" title="Delete">✕</button>`:''}
+      </div>
+      <div class="ann-card-body">${escHtml(a.message)}</div>
+      <div class="ann-meta">
+        <div class="ann-av" style="background:${col}20;color:${col}">${avatarInitials(name)}</div>
+        <span>${escHtml(name)}</span><span>·</span>
+        <span>${fmtDate(a.created_at)}</span><span>·</span>
+        <span>${timeAgo(a.created_at)}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 async function postAnn(){
   const title=document.getElementById('annTitle').value.trim(),msg=document.getElementById('annBody').value.trim();

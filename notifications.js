@@ -238,7 +238,7 @@ window.HubAnnouncements = {
   async checkOnLogin(sb, userId) {
     this._userId = userId;
     try {
-      const { data } = await sb.from('announcements').select('*, users(name)').order('created_at', { ascending: false });
+      const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false });
       if (!data || !data.length) return;
       const seen = this._getSeen();
       const unseen = data.filter(a => !seen.includes(a.id));
