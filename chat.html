@@ -193,6 +193,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
 <script>
 
 let partnerUser=null,lastDate=null,rtChannel=null,currentUserIsAdmin=false;
+async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function scrollBottom(){const a=document.getElementById('messagesArea');if(a)a.scrollTop=a.scrollHeight;}
