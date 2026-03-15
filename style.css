@@ -110,31 +110,37 @@ body::before {
   overflow: hidden;
 }
 
-/* Collapsed state — icons only */
+/* Collapsed state — icon rail only */
 .sidebar-nav.collapsed { width: var(--nav-w-col); }
 .sidebar-nav.collapsed ~ .main-content { margin-left: var(--nav-w-col); }
-/* Hide text in collapsed */
+/* In collapsed mode: hide the entire brand bar */
+.sidebar-nav.collapsed .snav-brand { display: none; }
+/* In collapsed state: hide the normal collapse-btn (snav-brand is hidden anyway) */
+.sidebar-nav.collapsed .collapse-btn { display: none !important; }
+.sidebar-nav.collapsed .snav-links { padding: 8px 4px; }
+/* Hide all text labels */
 .sidebar-nav.collapsed .snav-brand-name,
 .sidebar-nav.collapsed .snav-brand-sub,
 .sidebar-nav.collapsed .snav-label,
 .sidebar-nav.collapsed .snav-user-name,
 .sidebar-nav.collapsed .snav-user-role,
 .sidebar-nav.collapsed .btn-logout-nav { display: none !important; }
-.sidebar-nav.collapsed .snav-brand  { justify-content: center; padding: 0; }
-.sidebar-nav.collapsed .snav-links  { padding: 8px 4px; }
 .sidebar-nav.collapsed .snav-item   { justify-content: center; padding: 12px 0; }
 .sidebar-nav.collapsed .snav-user   { justify-content: center; padding: 8px 4px; }
 .sidebar-nav.collapsed .snav-footer { padding: 6px 4px 12px; }
-/* In collapsed mode: brand area shows ONLY the hamburger, aligned with nav icons */
-.sidebar-nav.collapsed .snav-brand-icon { display: none; }
-/* collapse-btn centers exactly like snav-item icons in collapsed state */
-.sidebar-nav.collapsed .collapse-btn {
-  margin: 0 auto;
-  width: 100%; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 8px;
-  padding: 0;
+
+
+/* ── Collapse rail button (shown only in collapsed sidebar) ── */
+.collapse-btn-rail {
+  display: none; /* hidden when expanded */
+  width: 100%; height: 52px; flex-shrink: 0;
+  background: none; border: none; border-bottom: 1px solid var(--glass-border);
+  cursor: pointer; color: var(--text-muted); font-size: 18px;
+  align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
 }
+.collapse-btn-rail:hover { background: var(--glass-hover); color: var(--primary); }
+.sidebar-nav.collapsed .collapse-btn-rail { display: flex; }
 
 .snav-brand {
   height: 58px; padding: 0 14px;
