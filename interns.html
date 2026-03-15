@@ -167,8 +167,7 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font-body);mi
 
 </div>
 <script>
-const SUPABASE_URL='https://gacthqqzbvjtxnukdnwf.supabase.co',SUPABASE_KEY='sb_publishable_r39LY-9OtMPIl0C-1btlng_nQcVvGH7';
-let sb,currentUser,allInterns=[];
+let currentUser,allInterns=[];
 // ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 function filterInterns(){

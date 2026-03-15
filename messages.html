@@ -176,8 +176,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
 
 <script>
 
-const SUPABASE_URL='https://gacthqqzbvjtxnukdnwf.supabase.co',SUPABASE_KEY='sb_publishable_r39LY-9OtMPIl0C-1btlng_nQcVvGH7';
-let sb,currentUser;
+let currentUser;
 function fmtDate(ts){if(!ts)return'—';return new Date(ts).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
 function toast(msg,type='inf'){let c=document.getElementById('toasts');if(!c){c=document.createElement('div');c.id='toasts';c.className='toasts';document.body.appendChild(c);}const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
 // ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
