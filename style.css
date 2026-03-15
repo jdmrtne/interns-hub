@@ -152,15 +152,17 @@ body::before {
 .collapse-btn {
   margin-left: auto; flex-shrink: 0;
   background: none; border: none; cursor: pointer;
-  color: var(--text-muted); font-size: 18px; line-height: 1;
-  padding: 5px 6px; border-radius: 7px;
+  color: var(--text-muted); font-size: 18px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 7px;
   transition: background .15s, color .15s;
 }
 .collapse-btn:hover { background: var(--glass-hover); color: var(--primary); }
 
 .snav-links { flex: 1; padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
 .snav-links::-webkit-scrollbar { display: none; }
-.snav-sub { display: none !important; }
+.snav-sub { display: none; } /* hidden on desktop, shown on mobile */
 
 .snav-item {
   display: flex; align-items: center; gap: 10px;
@@ -201,14 +203,19 @@ body::before {
   display: none; height: 52px;
   background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--glass-border);
-  align-items: center; justify-content: flex-end;
+  align-items: center; justify-content: space-between;
   padding: 0 14px; position: sticky; top: 0; z-index: 310;
 }
 .mob-header.pre-auth { display: none !important; }
+.mob-page-title {
+  font-family: var(--font-display); font-size: 16px; font-weight: 800;
+  color: var(--text); letter-spacing: .03em;
+}
 .mob-menu-btn {
   background: none; border: none; color: var(--text-muted);
   font-size: 22px; cursor: pointer; padding: 6px 8px;
   -webkit-tap-highlight-color: transparent; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
 }
 .sidebar-overlay {
   display: none; position: fixed; inset: 0;
@@ -414,4 +421,31 @@ tr:hover td { background: var(--glass-hover); }
   #tab-announcements > div { grid-template-columns: 1fr !important; gap: 14px; }
   .filter-row { gap: 6px; }
   .two-col { grid-template-columns: 1fr !important; }
+}
+
+/* ── Interns grid spacing ─────────────────────────────────── */
+.intern-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.intern-card { border-radius: 14px; padding: 22px 18px; }
+
+/* ── Mobile sub-menu (only on mobile) ────────────────────── */
+@media (max-width: 768px) {
+  .snav-sub {
+    display: flex !important;
+    flex-direction: column; gap: 1px;
+    padding: 2px 0 4px 14px;
+    margin-left: 18px;
+    border-left: 1px solid var(--glass-border);
+  }
+  .snav-subitem {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 7px;
+    color: var(--text-dim); font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; background: none; border: none;
+    width: 100%; text-align: left;
+    transition: background .15s, color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .snav-subitem:hover, .snav-subitem:active { background: var(--glass-hover); color: var(--text-muted); }
+  .snav-subitem.active { color: var(--primary); background: var(--primary-g); }
 }

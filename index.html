@@ -171,7 +171,7 @@
 .tstat-lbl { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
 
 /* ── App Body ─────────────────────────────────────────── */
-.app-body { max-width: 1100px; margin: 0 auto; padding: 24px 22px 40px; }
+.app-body { padding: 20px 24px 40px; }
 
 /* ── Name bar ────────────────────────────────────────── */
 .emp-bar {
@@ -578,7 +578,7 @@
     <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
   </div>
 </nav>
-<div class="main-content-wrap" style="margin-left:var(--nav-w);flex:1;min-height:100vh;display:flex;flex-direction:column;">
+<div class="main-content" id="mainContent">
 
 <div class="toasts" id="toasts"></div>
 
@@ -750,7 +750,7 @@
   </div>
 
 </div><!-- /app-body -->
-</div><!-- /main-content-wrap -->
+</div><!-- /main-content -->
 </div><!-- /platform-layout -->
 
 <script>
@@ -1311,24 +1311,29 @@ function setupDesktop(){
 
 // ─── Sidebar clock sub-nav ────────────────────────────────────────────────────
 function renderClockSideNav(isAdmin){
-  // Flat nav — no sub-menu. On desktop all sections visible at once.
   const links=[
-    {href:'index.html',         icon:ICONS.clock,     label:'Clock',      active:true},
     {href:'dashboard.html',     icon:ICONS.dashboard, label:'Dashboard'},
     {href:'interns.html',       icon:ICONS.users,     label:'Interns'},
     {href:'messages.html',      icon:ICONS.mail,      label:'Messages'},
     {href:'announcements.html', icon:ICONS.megaphone, label:'Board'},
   ];
-  if(isAdmin){
-    links.unshift({href:'daily-logs.html', icon:ICONS.logs, label:'Daily Logs'});
-    links.push({href:'admin.html', icon:ICONS.settings, label:'Admin'});
-  }
-  document.getElementById('sideNavLinks').innerHTML = links.map(n=>
-    `<a href="${n.href}" class="snav-item${n.active?' active':''}">
-      <span class="snav-icon">${n.icon}</span>
-      <span class="snav-label">${n.label}</span>
-    </a>`
-  ).join('');
+  if(isAdmin) links.push({href:'admin.html', icon:ICONS.settings, label:'Admin'});
+  const clockEntry = isAdmin
+    ? `<a href="daily-logs.html" class="snav-item"><span class="snav-icon">${ICONS.logs}</span><span class="snav-label">Daily Logs</span></a>`
+    : `<div>
+        <a href="index.html" class="snav-item active">
+          <span class="snav-icon">${ICONS.clock}</span>
+          <span class="snav-label">Clock</span>
+        </a>
+        <div class="snav-sub">
+          <button class="snav-subitem active" id="navClock" onclick="gotoPage('clock')">⏱ Time Clock</button>
+          <button class="snav-subitem" id="navLog"     onclick="gotoPage('log')">✏ Log Past Day</button>
+          <button class="snav-subitem" id="navHistory" onclick="gotoPage('history')">↺ History</button>
+        </div>
+      </div>`;
+  document.getElementById('sideNavLinks').innerHTML =
+    clockEntry +
+    links.map(n=>`<a href="${n.href}" class="snav-item"><span class="snav-icon">${n.icon}</span><span class="snav-label">${n.label}</span></a>`).join('');
 }
 
 // ─── Setup sidebar user display ───────────────────────────────────────────────

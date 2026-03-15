@@ -10,6 +10,8 @@ const STATIC_ASSETS = [
   '/interns-hub/messages.html',
   '/interns-hub/announcements.html',
   '/interns-hub/admin.html',
+  '/interns-hub/chat.html',
+  '/interns-hub/nav.js',
   '/interns-hub/notifications.js',
   '/interns-hub/config.js',
   '/interns-hub/style.css',
