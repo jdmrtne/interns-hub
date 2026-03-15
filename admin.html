@@ -245,9 +245,13 @@ function closeConfirm() {
   cbFn = null;
 }
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('confirmOkBtn').addEventListener('click', () => {
+  document.getElementById('confirmOkBtn').addEventListener('click', async () => {
+    const fn = cbFn;
     closeConfirm();
-    if (cbFn) cbFn();
+    if (fn) {
+      try { await fn(); }
+      catch(e) { console.error('Action error:', e); toast('Error: ' + e.message, 'err'); }
+    }
   });
 });
 
@@ -377,10 +381,14 @@ async function deleteUser(id, name) {
     '⚠ Delete User',
     `Permanently delete "${name}"'s account and ALL their data? This cannot be undone.`,
     async () => {
-      const { error } = await sb.from('users').delete().eq('id', id);
+      const { data, error } = await sb.from('users').delete().eq('id', id).select();
       if (error) {
         console.error('Delete error:', error);
-        toast('Error: ' + (error.message || JSON.stringify(error)), 'err');
+        toast('Delete failed: ' + (error.message || error.code || JSON.stringify(error)), 'err');
+        return;
+      }
+      if (!data || data.length === 0) {
+        toast('No rows deleted — check RLS policy in Supabase', 'err');
         return;
       }
       toast(`${name} deleted.`, 'ok');
@@ -471,17 +479,16 @@ async function postAnn() {
   if (error) { toast('Failed: ' + error.message, 'err'); return; }
   document.getElementById('adminAnnTitle').value = '';
   document.getElementById('adminAnnBody').value = '';
-  toast('Posted!', 'ok');
-  await loadAnns();
-  renderAdminAnns();
+  toast('Posted! Refreshing…', 'ok');
+  setTimeout(() => location.reload(), 800);
 }
 async function delAnn(id) {
   showConfirm('Delete Announcement', 'Delete this announcement permanently?',
     async () => {
-      await sb.from('announcements').delete().eq('id', id);
-      toast('Deleted', 'ok');
-      await loadAnns();
-      renderAdminAnns();
+      const { error } = await sb.from('announcements').delete().eq('id', id);
+      if (error) { toast('Error: ' + error.message, 'err'); return; }
+      toast('Deleted.', 'ok');
+      setTimeout(() => location.reload(), 800);
     }
   );
 }
