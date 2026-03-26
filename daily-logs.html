@@ -7,116 +7,210 @@
 
 <title>Daily Logs — The Interns Hub</title>
 <style>
-:root{--bg-SKIP;--surface-SKIP;--panel-SKIP;--border-SKIP;--border-bright-SKIP;--primary:var(--primary);--primary-glow:rgba(56,189,248,.15);--green:var(--green);--red:var(--red);--red-dim:#da3633;--blue:var(--blue);--purple:var(--purple);--text:var(--text);--text-muted:var(--text-muted);--text-dim:var(--text-dim);--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
+:root{
+  --primary-glow:rgba(56,189,248,.15);
+  --red-dim:#da3633;
+  --mono:var(--font-mono);
+  --display:var(--font-display);
+  --body:var(--font-body);
+  --nav-w:220px;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
-
-
-
-
-
-
-
+/* ── SCROLLBAR ───────────────────────────────────────────────────── */
 .tbl-scroll::-webkit-scrollbar{width:5px;height:5px;}
-.tbl-scroll::-webkit-scrollbar-thumb{background:var(--glass-border-b);border-radius:3px;}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px;}
 
-
-
-
-tr:last-child 
-tr:hover 
-
-.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;}
+/* ── STATUS DOTS ─────────────────────────────────────────────────── */
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0;}
 .status-in{background:var(--green);}
 .status-out{background:var(--text-dim);}
 .status-partial{background:var(--blue);}
 
-
-
-
-
-
-
-to{transform:translateX(0);opacity:1}}
-to{opacity:0;transform:translateX(110%)}}
-
-
-
-}
-
-
-
-
-
-.date-badge{font-family:var(--font-display);font-size:18px;letter-spacing:.06em;color:var(--primary);background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:6px 16px;}
-.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
-.fi{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:6px;padding:9px 14px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color .2s;}
-.fi:focus{border-color:var(--primary);}
-.fi::placeholder{color:var(--text-dim);}
-.refresh-btn{background:none;border:1px solid var(--glass-border-b);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
-.refresh-btn:hover{border-color:var(--primary);color:var(--primary);}
+/* ── LIVE PILL ───────────────────────────────────────────────────── */
 .live-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--green);background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:20px;padding:4px 10px;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@media(max-width:768px){
-  
-  .sidebar-nav.open{transform:translateX(0);}
-  .sidebar-overlay.show{display:block;}
-  
-  
-  
-  
-  
-  
-  
-  
-  .filter-row{gap:8px;}
-  .filter-row .fi{font-size:13px;padding:9px 12px;}
-  
-  .mob-log-list{display:flex;flex-direction:column;gap:10px;}
-  .mob-log-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:14px;}
-  .mob-log-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-  .mob-log-card-user{display:flex;align-items:center;gap:9px;}
-  .mob-log-card-name{font-family:var(--font-mono);font-size:12px;color:var(--text);}
-  .mob-log-card-total{font-family:var(--font-display);font-size:20px;color:var(--green);letter-spacing:.04em;}
-  .mob-log-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-  .mob-log-cell{background:var(--glass);border-radius:6px;padding:8px 10px;}
-  .mob-log-cell-lbl{font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;}
-  .mob-log-cell-val{font-family:var(--font-mono);font-size:12px;}
-}
-@media(min-width:769px){
-  .mob-log-list{display:none;}
-}
+
+/* ── REFRESH BTN ─────────────────────────────────────────────────── */
+.refresh-btn{background:none;border:1px solid var(--border-bright);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.refresh-btn:hover{border-color:var(--primary);color:var(--primary);}
+
+/* ── FILTER ROW (desktop) ────────────────────────────────────────── */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.fi{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:9px 14px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--primary);}
+.fi::placeholder{color:var(--text-dim);}
+
+/* ── DESKTOP TABLE (hidden on mobile) ───────────────────────────── */
+.tbl-wrap{display:block;}
+@media(max-width:768px){.tbl-wrap{display:none;}}
+
+/* ── SIDEBAR SVG ICON FIX ────────────────────────────────────────── */
 .snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .snav-icon svg{width:18px;height:18px;display:block;}
-.snav-item svg { stroke: var(--blue); }
-.snav-item.active svg { stroke: #93c5fd; }
-.snav-item:hover svg { stroke: #7dd3fc; }
+.snav-item svg{stroke:var(--blue);}
+.snav-item.active svg{stroke:#93c5fd;}
+.snav-item:hover svg{stroke:#7dd3fc;}
+
+/* ════════════════════════════════════════════
+   MOBILE STYLES
+   ════════════════════════════════════════════ */
+@media(max-width:768px){
+
+  /* ── page body padding ── */
+  .page-body{padding:0 12px 80px!important;}
+
+  /* ── page header compact ── */
+  .page-header{padding:12px 14px 10px!important;flex-direction:column;gap:8px!important;align-items:flex-start!important;}
+  .page-title{font-size:18px!important;letter-spacing:.12em!important;}
+  .page-subtitle{font-size:10px!important;}
+
+  /* ── live pill + refresh row ── */
+  .mob-topbar{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:0;}
+
+  /* ── stats grid: 2×2 ── */
+  .stat-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;margin-bottom:14px!important;}
+  .stat-card{padding:12px 14px!important;border-radius:10px!important;}
+  .stat-label{font-size:8px!important;letter-spacing:.12em!important;margin-bottom:4px!important;}
+  .stat-value{font-size:24px!important;line-height:1.1!important;}
+
+  /* ── filter row stacked ── */
+  .filter-row{flex-direction:column;gap:8px;margin-bottom:14px;}
+  .filter-row .fi{width:100%;font-size:14px;padding:11px 14px;}
+  .filter-row .btn{width:100%;justify-content:center;padding:11px 14px;font-size:11px;}
+
+  /* ── mobile card list ── */
+  .mob-log-list{display:flex;flex-direction:column;gap:10px;}
+
+  /* ── individual card ── */
+  .mob-log-card{
+    background:var(--panel);
+    border:1px solid var(--border-bright);
+    border-radius:12px;
+    padding:14px 16px;
+    animation:fadeUp .25s ease both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  .mob-log-card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+    gap:8px;
+  }
+  .mob-log-card-user{display:flex;align-items:center;gap:10px;min-width:0;}
+  .mob-log-card-info{min-width:0;}
+  .mob-log-card-name{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .mob-log-card-status{
+    display:flex;
+    align-items:center;
+    font-family:var(--font-mono);
+    font-size:9px;
+    letter-spacing:.08em;
+    margin-top:3px;
+  }
+
+  /* total hours badge on the right */
+  .mob-log-card-total-wrap{flex-shrink:0;text-align:right;}
+  .mob-log-card-total{
+    font-family:var(--font-display);
+    font-size:22px;
+    letter-spacing:.03em;
+    line-height:1;
+  }
+  .mob-log-card-total-lbl{
+    font-family:var(--font-mono);
+    font-size:8px;
+    color:var(--text-dim);
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+
+  /* 2×2 time grid */
+  .mob-log-card-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  .mob-log-cell{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:9px 12px;
+  }
+  .mob-log-cell-lbl{
+    font-family:var(--font-mono);
+    font-size:8px;
+    color:var(--text-dim);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .mob-log-cell-val{
+    font-family:var(--font-mono);
+    font-size:13px;
+    font-weight:600;
+  }
+
+  /* absent / no-log state — muted card */
+  .mob-log-card.is-absent{opacity:.6;}
+
+  /* sidebar & overlay */
+  .sidebar-nav.open{transform:translateX(0);}
+  .sidebar-overlay.show{display:block;}
+}
+
+/* hide mobile list on desktop */
+@media(min-width:769px){
+  .mob-log-list{display:none;}
+  .mob-topbar{display:none;}
+}
+
+/* ── LIGHT MODE: mobile cards ────────────────────────────────────── */
+@media(max-width:768px) and (prefers-color-scheme:light){
+  .mob-log-card{
+    background:#ffffff;
+    border-color:#d0d7de;
+    box-shadow:0 1px 4px rgba(0,0,0,.08);
+  }
+  .mob-log-card.is-absent{
+    background:#f6f8fa;
+    border-color:#d0d7de;
+  }
+  .mob-log-card-name{color:#24292f;}
+  .mob-log-cell{
+    background:#f6f8fa;
+    border-color:#d0d7de;
+  }
+  .mob-log-cell-lbl{color:#57606a;}
+  .stat-card{
+    background:#ffffff;
+    border-color:#d0d7de;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
+  }
+  .fi{
+    background:#ffffff;
+    border-color:#d0d7de;
+    color:#24292f;
+  }
+  .fi::placeholder{color:#6e7781;}
+  .refresh-btn{
+    background:#ffffff;
+    border-color:#d0d7de;
+    color:#57606a;
+  }
+  .refresh-btn:hover{border-color:#0969da;color:#0969da;}
+}
 </style>
 <link rel="stylesheet" href="./style.css">
 </head><body>
@@ -128,42 +222,64 @@ to{opacity:0;transform:translateX(110%)}}
 <div class="toasts" id="toasts"></div>
 <header class="mob-header" id="mobHeader"><span class="mob-page-title">Daily Logs</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+
 <div class="platform-layout">
   <nav class="sidebar-nav" id="sidebarNav">
     <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
-    <div style="flex:1;min-width:0">
-      <div class="snav-brand-name">The Interns Hub</div>
-      <div class="snav-brand-sub">Intern Portal</div>
+      <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+      <div style="flex:1;min-width:0">
+        <div class="snav-brand-name">The Interns Hub</div>
+        <div class="snav-brand-sub">Intern Portal</div>
+      </div>
+      <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
     </div>
-    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
-  </div>
-  <!-- collapse-btn clone: only visible when sidebar is collapsed, sits at top of icon rail -->
-  <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
-  <div class="snav-links" id="navLinks"></div>
+    <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
+    <div class="snav-links" id="navLinks"></div>
     <div class="snav-footer">
-      <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
+      <div class="snav-user">
+        <div class="snav-user-avatar" id="navAvatar"></div>
+        <div style="overflow:hidden">
+          <div class="snav-user-name" id="navUserName">Loading…</div>
+          <div class="snav-user-role" id="navUserRole">admin</div>
+        </div>
+      </div>
       <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
     </div>
   </nav>
+
   <main class="main-content">
+    <!-- ── PAGE HEADER ─────────────────────────────── -->
     <div class="page-header">
       <div>
         <div class="page-title">DAILY LOGS</div>
         <div class="page-subtitle" id="dateSubtitle">Today's attendance</div>
       </div>
+      <!-- desktop: live + refresh inline -->
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
         <span class="live-pill"><span class="live-dot"></span>Live</span>
         <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
       </div>
     </div>
+
     <div class="page-body">
-      <div class="stat-grid" id="statsRow"></div>
+
+      <!-- ── MOBILE: live + refresh bar ──────────────── -->
+      <div class="mob-topbar">
+        <span class="live-pill"><span class="live-dot"></span>Live</span>
+        <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
+      </div>
+
+      <!-- ── STATS ───────────────────────────────────── -->
+      <div class="stat-grid" id="statsRow" style="margin-top:12px;"></div>
+
+      <!-- ── FILTERS ─────────────────────────────────── -->
       <div class="filter-row">
         <input class="fi" id="searchInput" placeholder="Search intern…" oninput="applyFilter()" style="flex:1;min-width:160px">
         <input class="fi" type="date" id="dateFilter" onchange="applyFilter()">
         <button class="btn btn-ghost btn-sm" onclick="resetToToday()">Today</button>
       </div>
+
+      <!-- ── DESKTOP TABLE ───────────────────────────── -->
       <div class="tbl-wrap"><div class="tbl-scroll">
         <table>
           <thead><tr>
@@ -178,96 +294,156 @@ to{opacity:0;transform:translateX(110%)}}
           <tbody id="logsTbody"></tbody>
         </table>
       </div></div>
+
+      <!-- ── MOBILE CARDS ────────────────────────────── -->
       <div class="mob-log-list" id="mobLogList"></div>
+
     </div>
   </main>
 </div>
+
 <script>
-let currentUser,allUsers=[],todayLogs=[],currentDate='';
+let currentUser, allUsers = [], todayLogs = [], currentDate = '';
 
-function toast(msg,type='inf'){let c=document.getElementById('toasts');const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
-function fmtHours(total_hours){if(total_hours===null||total_hours===undefined)return'—';const h=Math.floor(total_hours),m=Math.round((total_hours%1)*60);return h+'h '+String(m).padStart(2,'0')+'m';}
-function toMins(t){if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);}
-function calcLogHours(l){if(l.total_hours)return l.total_hours;let tot=0;const amIn=toMins(l.am_in),amOut=toMins(l.am_out),pmIn=toMins(l.pm_in),pmOut=toMins(l.pm_out);if(amIn!==null&&amOut!==null&&amOut>amIn)tot+=amOut-amIn;if(pmIn!==null&&pmOut!==null&&pmOut>pmIn)tot+=pmOut-pmIn;return tot>0?tot/60:null;}
-function todayStr(){return new Date().toLocaleDateString('en-CA');}
+function toast(msg, type = 'inf') {
+  const c = document.getElementById('toasts');
+  const d = document.createElement('div');
+  d.className = 'toast ' + type;
+  d.textContent = msg;
+  c.appendChild(d);
+  setTimeout(() => d.remove(), 3100);
+}
+function fmtHours(h) {
+  if (h === null || h === undefined || h === '') return '—';
+  const hrs = Math.floor(h), mins = Math.round((h % 1) * 60);
+  return hrs + 'h ' + String(mins).padStart(2, '0') + 'm';
+}
+function toMins(t) {
+  if (!t) return null;
+  const [h, m] = (t + ':00').split(':').map(Number);
+  return h * 60 + (m || 0);
+}
+function calcLogHours(l) {
+  if (l.total_hours) return l.total_hours;
+  let tot = 0;
+  const amIn = toMins(l.am_in), amOut = toMins(l.am_out), pmIn = toMins(l.pm_in), pmOut = toMins(l.pm_out);
+  if (amIn !== null && amOut !== null && amOut > amIn) tot += amOut - amIn;
+  if (pmIn !== null && pmOut !== null && pmOut > pmIn) tot += pmOut - pmIn;
+  return tot > 0 ? tot / 60 : null;
+}
+function todayStr() { return new Date().toLocaleDateString('en-CA'); }
+async function doLogout() { await sb.auth.signOut(); window.location.href = 'index.html'; }
 
-async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
-
-function getStatus(log){
-  if(!log)return{label:'Absent',cls:'status-out'};
-  if(log.pm_out)return{label:'Done',cls:'status-partial'};
-  if(log.pm_in||log.am_out||log.am_in)return{label:'Clocked In',cls:'status-in'};
-  return{label:'No Log',cls:'status-out'};
+function getStatus(log) {
+  if (!log) return { label: 'Absent', cls: 'status-out' };
+  if (log.pm_out) return { label: 'Done', cls: 'status-partial' };
+  if (log.pm_in || log.am_out || log.am_in) return { label: 'Clocked In', cls: 'status-in' };
+  return { label: 'No Log', cls: 'status-out' };
 }
 
-function renderTable(users,logs){
-  const tb=document.getElementById('logsTbody');
-  const mob=document.getElementById('mobLogList');
-  const logMap={};
-  logs.forEach(l=>{logMap[l.user_id]=l;});
-  const search=document.getElementById('searchInput').value.toLowerCase().trim();
-  const filtered=users.filter(u=>!search||(u.name||'').toLowerCase().includes(search));
-  if(!filtered.length){
-    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No interns found</td></tr>';
-    mob.innerHTML='<div style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No interns found</div>';
+function renderTable(users, logs) {
+  const tb = document.getElementById('logsTbody');
+  const mob = document.getElementById('mobLogList');
+  const logMap = {};
+  logs.forEach(l => { logMap[l.user_id] = l; });
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = users.filter(u => !search || (u.name || '').toLowerCase().includes(search));
+
+  if (!filtered.length) {
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No interns found</td></tr>';
+    mob.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No interns found</div>';
     return;
   }
-  // Desktop table rows
-  tb.innerHTML=filtered.map(u=>{
-    const log=logMap[u.id];
-    const col=avatarColor(u.name);
-    const st=getStatus(log);
-    const total=log?fmtHours(calcLogHours(log)):'—';
-    return`<tr>
+
+  // ── Desktop rows ──────────────────────────────────────────────
+  tb.innerHTML = filtered.map(u => {
+    const log = logMap[u.id];
+    const col = avatarColor(u.name);
+    const st = getStatus(log);
+    const total = log ? fmtHours(calcLogHours(log)) : '—';
+    return `<tr>
       <td><div style="display:flex;align-items:center;gap:9px">
         <div class="avatar" style="background:${col}20;color:${col}">${avatarInitials(u.name)}</div>
-        <span style="color:var(--text)">${escHtml(u.name||'—')}</span>
+        <span style="color:var(--text)">${escHtml(u.name || '—')}</span>
       </div></td>
       <td><span class="status-dot ${st.cls}"></span><span style="color:var(--text-muted)">${st.label}</span></td>
-      <td style="color:var(--blue)">${log?.am_in||'—'}</td>
-      <td style="color:var(--blue)">${log?.am_out||'—'}</td>
-      <td style="color:var(--primary)">${log?.pm_in||'—'}</td>
-      <td style="color:var(--primary)">${log?.pm_out||'—'}</td>
+      <td style="color:var(--blue)">${log?.am_in || '—'}</td>
+      <td style="color:var(--blue)">${log?.am_out || '—'}</td>
+      <td style="color:var(--primary)">${log?.pm_in || '—'}</td>
+      <td style="color:var(--primary)">${log?.pm_out || '—'}</td>
       <td style="color:var(--green);font-weight:700">${total}</td>
     </tr>`;
   }).join('');
-  // Mobile cards
-  mob.innerHTML=filtered.map(u=>{
-    const log=logMap[u.id];
-    const col=avatarColor(u.name);
-    const st=getStatus(log);
-    const total=log?fmtHours(calcLogHours(log)):'—';
-    const statusColor=st.cls==='status-in'?'var(--green)':st.cls==='status-partial'?'var(--blue)':'var(--text-dim)';
-    return`<div class="mob-log-card">
+
+  // ── Mobile cards ──────────────────────────────────────────────
+  mob.innerHTML = filtered.map((u, idx) => {
+    const log = logMap[u.id];
+    const col = avatarColor(u.name);
+    const st = getStatus(log);
+    const hours = log ? calcLogHours(log) : null;
+    const total = fmtHours(hours);
+    const isAbsent = !log || (!log.am_in && !log.pm_in);
+
+    const statusColor =
+      st.cls === 'status-in' ? 'var(--green)' :
+      st.cls === 'status-partial' ? 'var(--blue)' :
+      'var(--text-dim)';
+
+    const totalColor =
+      hours !== null && hours > 0 ? 'var(--green)' :
+      isAbsent ? 'var(--text-dim)' :
+      'var(--primary)';
+
+    return `<div class="mob-log-card${isAbsent ? ' is-absent' : ''}" style="animation-delay:${idx * 30}ms">
       <div class="mob-log-card-header">
         <div class="mob-log-card-user">
           <div class="avatar" style="background:${col}20;color:${col}">${avatarInitials(u.name)}</div>
-          <div>
-            <div class="mob-log-card-name">${escHtml(u.name||'—')}</div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:${statusColor};letter-spacing:.08em;margin-top:2px"><span class="status-dot ${st.cls}"></span>${st.label}</div>
+          <div class="mob-log-card-info">
+            <div class="mob-log-card-name">${escHtml(u.name || '—')}</div>
+            <div class="mob-log-card-status" style="color:${statusColor}">
+              <span class="status-dot ${st.cls}"></span>${st.label}
+            </div>
           </div>
         </div>
-        <div class="mob-log-card-total">${total}</div>
+        <div class="mob-log-card-total-wrap">
+          <div class="mob-log-card-total" style="color:${totalColor}">${total}</div>
+          <div class="mob-log-card-total-lbl">Total</div>
+        </div>
       </div>
       <div class="mob-log-card-grid">
-        <div class="mob-log-cell"><div class="mob-log-cell-lbl">AM In</div><div class="mob-log-cell-val" style="color:var(--blue)">${log?.am_in||'—'}</div></div>
-        <div class="mob-log-cell"><div class="mob-log-cell-lbl">AM Out</div><div class="mob-log-cell-val" style="color:var(--blue)">${log?.am_out||'—'}</div></div>
-        <div class="mob-log-cell"><div class="mob-log-cell-lbl">PM In</div><div class="mob-log-cell-val" style="color:var(--primary)">${log?.pm_in||'—'}</div></div>
-        <div class="mob-log-cell"><div class="mob-log-cell-lbl">PM Out</div><div class="mob-log-cell-val" style="color:var(--primary)">${log?.pm_out||'—'}</div></div>
+        <div class="mob-log-cell">
+          <div class="mob-log-cell-lbl">AM In</div>
+          <div class="mob-log-cell-val" style="color:var(--blue)">${log?.am_in || '—'}</div>
+        </div>
+        <div class="mob-log-cell">
+          <div class="mob-log-cell-lbl">AM Out</div>
+          <div class="mob-log-cell-val" style="color:var(--blue)">${log?.am_out || '—'}</div>
+        </div>
+        <div class="mob-log-cell">
+          <div class="mob-log-cell-lbl">PM In</div>
+          <div class="mob-log-cell-val" style="color:var(--primary)">${log?.pm_in || '—'}</div>
+        </div>
+        <div class="mob-log-cell">
+          <div class="mob-log-cell-lbl">PM Out</div>
+          <div class="mob-log-cell-val" style="color:var(--primary)">${log?.pm_out || '—'}</div>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function renderStats(users,logs){
-  const logMap={};
-  logs.forEach(l=>{logMap[l.user_id]=l;});
-  const interns=users.filter(u=>u.role!=='admin');
-  const present=interns.filter(u=>logMap[u.id]?.am_in||logMap[u.id]?.pm_in).length;
-  const absent=interns.length-present;
-  const totalMins=logs.reduce((s,l)=>{const h=calcLogHours(l);if(!h)return s;return s+Math.round(h*60);},0);
-  const th=Math.floor(totalMins/60),tm=totalMins%60;
-  document.getElementById('statsRow').innerHTML=`
+function renderStats(users, logs) {
+  const logMap = {};
+  logs.forEach(l => { logMap[l.user_id] = l; });
+  const interns = users.filter(u => u.role !== 'admin');
+  const present = interns.filter(u => logMap[u.id]?.am_in || logMap[u.id]?.pm_in).length;
+  const absent = interns.length - present;
+  const totalMins = logs.reduce((s, l) => {
+    const h = calcLogHours(l);
+    return h ? s + Math.round(h * 60) : s;
+  }, 0);
+  const th = Math.floor(totalMins / 60), tm = totalMins % 60;
+  document.getElementById('statsRow').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Interns</div><div class="stat-value">${interns.length}</div></div>
     <div class="stat-card"><div class="stat-label">Present</div><div class="stat-value" style="color:var(--green)">${present}</div></div>
     <div class="stat-card"><div class="stat-label">Absent</div><div class="stat-value" style="color:var(--red)">${absent}</div></div>
@@ -275,48 +451,47 @@ function renderStats(users,logs){
   `;
 }
 
-async function loadData(){
-  const date=document.getElementById('dateFilter').value||todayStr();
-  currentDate=date;
-  document.getElementById('dateSubtitle').textContent=new Date(date+'T00:00:00').toLocaleDateString([],{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-  const[{data:users},{data:logs}]=await Promise.all([
-    sb.from('users').select('*').neq('role','disabled').order('name'),
-    sb.from('time_logs').select('*').eq('date',date)
+async function loadData() {
+  const date = document.getElementById('dateFilter').value || todayStr();
+  currentDate = date;
+  document.getElementById('dateSubtitle').textContent =
+    new Date(date + 'T00:00:00').toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const [{ data: users }, { data: logs }] = await Promise.all([
+    sb.from('users').select('*').neq('role', 'disabled').order('name'),
+    sb.from('time_logs').select('*').eq('date', date)
   ]);
-  allUsers=users||[];
-  todayLogs=logs||[];
-  renderStats(allUsers,todayLogs);
-  renderTable(allUsers,todayLogs);
+  allUsers = users || [];
+  todayLogs = logs || [];
+  renderStats(allUsers, todayLogs);
+  renderTable(allUsers, todayLogs);
 }
 
-function applyFilter(){renderTable(allUsers,todayLogs);loadData();}
-function resetToToday(){document.getElementById('dateFilter').value='';loadData();}
-async function refresh(){await loadData();toast('Refreshed','ok');}
+function applyFilter() { renderTable(allUsers, todayLogs); loadData(); }
+function resetToToday() { document.getElementById('dateFilter').value = ''; loadData(); }
+async function refresh() { await loadData(); toast('Refreshed', 'ok'); }
 
-async function boot(){
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
-  if(p?.role!=='admin'){window.location.href='index.html';return;}
-  document.getElementById('navLinks').innerHTML=renderNav('logs', true);
-  document.querySelectorAll('.admin-only').forEach(el=>el.style.display='flex');
-  const name=p?.name||currentUser.email?.split('@')[0]||'Admin';
-  document.getElementById('navUserName').textContent=name;
-  document.getElementById('navUserRole').textContent=p?.role||'admin';
-  const av=document.getElementById('navAvatar');
-  const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);
-  // Set today's date as default
-  document.getElementById('dateFilter').value=todayStr();
+async function boot() {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+  currentUser = session.user;
+  const { data: p } = await sb.from('users').select('*').eq('id', currentUser.id).single();
+  if (p?.role !== 'admin') { window.location.href = 'index.html'; return; }
+  document.getElementById('navLinks').innerHTML = renderNav('logs', true);
+  const name = p?.name || currentUser.email?.split('@')[0] || 'Admin';
+  document.getElementById('navUserName').textContent = name;
+  document.getElementById('navUserRole').textContent = p?.role || 'admin';
+  const av = document.getElementById('navAvatar');
+  const col = avatarColor(name);
+  av.style.background = col + '20'; av.style.color = col; av.textContent = avatarInitials(name);
+  document.getElementById('dateFilter').value = todayStr();
   await loadData();
   document.getElementById('loadingOverlay').classList.add('hidden');
-  // Auto-refresh every 60s
-  setInterval(loadData,60000);
-  await HubAnnouncements.checkOnLogin(sb,currentUser.id);
-  HubMsgPoller.start(sb,currentUser.id);
+  setInterval(loadData, 60000);
+  await HubAnnouncements.checkOnLogin(sb, currentUser.id);
+  HubMsgPoller.start(sb, currentUser.id);
 }
 boot();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 </script>
 </body></html>
