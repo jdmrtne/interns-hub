@@ -17,10 +17,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 .platform-layout{display:flex;height:100vh;overflow:hidden;}
 .sidebar-nav{width:var(--nav-w);background:var(--glass);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:300;overflow:hidden;}
-.snav-brand{padding:20px 18px 16px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;gap:10px;white-space:nowrap;min-height:60px;}
-.snav-brand-name{font-family:var(--font-display);font-size:22px;letter-spacing:.1em;color:var(--primary);line-height:1;}
-.snav-brand-sub{font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-top:2px;}
-.snav-brand-icon{font-size:22px;flex-shrink:0;}
+/* brand styles inherited from style.css — no overrides here */
 .snav-links{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
 .snav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--text-muted);transition:background .15s,color .15s;white-space:nowrap;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
 .snav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
@@ -161,10 +158,11 @@ tr:hover td{background:rgba(255,255,255,.018);}
     <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
-      <div class="snav-brand-sub">Chat</div>
+      <div class="snav-brand-sub">Intern Portal</div>
     </div>
     <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
   </div>
+  <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
   <div class="snav-footer">
     <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
