@@ -11,109 +11,119 @@
 
 <title>Interns — The Interns Hub</title>
 <style>
-:root{--bg-SKIP;--surface-SKIP;--panel-SKIP;--border-SKIP;--border-bright-SKIP;--primary:var(--primary);--primary-glow:rgba(56,189,248,.15);--green:var(--green);--red:var(--red);--red-dim:#da3633;--blue:var(--blue);--purple:var(--purple);--text:var(--text);--text-muted:var(--text-muted);--text-dim:var(--text-dim);--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
+/* ── CSS variable aliases (bridging style.css naming to this page's usage) ── */
+:root{
+  --mono:var(--font-mono);
+  --display:var(--font-display);
+  --body:var(--font-body);
+  --primary-glow:rgba(56,189,248,.15);
+  --red-dim:#da3633;
+  --nav-w:220px;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.search-bar{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:14px 16px;margin-bottom:20px;flex-wrap:wrap;}
-.search-input{flex:1;min-width:160px;background:var(--glass);border:1px solid var(--glass-border-b);border-radius:6px;padding:10px 14px 10px 36px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237d8590' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;}
-.search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-g);}
+/* ── SEARCH BAR ─────────────────────────────────────────────────── */
+.search-bar{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:20px;flex-wrap:wrap;}
+.search-input{flex:1;min-width:160px;background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:10px 14px 10px 36px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237d8590' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;}
+.search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
 .search-input::placeholder{color:var(--text-dim);}
-.search-select{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;cursor:pointer;min-width:160px;}
+.search-select{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;cursor:pointer;min-width:160px;}
 .search-select:focus{border-color:var(--primary);}
-.search-select option{background:var(--glass);}
-
+.search-select option{background:var(--panel);}
 
 .btn-primary:hover{background:#7dd3fc;transform:translateY(-1px);}
 
+/* ── TOAST ANIMATIONS ───────────────────────────────────────────── */
+@keyframes tsIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes tsOut{from{opacity:1}to{opacity:0;transform:translateX(110%)}}
 
-
-
-
-
-
-
-
-
-
-
-to{transform:translateX(0);opacity:1}}
-to{opacity:0;transform:translateX(110%)}}
-
-
-
-}
-
-
-
-
-
-.intern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,260px));gap:20px;}
-.intern-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;transition:border-color .2s,transform .15s,box-shadow .2s;animation:fadeUp .3s ease both;}
-.intern-card:hover{border-color:var(--glass-border-b);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+/* ── INTERN GRID & CARDS ────────────────────────────────────────── */
+.intern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.intern-card{background:var(--panel);border:1px solid var(--border-bright);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:border-color .2s,transform .15s,box-shadow .2s;animation:fadeUp .3s ease both;box-shadow:0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);}
+.intern-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.intern-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:18px;font-weight:700;border:2px solid transparent;transition:border-color .2s;}
+.intern-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;border:2px solid transparent;transition:border-color .2s;}
 .intern-card:hover .intern-avatar{border-color:var(--primary);}
-.intern-name{font-family:var(--font-mono);font-size:13px;color:var(--text);letter-spacing:.06em;}
-.intern-dept{font-family:var(--font-mono);font-size:9px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-4px;}
+.intern-name{font-family:var(--mono);font-size:14px;color:var(--text);letter-spacing:.06em;}
+.intern-dept{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-6px;}
 .intern-actions{display:flex;gap:8px;margin-top:4px;}
-.results-count{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:16px;}
+.results-count{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:16px;}
 @media(max-width:768px){.sidebar-nav.open{transform:translateX(0);}.sidebar-overlay.show{display:block;}}
 
-/* ── TIME RECORDS MODAL ───────────────────── */
+/* ── TIME RECORDS MODAL ─────────────────────────────────────────── */
 .modal-ov{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;}
 .modal-ov.open{display:flex;}
-.modal-box{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:14px;width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
-.modal-header{padding:20px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;}
-.modal-title{font-family:var(--font-display);font-size:22px;letter-spacing:.08em;color:var(--text);}
-.modal-close{background:none;border:1px solid var(--glass-border-b);border-radius:6px;padding:6px 12px;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.modal-box{background:var(--panel);border:1px solid var(--border-bright);border-radius:14px;width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;}
+.modal-title{font-family:var(--display);font-size:22px;letter-spacing:.08em;color:var(--text);}
+.modal-close{background:none;border:1px solid var(--border-bright);border-radius:6px;padding:6px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;}
 .modal-close:hover{border-color:var(--red);color:var(--red);}
-.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px;border-bottom:1px solid var(--glass-border);flex-shrink:0;}
-.modal-stat{background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;padding:12px 16px;}
-.modal-stat-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
-.modal-stat-value{font-family:var(--font-display);font-size:22px;letter-spacing:.05em;color:var(--primary);}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 24px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-stat{background:var(--surface);border:1px solid var(--border-bright);border-radius:8px;padding:12px 16px;}
+.modal-stat-label{font-family:var(--mono);font-size:8px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.modal-stat-value{font-family:var(--display);font-size:22px;letter-spacing:.05em;color:var(--primary);}
 .modal-body{overflow-y:auto;flex:1;}
-.modal-body 
-.modal-body 
-.modal-body 
-.modal-body 
-.modal-body tr:last-child 
-.modal-body tr:hover 
-.modal-empty{text-align:center;padding:48px 20px;font-family:var(--font-mono);font-size:11px;color:var(--text-dim);}
-.modal-loading{text-align:center;padding:40px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);}
+.modal-body table{width:100%;border-collapse:collapse;}
+.modal-body thead{position:sticky;top:0;z-index:5;background:var(--surface);}
+.modal-body th{padding:10px 14px;text-align:left;font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border-bright);}
+.modal-body td{padding:10px 14px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;white-space:nowrap;color:var(--text);}
+.modal-body tr:last-child td{border-bottom:none;}
+.modal-body tr:hover td{background:rgba(0,0,0,.04);}
+.modal-empty{text-align:center;padding:48px 20px;font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+.modal-loading{text-align:center;padding:40px;font-family:var(--mono);font-size:11px;color:var(--text-muted);}
+
+/* ── DARK MODE: TIME RECORDS MODAL ─────────────────────────────── */
+@media(prefers-color-scheme:dark){
+  .modal-box{background:#161b22;border-color:#30363d;}
+  .modal-header{border-bottom-color:#21262d;background:#161b22;}
+  .modal-title{color:#e6edf3;}
+  .modal-close{border-color:#30363d;color:#7d8590;}
+  .modal-close:hover{border-color:#f85149;color:#f85149;}
+  .modal-stats{border-bottom-color:#21262d;background:#161b22;}
+  .modal-stat{background:#111418;border-color:#30363d;}
+  .modal-stat-label{color:#484f58;}
+  .modal-stat-value{color:#38bdf8;}
+  .modal-body{background:#161b22;}
+  .modal-body thead{background:#111418;}
+  .modal-body th{color:#7d8590;border-bottom-color:#30363d;}
+  .modal-body td{border-bottom-color:#21262d;color:#e6edf3;}
+  .modal-body tr:hover td{background:rgba(255,255,255,.04);}
+  .modal-empty{color:#484f58;}
+  .modal-loading{color:#7d8590;}
+}
+
+/* ── LIGHT MODE: TIME RECORDS MODAL ────────────────────────────── */
+@media(prefers-color-scheme:light){
+  .modal-ov{background:rgba(0,0,0,.45);}
+  .modal-box{background:#f6f8fa;border-color:#d0d7de;}
+  .modal-header{border-bottom-color:#d0d7de;background:#f6f8fa;}
+  .modal-title{color:#24292f;}
+  .modal-close{border-color:#d0d7de;color:#57606a;}
+  .modal-close:hover{border-color:#cf222e;color:#cf222e;}
+  .modal-stats{border-bottom-color:#d0d7de;background:#f6f8fa;}
+  .modal-stat{background:#ffffff;border-color:#d0d7de;}
+  .modal-stat-label{color:#0969da;font-size:9px;}
+  .modal-stat-value{color:#0969da;}
+  .modal-body{background:#ffffff;}
+  .modal-body thead{background:#f6f8fa;}
+  .modal-body th{color:#57606a;border-bottom-color:#d0d7de;}
+  .modal-body td{border-bottom-color:#eaeef2;color:#24292f;}
+  .modal-body tr:hover td{background:rgba(0,0,0,.03);}
+  .modal-empty{color:#57606a;}
+  .modal-loading{color:#57606a;}
+}
+
 .intern-card.admin-view{cursor:pointer;}
 .intern-card.admin-view:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(56,189,248,.15);}
 @media(max-width:600px){.modal-stats{grid-template-columns:1fr 1fr;}.modal-box{max-height:95vh;}}
 
-
-/* ── SIDEBAR SVG ICON FIX ───────────────────── */
-.snav-icon { width: 22px; height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.snav-icon svg { width: 18px; height: 18px; display: block; }
-.snav-item { color: var(--text-muted); }
-.snav-item svg { stroke: var(--blue); }
-.snav-item.active svg { stroke: #93c5fd; }
-.snav-item:hover svg { stroke: #7dd3fc; }
+/* ── SIDEBAR SVG ICON FIX ───────────────────────────────────────── */
+.snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.snav-icon svg{width:18px;height:18px;display:block;}
+.snav-item{color:var(--text-muted);}
+.snav-item svg{stroke:var(--blue);}
+.snav-item.active svg{stroke:#93c5fd;}
+.snav-item:hover svg{stroke:#7dd3fc;}
 </style>
 <link rel="stylesheet" href="./style.css">
 </head>
@@ -129,16 +139,16 @@ to{opacity:0;transform:translateX(110%)}}
 <div class="platform-layout">
   <nav class="sidebar-nav" id="sidebarNav">
     <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
-    <div style="flex:1;min-width:0">
-      <div class="snav-brand-name">The Interns Hub</div>
-      <div class="snav-brand-sub">Intern Portal</div>
+      <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+      <div style="flex:1;min-width:0">
+        <div class="snav-brand-name">The Interns Hub</div>
+        <div class="snav-brand-sub">Intern Portal</div>
+      </div>
+      <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
     </div>
-    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
-  </div>
-  <!-- collapse-btn clone: only visible when sidebar is collapsed, sits at top of icon rail -->
-  <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
-  <div class="snav-links" id="navLinks"></div>
+    <!-- collapse-btn-rail: only visible when sidebar is collapsed, sits at top of icon rail -->
+    <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
+    <div class="snav-links" id="navLinks"></div>
     <div class="snav-footer">
       <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
       <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
@@ -156,27 +166,26 @@ to{opacity:0;transform:translateX(110%)}}
     </div>
   </main>
 
-<!-- TIME RECORDS MODAL (admin only) -->
-<div class="modal-ov" id="timeModal" onclick="handleModalBgClick(event)">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="modalInternName">Intern Name</div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;margin-top:4px" id="modalInternDept"></div>
+  <!-- TIME RECORDS MODAL (admin only) -->
+  <div class="modal-ov" id="timeModal" onclick="handleModalBgClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modalInternName">Intern Name</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;margin-top:4px" id="modalInternDept"></div>
+        </div>
+        <button class="modal-close" onclick="closeTimeModal()">✕ Close</button>
       </div>
-      <button class="modal-close" onclick="closeTimeModal()">✕ Close</button>
-    </div>
-    <div class="modal-stats" id="modalStats"></div>
-    <div class="modal-body" id="modalBody">
-      <div class="modal-loading">Loading records…</div>
+      <div class="modal-stats" id="modalStats"></div>
+      <div class="modal-body" id="modalBody">
+        <div class="modal-loading">Loading records…</div>
+      </div>
     </div>
   </div>
-</div>
 
 </div>
 <script>
 let currentUser,allInterns=[];
-// ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 function filterInterns(){
   const q=document.getElementById('searchInput').value.toLowerCase().trim(),dept=document.getElementById('deptFilter').value;
@@ -185,8 +194,16 @@ function filterInterns(){
   renderInterns(filtered);
 }
 let isAdmin=false;
+
+/* ── FIXED: fmtHours now correctly handles 0 and avoids "oh oom" ── */
 function fmtMin(m){if(m===null||m===undefined)return'—';return Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m';}
-function fmtHours(h){if(h===null||h===undefined)return'—';return Math.floor(h)+'h '+String(Math.round((h%1)*60)).padStart(2,'0')+'m';}
+function fmtHours(h){
+  if(h===null||h===undefined||h==='')return'—';
+  const hrs=Math.floor(h);
+  const mins=Math.round((h%1)*60);
+  return hrs+'h '+String(mins).padStart(2,'0')+'m';
+}
+
 function toMins(t){if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);}
 function calcLogHours(l){if(l.total_hours)return l.total_hours;let tot=0;const amIn=toMins(l.am_in),amOut=toMins(l.am_out),pmIn=toMins(l.pm_in),pmOut=toMins(l.pm_out);if(amIn!==null&&amOut!==null&&amOut>amIn)tot+=amOut-amIn;if(pmIn!==null&&pmOut!==null&&pmOut>pmIn)tot+=pmOut-pmIn;return tot>0?tot/60:null;}
 function fmtDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
@@ -203,8 +220,8 @@ function renderInterns(list){
       <div class="intern-name">${escHtml(i.name||'Unknown')}</div>
       <div class="intern-dept">${escHtml(i.department||'No Department')}</div>
       <span class="badge ${i.role==='admin'?'badge-admin':'badge-intern'}">${i.role||'intern'}</span>
-      ${!isSelf?`<div class="intern-actions"><a href="chat.html?uid=${i.id}" class="btn btn-primary btn-sm" onclick="event.stopPropagation()"> Message</a></div>`:'<span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em">YOU</span>'}
-      ${isAdmin&&!isSelf?'<div style="font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:.08em;margin-top:-4px"> View Records</div>':''}
+      ${!isSelf?`<div class="intern-actions"><a href="chat.html?uid=${i.id}" class="btn btn-primary btn-sm" onclick="event.stopPropagation()"> Message</a></div>`:'<span style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em">YOU</span>'}
+      ${isAdmin&&!isSelf?'<div style="font-family:var(--mono);font-size:8px;color:var(--text-dim);letter-spacing:.08em;margin-top:-4px"> View Records</div>':''}
     </div>`;
   }).join('');
 }
