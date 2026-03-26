@@ -771,6 +771,11 @@ function saveRecordsCache(){ try{ localStorage.setItem(cKey('records'),JSON.stri
 function loadRecordsCache(){ try{ const d=localStorage.getItem(cKey('records')); return d?JSON.parse(d):[]; }catch(e){ return[]; } }
 function getPendingQueue(){ try{ const d=localStorage.getItem(cKey('pending')); return d?JSON.parse(d):[]; }catch(e){ return[]; } }
 function setPendingQueue(q){ try{ localStorage.setItem(cKey('pending'),JSON.stringify(q)); }catch(e){} }
+// ── Offline user cache ───────────────────────────────────────────────────────
+const USER_CACHE_KEY='tc2_session_user';
+function saveUserCache(u,role){try{localStorage.setItem(USER_CACHE_KEY,JSON.stringify({id:u.id,email:u.email,user_metadata:u.user_metadata,role:role||'intern'}));}catch(e){}}
+function loadUserCache(){try{const d=localStorage.getItem(USER_CACHE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
+function clearUserCache(){try{localStorage.removeItem(USER_CACHE_KEY);}catch(e){}}
 function addToPendingQueue(op){
   const q=getPendingQueue();
   if(op.type==='upsert'){ const i=q.findIndex(x=>x.type==='upsert'&&x.data.date===op.data.date); if(i>=0){q[i]=op;}else{q.push(op);} }
@@ -876,6 +881,7 @@ async function doForgotPassword(){
 async function doLogout(){
   if(!confirm('Sign out of your account?'))return;
   showLoading('Signing out…');
+  clearUserCache();
   await sb.auth.signOut();
   currentUser=null; displayName=''; records=[];
   resetAppUI(); hideLoading();
@@ -893,6 +899,7 @@ async function onSignedIn(user){
     const role=prof?.role||'intern';
     if(role==='disabled'){await sb.auth.signOut();setLoginErr('Your account has been disabled. Contact an admin.');document.getElementById('loginScreen').classList.remove('hidden');hideLoading();return;}
     isAdm=role==='admin';
+    saveUserCache(user, role);
     if(isAdm){ window.location.href='daily-logs.html'; return; }
     renderClockSideNav(false);
     setupSidebarUser(displayName, role, false);
@@ -1353,6 +1360,24 @@ function setupSidebarUser(name, role, isAdmin){
 }
 
 // ═══════════════════════════════════════════
+//  OFFLINE SIGN-IN (restores session from cache)
+// ═══════════════════════════════════════════
+async function onSignedInOffline(cached){
+  currentUser=cached;
+  displayName=cached.user_metadata?.display_name||cached.email.split('@')[0];
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('empName').value=displayName;
+  renderClockSideNav(false);
+  setupSidebarUser(displayName, cached.role||'intern', false);
+  showLoading('Loading your records…');
+  await loadUserData();
+  hideLoading();
+  setupDesktop(); updateUI(); updateTotals(); updateWeekly();
+  renderTable(); renderCards();
+  updateConnectionUI();
+}
+
+// ═══════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════
 (async function boot(){
@@ -1363,13 +1388,19 @@ function setupSidebarUser(name, role, isAdmin){
   try{ const r=await sb.auth.getSession(); session=r.data.session; }catch(e){}
   if(session){
     await onSignedIn(session.user);
+  } else if(!navigator.onLine){
+    // Offline — restore from localStorage cache so user stays logged in
+    const cached=loadUserCache();
+    if(cached){ await onSignedInOffline(cached); }
+    else{ hideLoading(); document.getElementById('loginScreen').classList.remove('hidden'); }
   } else {
     hideLoading();
     document.getElementById('loginScreen').classList.remove('hidden');
   }
   sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session&&!currentUser){await onSignedIn(session.user);}
-    if(event==='SIGNED_OUT'){currentUser=null;records=[];}
+    // Only clear session on SIGNED_OUT when online — offline token expiry should not log the user out
+    if(event==='SIGNED_OUT'&&navigator.onLine){currentUser=null;records=[];clearUserCache();}
   });
 })();
 
