@@ -249,9 +249,29 @@ async function sendMessage(){
   const inp=document.getElementById('msgInput'),text=inp.value.trim();
   if(!text)return;
   const btn=document.getElementById('sendBtn');btn.disabled=true;inp.value='';inp.style.height='auto';
+
+  // ── Step 3 debug: verify session before sending ──
+  const{data:{session}}=await sb.auth.getSession();
+  console.log('[Chat] session:', session);
+  console.log('[Chat] sender_id:', session?.user?.id);
+  console.log('[Chat] receiver_id:', partnerUser?.id);
+
+  if(!session){
+    toast('Session expired — please sign in again','err');
+    btn.disabled=false;inp.value=text;
+    setTimeout(()=>window.location.href='index.html',1500);
+    return;
+  }
+
   const{error}=await sb.from('messages').insert({sender_id:currentUser.id,receiver_id:partnerUser.id,message:text});
   btn.disabled=false;
-  if(error){toast('Failed to send','err');inp.value=text;}
+  if(error){
+    console.error('[Chat] Send error code:',error.code);
+    console.error('[Chat] Send error message:',error.message);
+    console.error('[Chat] Send error details:',error.details);
+    toast('Failed to send: '+error.message,'err');
+    inp.value=text;
+  }
   inp.focus();
 }
 let _chatAudioCtx=null,_chatAudioBuf=null,_chatAudioReady=false;
