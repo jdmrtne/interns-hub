@@ -170,6 +170,9 @@
   .sidebar-overlay.show{display:block;}
 }
 
+  /* hide desktop live+refresh on mobile — mob-topbar handles it */
+  .page-header > div:last-child{display:none!important;}
+
 /* hide mobile list on desktop */
 @media(min-width:769px){
   .mob-log-list{display:none;}
