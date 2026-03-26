@@ -22,10 +22,8 @@
   position: fixed; inset: 0; z-index: 10000;
   display: flex; align-items: center; justify-content: center; padding: 24px;
   animation: fadeIn .4s ease;
-  /* Solid cover so app content doesn't bleed through */
   background: var(--bg);
 }
-/* Ambient orbs on the login screen itself */
 .login-screen::before {
   content: '';
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -193,10 +191,8 @@
   padding: 22px 24px; margin-bottom: 20px;
   display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;
 }
-/* Clock display scales with viewport minus sidebar (230px) minus panel (24*2px) divided by 2 cols */
 .clock-display {
   text-align: center; min-width: 0;
-  /* prevent any overflow */
   overflow: hidden;
 }
 .clock-dayname {
@@ -207,7 +203,6 @@
 }
 .clock-time {
   font-family: var(--font-mono); font-weight: 700;
-  /* "HH:MM:SS AM" = 11 chars. Safe fit: half of (viewport - sidebar - padding) * ~12% */
   font-size: clamp(20px, calc((100vw - var(--nav-w, 230px) - 100px) * 0.115), 46px);
   color: var(--primary); line-height: 1.1; margin-bottom: 5px;
   font-variant-numeric: tabular-nums; letter-spacing: .02em;
@@ -438,7 +433,7 @@
 .rch-val { font-family: var(--font-mono); font-size: 13px; color: var(--green); font-weight: 700; }
 .rec-card-acts { display: flex; gap: 8px; }
 
-/* ── Page nav (hidden - handled by sidebar) ──────────── */
+/* ── Page nav ────────────────────────────────────────── */
 .page { display: block; }
 .page.hidden { display: none; }
 
@@ -566,7 +561,6 @@
     </div>
     <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
   </div>
-  <!-- collapse-btn clone: only visible when sidebar is collapsed, sits at top of icon rail -->
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="sideNavLinks"></div>
   <div class="snav-footer">
@@ -757,7 +751,7 @@
 
 <script>
 // ═══════════════════════════════════════════
-//  INIT SUPABASE — before any auth call
+//  INIT SUPABASE
 // ═══════════════════════════════════════════
 sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -1006,7 +1000,7 @@ const V={
 };
 
 // ═══════════════════════════════════════════
-//  CLOCK ACTION
+//  CLOCK ACTION  ← auto-reload after success
 // ═══════════════════════════════════════════
 async function clockAction(type){
   if(!currentUser){toast('Please sign in first.','err');return;}
@@ -1018,6 +1012,7 @@ async function clockAction(type){
   const L={am_in:'AM IN',am_out:'AM OUT',pm_in:'PM IN',pm_out:'PM OUT'};
   toast(`✓ ${L[type]} at ${fmtTime(ts)}`,'ok');
   await upsertRecord(rec);
+  location.reload(); // ← refresh so daily-logs sees the update immediately
 }
 
 // ═══════════════════════════════════════════
@@ -1174,7 +1169,7 @@ function renderCards(){
 }
 
 // ═══════════════════════════════════════════
-//  EDIT / DELETE
+//  EDIT / DELETE  ← auto-reload after action
 // ═══════════════════════════════════════════
 async function delRec(i){
   if(!confirm('Delete this record?'))return;
@@ -1183,6 +1178,7 @@ async function delRec(i){
   updateUI();updateTotals();updateWeekly();renderTable();renderCards();
   toast('Deleted.','inf');
   await deleteRecord(rec.date);
+  location.reload(); // ← refresh
 }
 function openEdit(i){
   editIdx=i;const r=records[i];
@@ -1203,10 +1199,11 @@ async function saveEdit(){
   closeModal();updateUI();updateTotals();updateWeekly();renderTable();renderCards();
   toast('Updated.','ok');
   await upsertRecord(r);
+  location.reload(); // ← refresh
 }
 
 // ═══════════════════════════════════════════
-//  LOG PAST DAY
+//  LOG PAST DAY  ← auto-reload after save
 // ═══════════════════════════════════════════
 function prefillPast(){
   const d=document.getElementById('pDate');
@@ -1229,6 +1226,7 @@ async function savePast(){
   updateTotals();updateWeekly();renderTable();renderCards();
   toast(`Saved for ${date}`,'ok');clearPast();
   await upsertRecord(records.find(r=>r.date===date));
+  location.reload(); // ← refresh
 }
 function clearPast(){['pDate','pAmIn','pAmOut','pPmIn','pPmOut'].forEach(id=>document.getElementById(id).value='');}
 
@@ -1353,7 +1351,6 @@ function setupSidebarUser(name, role, isAdmin){
   }
   if(mh) mh.classList.remove('pre-auth');
 }
-
 
 // ═══════════════════════════════════════════
 //  BOOT
