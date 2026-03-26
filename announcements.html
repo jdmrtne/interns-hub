@@ -115,7 +115,7 @@ to{opacity:0;transform:translateX(110%)}}
 .snav-item:hover svg { stroke: #7dd3fc; }
 </style><link rel="stylesheet" href="./style.css">
 </head><body>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
 <script src="./notifications.js"></script>
@@ -206,9 +206,26 @@ async function postAnn(){
   const title=document.getElementById('annTitle').value.trim(),msg=document.getElementById('annBody').value.trim();
   if(!title||!msg){toast('Fill in both fields','err');return;}
   const btn=document.getElementById('postBtn');btn.disabled=true;btn.textContent='Posting…';
+
+  // ── Verify session is still alive before posting ──────────────────
+  const{data:{session}}=await sb.auth.getSession();
+  console.log('[Ann] session:', session);
+  if(!session){
+    toast('Session expired — signing you out…','err');
+    btn.disabled=false;btn.textContent=' Post';
+    setTimeout(()=>window.location.href='index.html',1500);
+    return;
+  }
+  // Keep currentUser in sync
+  currentUser=session.user;
+
   const{error}=await sb.from('announcements').insert({title,message:msg,created_by:currentUser.id});
   btn.disabled=false;btn.textContent=' Post';
-  if(error){toast('Failed: '+error.message,'err');return;}
+  if(error){
+    console.error('[Ann] Full error:', JSON.stringify(error));
+    toast('Failed: '+error.message,'err');
+    return;
+  }
   document.getElementById('annTitle').value='';document.getElementById('annBody').value='';
   toast('Announcement posted!','ok');
   setTimeout(()=>location.reload(),700);
