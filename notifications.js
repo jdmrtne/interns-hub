@@ -203,6 +203,8 @@ window.HubMsgPoller = {
   start(sb, userId) {
     this._sb = sb; this._userId = userId;
     this._lastTs = new Date(Date.now() - 5000).toISOString();
+    // Kick off web push subscription (defined in push.js)
+    if (window.HubPush) window.HubPush.init(sb, userId);
     try {
       this._channel = sb.channel('hub-msg-v2-' + userId)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'receiver_id=eq.' + userId }, async (payload) => {

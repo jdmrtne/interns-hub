@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════
 //  THE INTERNS HUB — SERVICE WORKER v5.0
 // ═══════════════════════════════════════════
-const CACHE_NAME = 'interns-hub-v5';
+const CACHE_NAME = 'interns-hub-v6';
 const STATIC_ASSETS = [
   '/interns-hub/',
   '/interns-hub/index.html',
@@ -13,6 +13,7 @@ const STATIC_ASSETS = [
   '/interns-hub/chat.html',
   '/interns-hub/nav.js',
   '/interns-hub/notifications.js',
+  '/interns-hub/push.js',
   '/interns-hub/config.js',
   '/interns-hub/style.css',
   '/interns-hub/manifest.json',
@@ -37,6 +38,46 @@ self.addEventListener('activate', event => {
         Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
       )
       .then(() => self.clients.claim()) // take over all open tabs now
+  );
+});
+
+// ── PUSH: show a native OS notification ─────────────────────────
+self.addEventListener('push', event => {
+  let data = { title: 'The Interns Hub', body: 'You have a new notification', url: '/interns-hub/', type: 'general' };
+  try { if (event.data) data = { ...data, ...event.data.json() }; } catch(e) {}
+
+  const icon  = '/interns-hub/icon-192.png';
+  const badge = '/interns-hub/icon-96.png';
+
+  const options = {
+    body:             data.body,
+    icon,
+    badge,
+    tag:              data.type + '-' + Date.now(),   // group by type
+    data:             { url: data.url },
+    vibrate:          [200, 80, 200],
+    requireInteraction: false,
+    silent:           false,
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+// ── NOTIFICATION CLICK: open or focus the correct page ──────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const target = event.notification.data?.url || '/interns-hub/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const client of list) {
+        if (client.url.includes('/interns-hub') && 'focus' in client) {
+          client.navigate(target);
+          return client.focus();
+        }
+      }
+      return clients.openWindow(target);
+    })
   );
 });
 
