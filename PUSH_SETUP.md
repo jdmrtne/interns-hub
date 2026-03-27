@@ -1,105 +1,105 @@
 # 🔔 Push Notifications — Setup Guide
-## The Interns Hub · Works on Android, Desktop, iPhone (PWA)
+## OS-level notifications (lock screen, Windows, macOS) — like WhatsApp & Gmail
 
 ---
 
-## What was fixed in v2
+## What you already did ✅
+- Ran `hotfix_push.sql` → Postgres triggers now correctly call `net.http_post()`
 
-| Problem | Fix |
-|---|---|
-| SW never installed → no background push | `push.js` now calls `navigator.serviceWorker.register()` explicitly |
-| `npm:web-push` fails in Deno | Edge Function rewritten with native Web Crypto (zero dependencies) |
-| Webhooks require manual UI setup | `push_setup.sql` installs pg_net triggers that fire automatically |
+## What you still need to do (2 steps)
 
 ---
 
-## 3-step setup (that's it)
+## Step 1 — Deploy the Edge Function
 
-### Step 1 — Run the SQL
+The Edge Function (`send-push`) is the server that actually delivers the
+notification to Android / iPhone / Windows / macOS.  Without this, nothing arrives.
 
-Go to **Supabase → SQL Editor**, paste the entire contents of `push_setup.sql`, and click **Run**.
-
-This creates the `push_subscriptions` table and installs Postgres triggers that automatically call your Edge Function whenever a message or announcement is inserted.
-
----
-
-### Step 2 — Deploy the Edge Function
-
+Install the Supabase CLI if you haven't:
 ```bash
-# Install Supabase CLI (if not already installed)
 npm install -g supabase
+```
 
-# Log in
+Then from your project folder:
+```bash
 supabase login
-
-# Link to your project
 supabase link --project-ref gacthqqzbvjtxnukdnwf
-
-# Deploy
 supabase functions deploy send-push --no-verify-jwt
 ```
 
+The `index.ts` file inside `supabase/functions/send-push/` is the function.
+
 ---
 
-### Step 3 — Set the secrets
+## Step 2 — Set the 3 secrets
 
-In **Supabase → Settings → Edge Function Secrets**, add:
+Go to **Supabase → Settings → Edge Function Secrets** and add:
 
-| Name | Value |
+| Secret name | Value |
 |---|---|
 | `VAPID_PUBLIC_KEY` | `BJVqeBtsr4gsTyjHRh6d-imHsRMH38P9HXVIwdS4qEuBI1NNsYR-gcWJZXwaVrUPPep9zbGOCsHJObpEXdLLKzk` |
 | `VAPID_PRIVATE_KEY` | `C-yPbbkcVHKYgJpJragFdPfWPndlPuHRkou8KHOiIcU` |
-| `VAPID_EMAIL` | `mailto:your@email.com` |
+| `VAPID_EMAIL` | `mailto:your@email.com` (use your real email) |
 
-> `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically — don't add those.
-
-Then commit and push all changed files to GitHub.
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically — don't add those.
 
 ---
 
-## How it works end-to-end
-
-```
-User opens site → push.js registers sw.js → asks for notification permission
-  → subscription saved to push_subscriptions table in Supabase
-
-Someone sends a message or admin posts announcement
-  → Postgres INSERT triggers trig_push_message / trig_push_announcement
-    → pg_net calls send-push Edge Function
-      → Edge Function encrypts payload, sends to browser push service
-        → sw.js receives push event → showNotification()
-          → OS shows native notification (even if browser/tab is closed)
-            → user taps → app opens to the right page
-```
+## That's it. Push and redeploy to GitHub.
 
 ---
 
-## Platform support
+## How the full flow works
 
-| Platform | Status | Notes |
-|---|---|---|
-| Android Chrome | ✅ Full push | Works when browser is fully closed |
-| Desktop Chrome / Edge | ✅ Full push | Works when tab is closed |
-| Desktop Firefox | ✅ Full push | Works when tab is closed |
-| iPhone Safari (iOS 16.4+) | ✅ Works | Must install via "Add to Home Screen" first — app shows a banner guiding users |
-| iPhone Chrome / Firefox | ⚠️ Limited | Apple forces all iOS browsers to use Safari engine; PWA install still required |
+```
+User opens site
+  → sw.js registers as a Service Worker in the browser
+  → "Enable Notifications" banner appears
+  → User clicks Enable → browser asks for permission
+  → Subscription saved to push_subscriptions table in Supabase
+
+Someone sends a message (or admin posts an announcement)
+  → Postgres INSERT fires
+  → net.http_post() calls the send-push Edge Function   ← fixed by hotfix_push.sql
+  → Edge Function encrypts payload with VAPID
+  → Sends to Google FCM / Apple APNs / Mozilla push server
+  → Browser/OS receives it and shows a native notification
+     ✓ Android lock screen
+     ✓ Windows notification centre (bottom-right popup)
+     ✓ macOS notification banner (top-right)
+     ✓ iPhone lock screen (PWA mode, iOS 16.4+)
+  → User taps → app opens to the right page
+```
 
 ---
 
 ## Troubleshooting
 
-**"Enable Notifications" banner never appears**
-- Open DevTools → Console — look for `[HubPush]` messages
-- Check Application → Service Workers — is `sw.js` registered and active?
-- If you previously denied permission: browser address bar → 🔒 → Notifications → Reset
+**Check Edge Function logs:**
+Supabase → Edge Functions → send-push → Logs
+You'll see: `sent=1 expired=0 errors=0` on success.
 
-**Notifications appear in-app but not when closed**
-- Check Supabase → Edge Functions → `send-push` → Logs for errors
-- Verify all 3 secrets are set correctly
-- Check `push_subscriptions` table has a row for your user
+**Check the trigger is firing:**
+Supabase → Database → Logs — look for `hub` warnings.
 
-**iPhone not working**
-- iOS 16.4 or later required
-- Must use Safari, not Chrome or Firefox
-- Must tap Share ⬆ → Add to Home Screen first
-- Open the PWA from your home screen — the banner will then appear
+**User never sees the permission prompt:**
+- Open browser DevTools → Console → look for `[HubPush]` messages
+- Check Application → Service Workers — is sw.js Active?
+- If permission was previously denied: address bar → 🔒 → Notifications → Reset
+
+**iPhone not working:**
+- Requires iOS 16.4 or later + Safari only
+- Must tap Share ⬆ → Add to Home Screen → open from home screen
+- The banner will guide users through this automatically
+
+---
+
+## Platform support
+
+| Platform | Status |
+|---|---|
+| Android Chrome | ✅ Works even when browser is closed |
+| Desktop Chrome / Edge | ✅ Works when tab is closed |
+| Desktop Firefox | ✅ Works when tab is closed |
+| iPhone Safari (PWA) | ✅ iOS 16.4+, must install to home screen |
+| iPhone Chrome/Firefox | ⚠️ Apple forces Safari engine — same PWA requirement |
