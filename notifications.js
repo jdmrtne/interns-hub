@@ -316,6 +316,28 @@ function timeAgo(ts) {
   return Math.floor(h / 24) + 'd ago';
 }
 
+// ─── OS Banner via Service Worker ────────────────────────
+// Routes through reg.showNotification() so it works even when
+// the tab is unfocused or minimised (new Notification() is blocked by browsers in that state)
+function showOSNotification(title, body, url, type) {
+  if (!('serviceWorker' in navigator)) return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+  navigator.serviceWorker.ready.then(reg => {
+    reg.showNotification(title, {
+      body,
+      icon:    '/interns-hub/icon-192.png',
+      badge:   '/interns-hub/icon-96.png',
+      tag:     (type === 'message' ? 'msg-' : 'ann-') + Date.now(),
+      renotify: true,
+      data:    { url: url },
+      vibrate: [200, 80, 200],
+      silent:  false,
+      requireInteraction: false,
+    });
+  }).catch(() => {});
+}
+
 // ─── Audio ───────────────────────────────────────────────
 let _audioCtx = null, _audioBuffer = null, _audioReady = false, _audioLoadPromise = null;
 function _getAudioCtx() { if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return _audioCtx; }
@@ -350,6 +372,11 @@ window.HubNotif = {
       if (uid === senderId) return;
     }
     _playNotifSound();
+    // Fire OS banner when the tab isn't in focus — new Notification() is silently
+    // blocked by browsers in that state; reg.showNotification() is not.
+    if (document.visibilityState !== 'visible' || !document.hasFocus()) {
+      showOSNotification('💬 ' + senderName, text, 'messages.html?uid=' + senderId, 'message');
+    }
     const col = avatarColor(senderName);
     const el = document.createElement('a');
     el.className = 'msg-notif'; el.href = 'messages.html?uid=' + senderId;
@@ -709,6 +736,10 @@ window.HubAnnouncements = {
     };
     document.getElementById('ann-modal-ov').classList.remove('hidden');
     _playNotifSound();
+    // Fire OS banner for announcement when tab is unfocused
+    if (document.visibilityState !== 'visible' || !document.hasFocus()) {
+      showOSNotification('📣 ' + (ann.title || 'New Announcement'), ann.message || '', 'announcements.html', 'announcement');
+    }
   },
   _close() { document.getElementById('ann-modal-ov').classList.add('hidden'); }
 };
