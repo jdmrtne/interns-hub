@@ -490,7 +490,7 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="login-logo">
-      <div class="login-logo-icon">◆</div>
+      <div class="login-logo-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
       <h1>The Interns Hub</h1>
       <p>Work Hours Tracker</p>
     </div>
@@ -509,7 +509,7 @@
         <label>Password</label>
         <div class="pw-wrap">
           <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-          <button class="pw-toggle" onclick="togglePw('loginPass',this)" tabindex="-1">👁</button>
+          <button class="pw-toggle" onclick="togglePw('loginPass',this)" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-login-submit" id="btnLogin" onclick="doLogin()">Sign In</button>
@@ -529,14 +529,14 @@
         <label>Password</label>
         <div class="pw-wrap">
           <input type="password" id="regPass" placeholder="min 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
-          <button class="pw-toggle" onclick="togglePw('regPass',this)" tabindex="-1">👁</button>
+          <button class="pw-toggle" onclick="togglePw('regPass',this)" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <div class="login-field">
         <label>Confirm Password</label>
         <div class="pw-wrap">
           <input type="password" id="regPass2" placeholder="repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
-          <button class="pw-toggle" onclick="togglePw('regPass2',this)" tabindex="-1">👁</button>
+          <button class="pw-toggle" onclick="togglePw('regPass2',this)" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-login-submit" id="btnRegister" onclick="doRegister()">Create Account</button>
@@ -556,7 +556,7 @@
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>
@@ -653,22 +653,22 @@
     </div>
     <div class="btn-grid">
       <button class="clk-btn btn-am-in"  id="bAmIn"  onclick="clockAction('am_in')">
-        <span class="b-icon">☀</span>AM IN
+        <span class="b-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>AM IN
         <span class="b-sub">Morning Clock-In</span>
         <span class="b-time" id="btAmIn"></span>
       </button>
       <button class="clk-btn btn-am-out" id="bAmOut" onclick="clockAction('am_out')">
-        <span class="b-icon">🌤</span>AM OUT
+        <span class="b-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><circle cx="13" cy="8" r="3"/><path d="M3 17H2a2 2 0 0 1 0-4h.5A5.5 5.5 0 0 1 14 11a3 3 0 1 1 0 6H3z"/><path d="M10 4.2A6 6 0 0 1 16.8 11"/></svg></span>AM OUT
         <span class="b-sub">Morning Clock-Out</span>
         <span class="b-time" id="btAmOut"></span>
       </button>
       <button class="clk-btn btn-pm-in"  id="bPmIn"  onclick="clockAction('pm_in')">
-        <span class="b-icon">🌅</span>PM IN
+        <span class="b-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41M2 18h2M20 18h2m-1.93-7.07-1.41 1.41M22 22H2"/><path d="m8 22 4-4 4 4"/><circle cx="12" cy="18" r="4"/></svg></span>PM IN
         <span class="b-sub">Afternoon Clock-In</span>
         <span class="b-time" id="btPmIn"></span>
       </button>
       <button class="clk-btn btn-pm-out" id="bPmOut" onclick="clockAction('pm_out')">
-        <span class="b-icon">🌙</span>PM OUT
+        <span class="b-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>PM OUT
         <span class="b-sub">Afternoon Clock-Out</span>
         <span class="b-time" id="btPmOut"></span>
       </button>
@@ -810,7 +810,7 @@ async function syncPendingQueue(){
   }
   setPendingQueue(failed);
   const synced=queue.length-failed.length;
-  if(synced>0) toast(`Synced ${synced} change${synced>1?'s':''} ✓`,'ok');
+  if(synced>0) toast(`Synced ${synced} change${synced>1?'s':''} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg>`,'ok');
   if(failed.length>0) toast(`${failed.length} changes failed to sync.`,'err');
   updateConnectionUI();
 }
@@ -839,7 +839,7 @@ function setLoginErr(msg,isSuccess=false){
 function togglePw(id,btn){
   const inp=document.getElementById(id);
   inp.type=inp.type==='password'?'text':'password';
-  btn.textContent=inp.type==='text'?'🙈':'👁';
+  btn.innerHTML=inp.type==='text'?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
 }
 
 // ═══════════════════════════════════════════
@@ -1020,7 +1020,7 @@ async function clockAction(type){
   rec[type]=ts;
   updateUI(); updateTotals(); updateWeekly();
   const L={am_in:'AM IN',am_out:'AM OUT',pm_in:'PM IN',pm_out:'PM OUT'};
-  toast(`✓ ${L[type]} at ${fmtTime(ts)}`,'ok');
+  toast(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> ${L[type]} at ${fmtTime(ts)}`,'ok');
   await upsertRecord(rec);
   location.reload(); // ← refresh so daily-logs sees the update immediately
 }
@@ -1337,7 +1337,7 @@ function renderClockSideNav(isAdmin){
         </a>
         <div class="snav-sub">
           <button class="snav-subitem active" id="navClock" onclick="gotoPage('clock')">⏱ Time Clock</button>
-          <button class="snav-subitem" id="navLog"     onclick="gotoPage('log')">✏ Log Past Day</button>
+          <button class="snav-subitem" id="navLog"     onclick="gotoPage('log')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Log Past Day</button>
           <button class="snav-subitem" id="navHistory" onclick="gotoPage('history')">↺ History</button>
         </div>
       </div>`;

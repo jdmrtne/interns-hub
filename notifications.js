@@ -428,7 +428,7 @@ window.HubNotif = {
     // Fire OS banner when the tab isn't in focus — new Notification() is silently
     // blocked by browsers in that state; reg.showNotification() is not.
     if (document.visibilityState !== 'visible' || !document.hasFocus()) {
-      showOSNotification('💬 ' + senderName, text, 'messages.html?uid=' + senderId, 'message');
+      showOSNotification('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ' + senderName, text, 'messages.html?uid=' + senderId, 'message');
     }
     const col = avatarColor(senderName);
     const avatarHtml = senderAvatar
@@ -443,7 +443,7 @@ window.HubNotif = {
         <div class="msg-notif-name">${senderName}</div>
         <div class="msg-notif-text">${text}</div>
       </div>
-      <button class="msg-notif-close" onclick="event.preventDefault();event.stopPropagation();HubNotif._dismiss(this.closest('.msg-notif'))">✕</button>`;
+      <button class="msg-notif-close" onclick="event.preventDefault();event.stopPropagation();HubNotif._dismiss(this.closest('.msg-notif'))"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
     tray.appendChild(el);
     setTimeout(() => HubNotif._dismiss(el), 6000);
     // Also add to bell panel
@@ -494,10 +494,10 @@ window.HubBell = {
       <div id="hub-notif-panel-overlay"></div>
       <div id="hub-notif-panel">
         <div id="hub-notif-panel-head">
-          <span class="hnp-title">🔔 Notifications</span>
+          <span class="hnp-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Notifications</span>
           <div style="display:flex;gap:8px;align-items:center">
             <button class="hnp-mark-all" id="hnp-mark-all">Mark all read</button>
-            <button class="hnp-close" id="hnp-close">✕</button>
+            <button class="hnp-close" id="hnp-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           </div>
         </div>
         <div id="hub-notif-tabs">
@@ -593,7 +593,7 @@ window.HubBell = {
     const sorted = [...filtered].reverse();
 
     if (!sorted.length) {
-      list.innerHTML = `<div class="hn-empty"><div class="hn-empty-icon">🔔</div><div class="hn-empty-text">No notifications yet</div></div>`;
+      list.innerHTML = `<div class="hn-empty"><div class="hn-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="hn-empty-text">No notifications yet</div></div>`;
       return;
     }
 
@@ -614,7 +614,7 @@ window.HubBell = {
         </a>`;
       } else {
         return `<a class="hn-item${item.read ? '' : ' unread'}" href="announcements.html" data-id="${item.id}">
-          <div class="hn-avatar announcement">📣</div>
+          <div class="hn-avatar announcement"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>
           <div class="hn-body">
             <div class="hn-sender">${item.title || 'New Announcement'}</div>
             <div class="hn-text">${item.text || ''}</div>
@@ -763,7 +763,7 @@ window.HubAnnouncements = {
       : '';
     const prevBtn = !isFirst ? `<button class="ann-modal-btn ghost" id="_annPrev">← Previous</button>` : '';
     document.getElementById('ann-modal').innerHTML = `
-      <div class="ann-modal-badge">📣 Announcement</div>
+      <div class="ann-modal-badge"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Announcement</div>
       <div class="ann-modal-title">${ann.title}</div>
       <div class="ann-modal-body">${ann.message}</div>
       <div class="ann-modal-meta">${ann.users?.name || 'Admin'} · ${timeAgo(ann.created_at)}</div>
@@ -771,7 +771,7 @@ window.HubAnnouncements = {
       <div class="ann-modal-actions">
         <button class="ann-modal-btn ghost" id="_annDismiss">Dismiss All</button>
         ${prevBtn}
-        <button class="ann-modal-btn primary" id="_annNext">${isLast ? 'Got it ✓' : 'Next →'}</button>
+        <button class="ann-modal-btn primary" id="_annNext">${isLast ? 'Got it <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg>' : 'Next →'}</button>
       </div>`;
     document.getElementById('_annDismiss').onclick = () => { this._markAllSeen(); this._close(); };
     if (!isFirst) document.getElementById('_annPrev').onclick = () => { this._idx--; this._render(); };
@@ -784,7 +784,7 @@ window.HubAnnouncements = {
     _playNotifSound();
     // Fire OS banner for announcement when tab is unfocused
     if (document.visibilityState !== 'visible' || !document.hasFocus()) {
-      showOSNotification('📣 ' + (ann.title || 'New Announcement'), ann.message || '', 'announcements.html', 'announcement');
+      showOSNotification('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> ' + (ann.title || 'New Announcement'), ann.message || '', 'announcements.html', 'announcement');
     }
   },
   _close() { document.getElementById('ann-modal-ov').classList.add('hidden'); }
@@ -800,7 +800,7 @@ if ('serviceWorker' in navigator) {
     if (d.pushType === 'message') {
       // Extract senderId from the URL (?uid=...)
       const uid = d.url ? new URL(d.url, location.origin).searchParams.get('uid') : null;
-      if (window.HubNotif) HubNotif.showMessage(d.senderName?.replace('💬 ','') || 'Someone', d.body, uid || '');
+      if (window.HubNotif) HubNotif.showMessage(d.senderName?.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ','') || 'Someone', d.body, uid || '');
     }
     if (window.HubBell) HubBell._render();
   });

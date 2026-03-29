@@ -46,7 +46,7 @@
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>
@@ -72,7 +72,7 @@
           <div class="card-body">
             <div class="field"><label>Title</label><input type="text" id="annTitle" placeholder="Announcement title…"></div>
             <div class="field"><label>Message</label><textarea id="annBody" rows="5" placeholder="Write your announcement…"></textarea></div>
-            <button class="btn btn-primary" style="width:100%" onclick="postAnn()" id="postBtn">📣 Post</button>
+            <button class="btn btn-primary" style="width:100%" onclick="postAnn()" id="postBtn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post</button>
           </div>
         </div>
         <div class="card"><div class="card-header"><div class="card-title">About Board</div></div><div class="card-body"><p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.6">The Announcement Board is where admins share important updates, reminders, and news with all interns.</p></div></div>
@@ -92,7 +92,7 @@ async function loadAnns(){
   const{data,error}=await sb.from('announcements').select('*').order('created_at',{ascending:false});
   if(error){console.error('loadAnns error:',error);}
   const c=document.getElementById('annList');const isAdmin=userProfile?.role==='admin';
-  if(!data||!data.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-title">No Announcements</div><div class="empty-sub">'+(isAdmin?'Post the first announcement below.':'Check back later.')+'</div></div>';return;}
+  if(!data||!data.length){c.innerHTML='<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div><div class="empty-title">No Announcements</div><div class="empty-sub">'+(isAdmin?'Post the first announcement below.':'Check back later.')+'</div></div>';return;}
 
   const authorIds=[...new Set(data.filter(a=>a.created_by).map(a=>a.created_by))];
   let authorMap={};
@@ -109,7 +109,7 @@ async function loadAnns(){
     return`<div class="ann-card" style="animation-delay:${i*50}ms">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;">
         <div class="ann-card-title">${escHtml(a.title)}</div>
-        ${isAdmin?`<button class="btn-del" onclick="delAnn('${a.id}')" title="Delete">✕</button>`:''}
+        ${isAdmin?`<button class="btn-del" onclick="delAnn('${a.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`:''}
       </div>
       <div class="ann-card-body">${escHtml(a.message)}</div>
       <div class="ann-meta">
@@ -127,10 +127,10 @@ async function postAnn(){
   if(!title||!msg){toast('Fill in both fields','err');return;}
   const btn=document.getElementById('postBtn');btn.disabled=true;btn.textContent='Posting…';
   const{data:{session}}=await sb.auth.getSession();
-  if(!session){toast('Session expired — signing you out…','err');btn.disabled=false;btn.textContent='📣 Post';setTimeout(()=>window.location.href='index.html',1500);return;}
+  if(!session){toast('Session expired — signing you out…','err');btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post';setTimeout(()=>window.location.href='index.html',1500);return;}
   currentUser=session.user;
   const{error}=await sb.from('announcements').insert({title,message:msg,created_by:currentUser.id});
-  btn.disabled=false;btn.textContent='📣 Post';
+  btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post';
   if(error){toast('Failed: '+error.message,'err');return;}
   document.getElementById('annTitle').value='';document.getElementById('annBody').value='';
   toast('Announcement posted!','ok');

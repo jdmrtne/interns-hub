@@ -160,7 +160,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
 <nav class="sidebar-nav" id="sidebarNav">
     <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>
@@ -189,7 +189,7 @@ tr:hover td{background:rgba(255,255,255,.018);}
       <div class="messages-area" id="messagesArea"></div>
       <div class="chat-input-bar">
         <textarea id="msgInput" placeholder="Type a message…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="btn-send" id="sendBtn" onclick="sendMessage()">➤</button>
+        <button class="btn-send" id="sendBtn" onclick="sendMessage()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
       </div>
     </div>
   </main>
@@ -222,8 +222,8 @@ function renderMsg(msg,append=true){
   const canDelete=isMine||currentUserIsAdmin;
   const trashIcon=`<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
   const delBtn=canDelete?`<button class="btn-del-msg" title="Delete message" onclick="deleteMsg('${msg.id}',this)">${trashIcon}</button>`:'';
-  // Seen tick for own messages: ✓ sent, ✓✓ seen (blue)
-  const tick=isMine?`<span class="msg-tick ${msg.seen_at?'seen':'sent'}" data-tick="${msg.id}">${msg.seen_at?'✓✓':'✓'}</span>`:'';
+  // Seen tick for own messages: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> sent, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> seen (blue)
+  const tick=isMine?`<span class="msg-tick ${msg.seen_at?'seen':'sent'}" data-tick="${msg.id}">${msg.seen_at?`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="1 9 6 14 15 5"/><polyline points="10 9 15 14 24 5"/></svg>`:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg>`}</span>`:'';
   // Avatar next to their bubbles
   const avatarHtml = !isMine
     ? (partnerUser?.avatar_url
@@ -338,9 +338,9 @@ function applyDeleteToUI(msgId){
   bubble.classList.remove('deleting');
 }
 function applySeenToUI(seenAt){
-  // Flip all grey ✓ ticks to blue ✓✓ for the partner's messages we sent
+  // Flip all grey <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> ticks to blue <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> for the partner's messages we sent
   document.querySelectorAll('.msg-bubble.mine .msg-tick').forEach(tick=>{
-    tick.textContent='✓✓';tick.className='msg-tick seen';
+    tick.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="1 9 6 14 15 5"/><polyline points="10 9 15 14 24 5"/></svg>';tick.className='msg-tick seen';
   });
 }
 function setupRealtime(){
@@ -362,10 +362,10 @@ function setupRealtime(){
       const inConvo=(m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id);
       if(!inConvo)return;
       if(m.is_deleted){applyDeleteToUI(m.id);return;}
-      // Sender sees their tick flip to ✓✓ when receiver opens the chat
+      // Sender sees their tick flip to <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> when receiver opens the chat
       if(m.seen_at&&m.sender_id===currentUser.id){
         const tick=document.querySelector(`.msg-tick[data-tick="${m.id}"]`);
-        if(tick){tick.textContent='✓✓';tick.className='msg-tick seen';}
+        if(tick){tick.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="1 9 6 14 15 5"/><polyline points="10 9 15 14 24 5"/></svg>';tick.className='msg-tick seen';}
       }
     })
     .subscribe();

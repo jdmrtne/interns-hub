@@ -10,7 +10,7 @@
 :root{--primary-glow:rgba(56,189,248,.15);--red-dim:#da3633;--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 .tbl-scroll::-webkit-scrollbar{width:5px;height:5px;}
-.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px;}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--glass-border-b);border-radius:3px;}
 .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0;}
 .status-in{background:var(--green);}
 .status-out{background:var(--text-dim);}
@@ -18,10 +18,10 @@
 .live-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--green);background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:20px;padding:4px 10px;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.refresh-btn{background:none;border:1px solid var(--border-bright);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.refresh-btn{background:none;border:1px solid var(--glass-border-b);border-radius:6px;padding:7px 14px;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
 .refresh-btn:hover{border-color:var(--primary);color:var(--primary);}
 .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
-.fi{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:9px 14px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color .2s;}
+.fi{background:var(--glass-strong);border:1px solid var(--glass-border-b);border-radius:6px;padding:9px 14px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color .2s;}
 .fi:focus{border-color:var(--primary);}
 .fi::placeholder{color:var(--text-dim);}
 .tbl-wrap{display:block;}
@@ -46,7 +46,7 @@
   .filter-row .fi{width:100%;font-size:14px;padding:11px 14px;}
   .filter-row .btn{width:100%;justify-content:center;padding:11px 14px;font-size:11px;}
   .mob-log-list{display:flex;flex-direction:column;gap:10px;}
-  .mob-log-card{background:var(--panel);border:1px solid var(--border-bright);border-radius:12px;padding:14px 16px;animation:fadeUp .25s ease both;}
+  .mob-log-card{background:var(--glass-strong);border:1px solid var(--glass-border-b);border-radius:12px;padding:14px 16px;animation:fadeUp .25s ease both;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   .mob-log-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
   .mob-log-card-user{display:flex;align-items:center;gap:10px;min-width:0;}
@@ -57,7 +57,7 @@
   .mob-log-card-total{font-family:var(--font-display);font-size:22px;letter-spacing:.03em;line-height:1;}
   .mob-log-card-total-lbl{font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
   .mob-log-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-  .mob-log-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;}
+  .mob-log-cell{background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;padding:9px 12px;}
   .mob-log-cell-lbl{font-family:var(--font-mono);font-size:8px;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
   .mob-log-cell-val{font-family:var(--font-mono);font-size:13px;font-weight:600;}
   .mob-log-card.is-absent{opacity:.6;}
@@ -95,7 +95,7 @@
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Intern Portal</div>

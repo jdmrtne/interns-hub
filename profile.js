@@ -73,38 +73,38 @@ function _injectProfileModalHTML() {
 <style>
 #hubProfileModal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
 #hubProfileModal.open{display:flex;}
-.hub-pmodal-box{background:var(--panel,#161b22);border:1px solid var(--border-bright,#30363d);border-radius:16px;width:100%;max-width:420px;overflow:hidden;animation:hubPmIn .2s ease both;}
+.hub-pmodal-box{background:var(--glass-strong);border:1px solid var(--glass-border-b);border-radius:16px;width:100%;max-width:420px;overflow:hidden;max-height:92vh;display:flex;flex-direction:column;animation:hubPmIn .2s ease both;}
 @keyframes hubPmIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
-.hub-pmodal-hdr{padding:20px 22px 16px;border-bottom:1px solid var(--border,#21262d);display:flex;align-items:center;justify-content:space-between;}
+.hub-pmodal-hdr{padding:20px 22px 16px;border-bottom:1px solid var(--glass-border,#21262d);display:flex;align-items:center;justify-content:space-between;}
 .hub-pmodal-title{font-family:var(--font-display,'Syne',sans-serif);font-size:20px;font-weight:800;letter-spacing:.06em;color:var(--text,#e6edf3);}
-.hub-pmodal-close{background:none;border:1px solid var(--border-bright,#30363d);border-radius:6px;padding:5px 11px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);cursor:pointer;transition:all .15s;}
+.hub-pmodal-close{background:none;border:1px solid var(--glass-border-b);border-radius:6px;padding:5px 11px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);cursor:pointer;transition:all .15s;}
 .hub-pmodal-close:hover{border-color:#f85149;color:#f85149;}
-.hub-pmodal-body{padding:22px;}
+.hub-pmodal-body{overflow-y:auto;flex:1;padding:22px;}
 .hub-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:22px;}
-.hub-avatar-ring{width:86px;height:86px;border-radius:50%;position:relative;cursor:pointer;flex-shrink:0;overflow:hidden;border:2px solid var(--border-bright,#30363d);transition:border-color .2s;}
+.hub-avatar-ring{width:86px;height:86px;border-radius:50%;position:relative;cursor:pointer;flex-shrink:0;overflow:hidden;border:2px solid var(--glass-border-b);transition:border-color .2s;}
 .hub-avatar-ring:hover{border-color:var(--primary,#38bdf8);}
 .hub-avatar-ring img,.hub-avatar-ring .hub-av-initials{width:100%;height:100%;object-fit:cover;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .hub-av-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.1em;color:#fff;text-transform:uppercase;}
 .hub-avatar-ring:hover .hub-av-overlay{opacity:1;}
 .hub-photo-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
 .hub-field-label{font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;color:var(--text-muted,#7d8590);text-transform:uppercase;display:block;margin-bottom:6px;}
-.hub-field-input{width:100%;background:var(--surface,#111418);border:1px solid var(--border-bright,#30363d);border-radius:8px;padding:10px 14px;color:var(--text,#e6edf3);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.hub-field-input{width:100%;background:var(--glass);border:1px solid var(--glass-border-b);border-radius:8px;padding:10px 14px;color:var(--text,#e6edf3);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;}
 .hub-field-input:focus{border-color:var(--primary,#38bdf8);box-shadow:0 0 0 3px rgba(56,189,248,.15);}
 .hub-pmodal-footer{padding:0 22px 20px;display:flex;gap:10px;}
 .hub-pmodal-msg{padding:0 22px 14px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:10px;letter-spacing:.06em;text-align:center;display:none;}
 @media(prefers-color-scheme:light){
-  .hub-pmodal-box{background:#f6f8fa;border-color:#d0d7de;}
+  /* light mode via design system vars */
   .hub-pmodal-hdr{border-bottom-color:#d0d7de;}
-  .hub-pmodal-title{color:#24292f;}
-  .hub-pmodal-close{border-color:#d0d7de;color:#57606a;}
-  .hub-field-input{background:#fff;border-color:#d0d7de;color:#24292f;}
+  .hub-pmodal-title{color:var(--text);}
+  .hub-pmodal-close{border-color:var(--glass-border-b);color:var(--text-muted);}
+  .hub-field-input{background:#fff;border-color:var(--glass-border-b);color:var(--text);}
 }
 </style>
 <div id="hubProfileModal">
   <div class="hub-pmodal-box">
     <div class="hub-pmodal-hdr">
       <div class="hub-pmodal-title">Edit Profile</div>
-      <button class="hub-pmodal-close" onclick="hubCloseProfileModal()">✕ Close</button>
+      <button class="hub-pmodal-close" onclick="hubCloseProfileModal()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Close</button>
     </div>
     <div class="hub-pmodal-body">
       <div class="hub-avatar-wrap">
@@ -114,8 +114,8 @@ function _injectProfileModalHTML() {
         </div>
         <input type="file" id="hubImgInput" accept="image/*" style="display:none" onchange="hubHandleImgChange(event)">
         <div class="hub-photo-btns">
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('hubImgInput').click()" style="font-size:10px">📷 Change Photo</button>
-          <button class="btn btn-ghost btn-sm" id="hubRemovePhotoBtn" onclick="hubRemovePhoto()" style="font-size:10px;color:#f85149;display:none">✕ Remove</button>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('hubImgInput').click()" style="font-size:10px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Change Photo</button>
+          <button class="btn btn-ghost btn-sm" id="hubRemovePhotoBtn" onclick="hubRemovePhoto()" style="font-size:10px;color:#f85149;display:none"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove</button>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px">
@@ -138,13 +138,13 @@ function _injectProfileModalHTML() {
         </div>
       </div>
       <!-- Internship Progress — shown once hours > 0 -->
-      <div id="hubInternProgressSection" style="display:none;margin-top:4px;padding-top:16px;border-top:1px solid var(--border-bright,#30363d)">
+      <div id="hubInternProgressSection" style="display:none;margin-top:4px;padding-top:16px;border-top:1px solid var(--glass-border-b)">
         <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);margin-bottom:10px">Your Progress</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <span id="hubProgHours" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;color:var(--text-muted,#7d8590)">0h / 0h</span>
           <span id="hubProgPct" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;font-weight:600;color:var(--primary,#38bdf8)">0%</span>
         </div>
-        <div style="width:100%;height:8px;background:var(--glass,rgba(255,255,255,.06));border-radius:99px;overflow:hidden;border:1px solid var(--border-bright,#30363d)">
+        <div style="width:100%;height:8px;background:var(--glass,rgba(255,255,255,.06));border-radius:99px;overflow:hidden;border:1px solid var(--glass-border-b)">
           <div id="hubProgFill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .6s ease;width:0%"></div>
         </div>
         <div id="hubProgMeta" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-dim,#484f58);margin-top:6px;text-align:right"></div>
@@ -221,7 +221,7 @@ function _hubRenderProgress(logged, totalHours) {
   const fill = document.getElementById('hubProgFill');
   fill.style.width = pct.toFixed(1) + '%';
   fill.style.background = complete ? 'linear-gradient(90deg,#34d399,#38bdf8)' : 'linear-gradient(90deg,#38bdf8,#60a5fa)';
-  document.getElementById('hubProgMeta').textContent = complete ? '🎉 Internship complete!' : `${remaining.toFixed(1)}h remaining`;
+  document.getElementById('hubProgMeta').innerHTML = complete ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01M22 8h.01M15 2h.01M22 20h.01"/><path d="m22 2-2.24 2.24M20 12l2.24 2.24M12 20l2.24 2.24"/><path d="M2.5 6.5 5 4l6 1-1 6-2.5 2.5"/><path d="M14 8.5 9.5 13"/></svg> Internship complete!' : `${remaining.toFixed(1)}h remaining`;
 }
 
 function _hubRefreshAvatarPreview(avatarUrl, name) {
@@ -274,7 +274,7 @@ async function hubHandleImgChange(event) {
 
     document.getElementById('hubRemovePhotoBtn').style.display = '';
     const kb = Math.round(dataUrl.length * 0.75 / 1024);
-    _hubShowMsg(`✓ Compressed to ~${kb} KB`, '#34d399');
+    _hubShowMsg(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> Compressed to ~${kb} KB`, '#34d399');
   } catch {
     _hubShowMsg('Failed to process image', '#f85149');
   }
@@ -334,7 +334,7 @@ async function hubSaveProfile() {
     if (updates.avatar_url !== undefined) _hub.profile.avatar_url = updates.avatar_url;
   }
 
-  _hubShowMsg('✓ Profile saved!', '#34d399');
+  _hubShowMsg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> Profile saved!', '#34d399');
   btn.textContent = 'Save Changes'; btn.disabled = false;
 
   // Notify page if it defines a hook

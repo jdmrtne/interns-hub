@@ -86,7 +86,7 @@ window.HubPush = {
       if (error) {
         console.warn('[HubPush] Supabase save error:', error);
       } else {
-        console.info('[HubPush] ✓ Push subscription saved — you will now receive OS notifications');
+        console.info('[HubPush] <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> Push subscription saved — you will now receive OS notifications');
       }
       this._hideBanner();
     } catch (err) {
@@ -175,13 +175,13 @@ window.HubPush = {
 }
 #hub-push-banner .pb-no:hover { border-color: rgba(167,139,250,.5); color: #a78bfa; }
 </style>
-<div class="pb-icon">🔔</div>
+<div class="pb-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
 <div class="pb-body">
   <div class="pb-title">Enable Push Notifications</div>
   <div class="pb-desc">Get notified on your phone and desktop — just like WhatsApp.</div>
   <div class="pb-examples">
-    <div class="pb-example"><span>💬</span> New messages — even when this tab is closed</div>
-    <div class="pb-example"><span>📣</span> New announcements from admin</div>
+    <div class="pb-example"><span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> New messages — even when this tab is closed</div>
+    <div class="pb-example"><span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span> New announcements from admin</div>
   </div>
   <div class="pb-actions">
     <button class="pb-ok" id="hub-push-ok">Enable Notifications</button>
@@ -229,7 +229,7 @@ window.HubPush = {
   font-size: 18px; cursor: pointer; flex-shrink: 0; padding: 0 2px; line-height: 1;
 }
 </style>
-<div class="pbi">📲</div>
+<div class="pbi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><path d="m17 7-5-5-5 5"/><line x1="12" y1="2" x2="12" y2="13"/></svg></div>
 <div class="pbb">
   <div class="pbt">Get notifications on iPhone</div>
   <div class="pbd">
@@ -239,7 +239,7 @@ window.HubPush = {
     Tap <b>Enable Notifications</b>
   </div>
 </div>
-<button class="pb-x" id="hub-ios-x">✕</button>`;
+<button class="pb-x" id="hub-ios-x"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
 
     document.body.appendChild(el);
     document.getElementById('hub-ios-x').onclick = () => {

@@ -114,7 +114,7 @@
     <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-bottom:16px">Leave blank / 0 to remove the period</div>
     <div class="confirm-acts">
       <button class="btn btn-ghost" onclick="closeInternHoursModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveInternHours()">💾 Save</button>
+      <button class="btn btn-primary" onclick="saveInternHours()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save</button>
     </div>
   </div>
 </div>
@@ -125,7 +125,7 @@
 
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
-    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"  width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 2L22 12L12 22L2 12Z"/></svg></div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
       <div class="snav-brand-sub">Admin Panel</div>
@@ -152,14 +152,14 @@
       <div class="page-title">Admin Panel</div>
       <div class="page-subtitle">Platform management &amp; user control</div>
     </div>
-    <span class="badge badge-admin" style="font-size:11px;padding:6px 14px">⚙ ADMIN</span>
+    <span class="badge badge-admin" style="font-size:11px;padding:6px 14px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> ADMIN</span>
   </div>
   <div class="page-body">
     <div class="stat-grid" id="statsRow"></div>
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchTab('interns',this)">👥 Users</button>
+      <button class="admin-tab active" onclick="switchTab('interns',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Users</button>
       <button class="admin-tab" onclick="switchTab('timelogs',this)">⏱ Time Logs</button>
-      <button class="admin-tab" onclick="switchTab('announcements',this)">📣 Announcements</button>
+      <button class="admin-tab" onclick="switchTab('announcements',this)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Announcements</button>
     </div>
     <!-- USERS TAB -->
     <div class="tab-panel active" id="tab-interns">
@@ -204,7 +204,7 @@
           <div class="card-body">
             <div class="field"><label>Title</label><input type="text" id="adminAnnTitle" placeholder="Announcement title…"></div>
             <div class="field"><label>Message</label><textarea id="adminAnnBody" rows="5" placeholder="Write your message…"></textarea></div>
-            <button class="btn btn-primary" style="width:100%" onclick="postAnn()">📣 Post Announcement</button>
+            <button class="btn btn-primary" style="width:100%" onclick="postAnn()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post Announcement</button>
           </div>
         </div>
       </div>
@@ -272,9 +272,9 @@ function renderInternTable(list){
     const promoteBtn=(!isAdm&&!isDis)?`<button class="act-btn promote" onclick="handleAction('promote','${id}')">↑ Admin</button>`:'';
     const demoteBtn=(isAdm&&!isSelf)?`<button class="act-btn" onclick="handleAction('demote','${id}')">↓ Intern</button>`:'';
     const disableBtn=(!isDis&&!isSelf)?`<button class="act-btn warn" onclick="handleAction('disable','${id}')">⊘ Disable</button>`:'';
-    const enableBtn=isDis?`<button class="act-btn" onclick="handleAction('enable','${id}')">✓ Enable</button>`:'';
-    const pwBtn=!isSelf?`<button class="act-btn" onclick="handleAction('resetpw','${id}')">🔑 PW</button>`:'';
-    const delBtn=!isSelf?`<button class="act-btn danger" onclick="handleAction('delete','${id}')">🗑 Delete</button>`:'';
+    const enableBtn=isDis?`<button class="act-btn" onclick="handleAction('enable','${id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> Enable</button>`:'';
+    const pwBtn=!isSelf?`<button class="act-btn" onclick="handleAction('resetpw','${id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> PW</button>`:'';
+    const delBtn=!isSelf?`<button class="act-btn danger" onclick="handleAction('delete','${id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>`:'';
     const badge=isAdm?'badge-admin':isDis?'badge-disabled':'badge-intern';
     const avatarHtml=u.avatar_url?`<img src="${escHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(u.name);
 
@@ -356,7 +356,7 @@ async function demoteUser(id,name){showConfirm('Demote to Intern',`Demote "${nam
 async function disableUser(id,name){showConfirm('Disable Account',`Disable "${name}"?`,async()=>{if(await doUserUpdate(id,{role:'disabled'},`${name} disabled.`))setTimeout(()=>location.reload(),1000);});}
 async function enableUser(id,name){showConfirm('Re-enable Account',`Re-enable "${name}"?`,async()=>{if(await doUserUpdate(id,{role:'intern'},`${name} re-enabled.`))setTimeout(()=>location.reload(),1000);},'Enable',false);}
 async function deleteUser(id,name){
-  showConfirm('⚠ Delete User',`Permanently delete "${name}" and ALL data? Cannot be undone.`,async()=>{
+  showConfirm('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Delete User',`Permanently delete "${name}" and ALL data? Cannot be undone.`,async()=>{
     const{data,error}=await sb.from('users').delete().eq('id',id).select();
     if(error){toast('Delete failed: '+(error.message||JSON.stringify(error)),'err');return;}
     if(!data||data.length===0){toast('No rows deleted — check RLS policy','err');return;}
@@ -424,9 +424,9 @@ async function delAnn(id){
 }
 function renderAdminAnns(){
   const c=document.getElementById('adminAnnList');
-  if(!allAnns.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-sub">No announcements yet</div></div>`;return;}
+  if(!allAnns.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div><div class="empty-sub">No announcements yet</div></div>`;return;}
   c.innerHTML=allAnns.map(a=>`<div class="card" style="margin-bottom:12px">
-    <div class="card-header"><div class="card-title" style="font-size:11px">${escHtml(a.title)}</div><button class="act-btn danger" onclick="delAnn('${a.id}')">✕ Delete</button></div>
+    <div class="card-header"><div class="card-title" style="font-size:11px">${escHtml(a.title)}</div><button class="act-btn danger" onclick="delAnn('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Delete</button></div>
     <div class="card-body"><p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.65">${escHtml(a.message)}</p><p style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:10px">${fmtDate(a.created_at)} · ${timeAgo(a.created_at)}</p></div>
   </div>`).join('');
 }
