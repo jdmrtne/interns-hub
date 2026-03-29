@@ -133,7 +133,19 @@
 }
 @media(max-width:600px){.modal-stats{grid-template-columns:1fr 1fr;}.modal-box{max-height:95vh;}}
 
-/* ── SIDEBAR SVG ICON FIX ───────────────────────────────────────── */
+/* ── CARD PROGRESS BAR (admin view) ─────────────────────────────── */
+.card-progress{width:100%;padding-top:4px;}
+.card-progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.card-progress-label{font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.06em;}
+.card-progress-pct{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--primary);}
+.card-progress-pct.done{color:#34d399;}
+.card-progress-track{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.card-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .5s ease;}
+.card-progress-fill.done{background:linear-gradient(90deg,#34d399,#38bdf8);}
+@media(prefers-color-scheme:light){
+  .card-progress-track{background:rgba(0,0,0,.08);}
+  .card-progress-label{color:#57606a;}
+}
 .snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .snav-icon svg{width:18px;height:18px;display:block;}
 .snav-item{color:var(--text-muted);}
@@ -235,7 +247,7 @@
 </div><!-- end platform-layout -->
 
 <script>
-let currentUser, allInterns = [], isAdmin = false, currentUserProfile = null;
+let currentUser, allInterns = [], isAdmin = false, currentUserProfile = null, logTotals = {};
 
 async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }
 
@@ -269,7 +281,7 @@ function calcLogHours(l){
 }
 function fmtDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
 
-// ── Render intern cards (all clickable) ────────────────────────────────────
+// ── Render intern cards ────────────────────────────────────────────────────
 function renderInterns(list){
   const grid = document.getElementById('internGrid');
   if(!list.length){
@@ -279,13 +291,30 @@ function renderInterns(list){
   grid.innerHTML = list.map((intern, idx) => {
     const col = avatarColor(intern.name);
     const isSelf = intern.id === currentUser?.id;
-    // Avatar: photo or initials
     const avatarHtml = intern.avatar_url
       ? `<img src="${escHtml(intern.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
       : avatarInitials(intern.name);
     const avatarStyle = intern.avatar_url
       ? `background:transparent`
       : `background:${col}20;color:${col}`;
+
+    // Progress bar — only shown to admins when internship_hours is set
+    let progressHtml = '';
+    if (isAdmin && intern.internship_hours && intern.internship_hours > 0) {
+      const logged = logTotals[intern.id] || 0;
+      const pct = Math.min(100, Math.round((logged / intern.internship_hours) * 100));
+      const done = logged >= intern.internship_hours;
+      progressHtml = `
+        <div class="card-progress">
+          <div class="card-progress-top">
+            <span class="card-progress-label">${logged.toFixed(1)}h / ${intern.internship_hours}h</span>
+            <span class="card-progress-pct ${done?'done':''}">${pct}%</span>
+          </div>
+          <div class="card-progress-track">
+            <div class="card-progress-fill ${done?'done':''}" style="width:${pct}%"></div>
+          </div>
+        </div>`;
+    }
 
     return `<div class="intern-card" style="animation-delay:${idx*40}ms"
         onclick="openInternProfile('${intern.id}')">
@@ -294,6 +323,7 @@ function renderInterns(list){
       <div class="intern-dept">${escHtml(intern.department||'No Department')}</div>
       <span class="badge ${intern.role==='admin'?'badge-admin':'badge-intern'}">${intern.role||'intern'}</span>
       ${isSelf ? '<span style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em">YOU</span>' : ''}
+      ${progressHtml}
     </div>`;
   }).join('');
 }
@@ -419,9 +449,17 @@ async function boot(){
   // ── Enable sidebar profile click (from profile.js) ──
   enableSidebarProfileClick(sb, currentUser.id, p);
 
-  // ── Load all interns ──
+  // ── Load all interns (+ log totals if admin) ──
   const {data} = await sb.from('users').select('*').order('name');
   allInterns = data || [];
+
+  if (isAdmin) {
+    const {data: logRows} = await sb.from('time_logs').select('user_id, total_hours');
+    logTotals = {};
+    (logRows || []).forEach(l => {
+      logTotals[l.user_id] = (logTotals[l.user_id] || 0) + (parseFloat(l.total_hours) || 0);
+    });
+  }
 
   const depts = [...new Set(allInterns.map(i=>i.department).filter(Boolean))].sort();
   const sel = document.getElementById('deptFilter');
