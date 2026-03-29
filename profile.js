@@ -127,10 +127,19 @@ function _injectProfileModalHTML() {
           <label class="hub-field-label">Department</label>
           <input class="hub-field-input" id="hubDeptInput" placeholder="e.g. Engineering, Marketing…" maxlength="80">
         </div>
+        <div>
+          <label class="hub-field-label">Required Internship Hours</label>
+          <input class="hub-field-input" id="hubInternHoursInput" type="number" min="1" max="9999" step="1"
+            placeholder="e.g. 300" style="appearance:textfield;-moz-appearance:textfield"
+            oninput="hubUpdateProgPreview()">
+          <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-dim,#484f58);margin-top:5px">
+            Enter your total required hours for this internship
+          </div>
+        </div>
       </div>
-      <!-- Internship Progress (shown only if internship_hours is set) -->
-      <div id="hubInternProgressSection" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--border-bright,#30363d)">
-        <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);margin-bottom:10px">Internship Progress</div>
+      <!-- Internship Progress — shown once hours > 0 -->
+      <div id="hubInternProgressSection" style="display:none;margin-top:4px;padding-top:16px;border-top:1px solid var(--border-bright,#30363d)">
+        <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);margin-bottom:10px">Your Progress</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <span id="hubProgHours" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;color:var(--text-muted,#7d8590)">0h / 0h</span>
           <span id="hubProgPct" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;font-weight:600;color:var(--primary,#38bdf8)">0%</span>
@@ -166,20 +175,24 @@ function hubOpenProfileModal(sbClient, userId, profile) {
 
   document.getElementById('hubNameInput').value = profile?.name || '';
   document.getElementById('hubDeptInput').value = profile?.department || '';
+  document.getElementById('hubInternHoursInput').value = profile?.internship_hours || '';
   document.getElementById('hubPModalMsg').style.display = 'none';
 
   _hubRefreshAvatarPreview(profile?.avatar_url, profile?.name || '');
 
-  // ── Internship progress ──
-  const progSection = document.getElementById('hubInternProgressSection');
-  if (profile?.internship_hours && profile.internship_hours > 0) {
-    progSection.style.display = '';
-    _hubLoadInternProgress(sbClient, userId, profile.internship_hours);
-  } else {
-    progSection.style.display = 'none';
-  }
+  // Always try to load progress (section appears only if hours > 0)
+  _hubLoadInternProgress(sbClient, userId, profile?.internship_hours || 0);
 
   document.getElementById('hubProfileModal').classList.add('open');
+}
+
+// Called live when the user types into the hours input
+function hubUpdateProgPreview() {
+  const newHours = parseFloat(document.getElementById('hubInternHoursInput').value) || 0;
+  // Re-render progress with the new total without re-fetching logs
+  if (_hub._loggedHrs !== undefined) {
+    _hubRenderProgress(_hub._loggedHrs, newHours);
+  }
 }
 
 async function _hubLoadInternProgress(sbClient, userId, totalHours) {
@@ -192,6 +205,14 @@ async function _hubLoadInternProgress(sbClient, userId, totalHours) {
     if (ai && ao && ao > ai) logged += (ao - ai) / 60;
     if (pi && po && po > pi) logged += (po - pi) / 60;
   });
+  _hub._loggedHrs = logged; // cache so live preview can reuse
+  _hubRenderProgress(logged, totalHours);
+}
+
+function _hubRenderProgress(logged, totalHours) {
+  const section = document.getElementById('hubInternProgressSection');
+  if (!totalHours || totalHours <= 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
   const pct = Math.min(100, (logged / totalHours) * 100);
   const remaining = Math.max(0, totalHours - logged);
   const complete = logged >= totalHours;
@@ -279,12 +300,14 @@ function _hubShowMsg(msg, color) {
 async function hubSaveProfile() {
   const name = document.getElementById('hubNameInput').value.trim();
   const dept = document.getElementById('hubDeptInput').value.trim();
+  const hoursRaw = document.getElementById('hubInternHoursInput').value.trim();
+  const internshipHours = hoursRaw === '' || Number(hoursRaw) <= 0 ? null : Number(hoursRaw);
   if (!name) { _hubShowMsg('Name cannot be empty', '#f85149'); return; }
 
   const btn = document.getElementById('hubSaveProfileBtn');
   btn.textContent = 'Saving…'; btn.disabled = true;
 
-  const updates = { name, department: dept };
+  const updates = { name, department: dept, internship_hours: internshipHours };
   if (_hub.newAvatar)    updates.avatar_url = _hub.newAvatar;
   if (_hub.removeAvatar) updates.avatar_url = null;
 
@@ -307,6 +330,7 @@ async function hubSaveProfile() {
   if (_hub.profile) {
     _hub.profile.name = name;
     _hub.profile.department = dept;
+    _hub.profile.internship_hours = internshipHours;
     if (updates.avatar_url !== undefined) _hub.profile.avatar_url = updates.avatar_url;
   }
 
