@@ -1,97 +1,17 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
 <meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme:light)">
 <link rel="manifest" href="./manifest.json"><link rel="icon" href="./favicon.ico"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
-
 <title>Announcements — The Interns Hub</title>
 <style>
-:root{--bg-SKIP;--surface-SKIP;--panel-SKIP;--border-SKIP;--border-bright-SKIP;--primary:var(--primary);--primary-glow:rgba(56,189,248,.15);--green:var(--green);--red:var(--red);--red-dim:#da3633;--blue:var(--blue);--purple:var(--purple);--text:var(--text);--text-muted:var(--text-muted);--text-dim:var(--text-dim);--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
+:root{--primary-glow:rgba(56,189,248,.15);--red-dim:#da3633;--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .btn-primary:hover{background:#7dd3fc;transform:translateY(-1px);}
-
 .btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
-
-.btn-danger:hover{background:rgba(248,81,73,.1);}
-
-
-
-
-
-
-.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);}
-
-
-
-
-
-
-
-
-.card-title::before{content:"";display:block;width:3px;height:13px;background:var(--primary);border-radius:2px;}
-
-
-
-.tbl-scroll::-webkit-scrollbar{width:5px;height:5px;}
-.tbl-scroll::-webkit-scrollbar-thumb{background:var(--glass-border-b);border-radius:3px;}
-
-
-
-
-tr:last-child 
-tr:hover 
-
-
-
-
-
-
-
-
-
-to{transform:translateX(0);opacity:1}}
-to{opacity:0;transform:translateX(110%)}}
-
-
-
-}
-
-
-
-
-
-
-
-
-
 @media(max-width:768px){.sidebar-nav.open{transform:translateX(0);}.sidebar-overlay.show{display:block;}}
-
 .ann-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;}
 @media(max-width:960px){.ann-layout{grid-template-columns:1fr;}}
 .ann-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:24px;margin-bottom:16px;animation:fadeUp .3s ease both;}
@@ -102,28 +22,27 @@ to{opacity:0;transform:translateX(110%)}}
 .ann-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-family:var(--font-mono);font-weight:700;}
 .btn-del{background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:4px;border-radius:4px;transition:color .15s;margin-left:auto;}
 .btn-del:hover{color:var(--red);}
-
-/* ── BOTTOM NAV (mobile) ───────────────────── */
-
-
-/* ── SIDEBAR SVG ICON FIX ───────────────────── */
-.snav-icon { width: 22px; height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.snav-icon svg { width: 18px; height: 18px; display: block; }
-.snav-item { color: var(--text-muted); }
-.snav-item svg { stroke: var(--blue); }
-.snav-item.active svg { stroke: #93c5fd; }
-.snav-item:hover svg { stroke: #7dd3fc; }
-</style><link rel="stylesheet" href="./style.css">
+.snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.snav-icon svg{width:18px;height:18px;display:block;}
+.snav-item{color:var(--text-muted);}
+.snav-item svg{stroke:var(--blue);}
+.snav-item.active svg{stroke:#93c5fd;}
+.snav-item:hover svg{stroke:#7dd3fc;}
+</style>
+<link rel="stylesheet" href="./style.css">
 </head><body>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
+<script src="./profile.js"></script>
 <script src="./notifications.js"></script>
 <script src="./push.js"></script>
+
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading…</div></div>
 <div class="toasts" id="toasts"></div>
 <header class="mob-header" id="mobHeader"><span class="mob-page-title">Board</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
@@ -134,7 +53,6 @@ to{opacity:0;transform:translateX(110%)}}
     </div>
     <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
   </div>
-  <!-- collapse-btn clone: only visible when sidebar is collapsed, sits at top of icon rail -->
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
   <div class="snav-footer">
@@ -142,50 +60,51 @@ to{opacity:0;transform:translateX(110%)}}
     <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
   </div>
 </nav>
-  <main class="main-content">
-    <div class="page-header"><div><div class="page-title">ANNOUNCEMENTS</div><div class="page-subtitle">Platform-wide updates</div></div></div>
-    <div class="page-body">
-      <div class="ann-layout">
-        <div id="annList"><div style="padding:40px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Loading announcements…</div></div>
-        <div>
-          <div class="card" id="postCard" style="display:none;margin-bottom:16px;">
-            <div class="card-header"><div class="card-title">Post Announcement</div></div>
-            <div class="card-body">
-              <div class="field"><label>Title</label><input type="text" id="annTitle" placeholder="Announcement title…"></div>
-              <div class="field"><label>Message</label><textarea id="annBody" rows="5" placeholder="Write your announcement…"></textarea></div>
-              <button class="btn btn-primary" style="width:100%" onclick="postAnn()" id="postBtn"> Post</button>
-            </div>
+
+<main class="main-content">
+  <div class="page-header"><div><div class="page-title">ANNOUNCEMENTS</div><div class="page-subtitle">Platform-wide updates</div></div></div>
+  <div class="page-body">
+    <div class="ann-layout">
+      <div id="annList"><div style="padding:40px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">Loading announcements…</div></div>
+      <div>
+        <div class="card" id="postCard" style="display:none;margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Post Announcement</div></div>
+          <div class="card-body">
+            <div class="field"><label>Title</label><input type="text" id="annTitle" placeholder="Announcement title…"></div>
+            <div class="field"><label>Message</label><textarea id="annBody" rows="5" placeholder="Write your announcement…"></textarea></div>
+            <button class="btn btn-primary" style="width:100%" onclick="postAnn()" id="postBtn">📣 Post</button>
           </div>
-          <div class="card"><div class="card-header"><div class="card-title">About Board</div></div><div class="card-body"><p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.6">The Announcement Board is where admins share important updates, reminders, and news with all interns.</p></div></div>
         </div>
+        <div class="card"><div class="card-header"><div class="card-title">About Board</div></div><div class="card-body"><p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.6">The Announcement Board is where admins share important updates, reminders, and news with all interns.</p></div></div>
       </div>
     </div>
-  </main>
-
-
+  </div>
+</main>
 </div>
+
 <script>
 let currentUser;
-
-function toast(msg,type='inf'){let c=document.getElementById('toasts');if(!c){c=document.createElement('div');c.id='toasts';c.className='toasts';document.body.appendChild(c);}const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
-// ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
-function setupUser(p,active){const isAdmin=p?.role==='admin';document.getElementById('navLinks').innerHTML=renderNav(active,isAdmin);const name=p?.name||currentUser.email?.split('@')[0]||'Intern';document.getElementById('navUserName').textContent=name;document.getElementById('navUserRole').textContent=p?.role||'intern';const av=document.getElementById('navAvatar');const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);}
+
 let userProfile=null;
+
 async function loadAnns(){
-  const{data, error}=await sb.from('announcements').select('*').order('created_at',{ascending:false});
-  if(error){ console.error('loadAnns error:', error); }
+  const{data,error}=await sb.from('announcements').select('*').order('created_at',{ascending:false});
+  if(error){console.error('loadAnns error:',error);}
   const c=document.getElementById('annList');const isAdmin=userProfile?.role==='admin';
   if(!data||!data.length){c.innerHTML='<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-title">No Announcements</div><div class="empty-sub">'+(isAdmin?'Post the first announcement below.':'Check back later.')+'</div></div>';return;}
-  // Load author names separately to avoid join issues
+
   const authorIds=[...new Set(data.filter(a=>a.created_by).map(a=>a.created_by))];
   let authorMap={};
   if(authorIds.length){
-    const{data:authors}=await sb.from('users').select('id,name').in('id',authorIds);
-    if(authors) authors.forEach(u=>{authorMap[u.id]=u.name;});
+    const{data:authors}=await sb.from('users').select('id,name,avatar_url').in('id',authorIds);
+    if(authors) authors.forEach(u=>{authorMap[u.id]={name:u.name,avatar:u.avatar_url||null};});
   }
+
   c.innerHTML=data.map((a,i)=>{
-    const name=authorMap[a.created_by]||'Admin';
+    const _author=authorMap[a.created_by]||{};
+    const name=_author.name||'Admin';
+    const authorAvatar=_author.avatar||null;
     const col=avatarColor(name);
     return`<div class="ann-card" style="animation-delay:${i*50}ms">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;">
@@ -194,7 +113,7 @@ async function loadAnns(){
       </div>
       <div class="ann-card-body">${escHtml(a.message)}</div>
       <div class="ann-meta">
-        <div class="ann-av" style="background:${col}20;color:${col}">${avatarInitials(name)}</div>
+        <div class="ann-av" style="background:${authorAvatar?'transparent':col+'20'};color:${col};overflow:hidden">${authorAvatar?`<img src="${escHtml(authorAvatar)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(name)}</div>
         <span>${escHtml(name)}</span><span>·</span>
         <span>${fmtDate(a.created_at)}</span><span>·</span>
         <span>${timeAgo(a.created_at)}</span>
@@ -202,34 +121,22 @@ async function loadAnns(){
     </div>`;
   }).join('');
 }
+
 async function postAnn(){
   const title=document.getElementById('annTitle').value.trim(),msg=document.getElementById('annBody').value.trim();
   if(!title||!msg){toast('Fill in both fields','err');return;}
   const btn=document.getElementById('postBtn');btn.disabled=true;btn.textContent='Posting…';
-
-  // ── Verify session is still alive before posting ──────────────────
   const{data:{session}}=await sb.auth.getSession();
-  console.log('[Ann] session:', session);
-  if(!session){
-    toast('Session expired — signing you out…','err');
-    btn.disabled=false;btn.textContent=' Post';
-    setTimeout(()=>window.location.href='index.html',1500);
-    return;
-  }
-  // Keep currentUser in sync
+  if(!session){toast('Session expired — signing you out…','err');btn.disabled=false;btn.textContent='📣 Post';setTimeout(()=>window.location.href='index.html',1500);return;}
   currentUser=session.user;
-
   const{error}=await sb.from('announcements').insert({title,message:msg,created_by:currentUser.id});
-  btn.disabled=false;btn.textContent=' Post';
-  if(error){
-    console.error('[Ann] Full error:', JSON.stringify(error));
-    toast('Failed: '+error.message,'err');
-    return;
-  }
+  btn.disabled=false;btn.textContent='📣 Post';
+  if(error){toast('Failed: '+error.message,'err');return;}
   document.getElementById('annTitle').value='';document.getElementById('annBody').value='';
   toast('Announcement posted!','ok');
   setTimeout(()=>location.reload(),700);
 }
+
 async function delAnn(id){
   if(!confirm('Delete this announcement?'))return;
   const{error}=await sb.from('announcements').delete().eq('id',id);
@@ -237,25 +144,42 @@ async function delAnn(id){
   toast('Deleted','ok');
   setTimeout(()=>location.reload(),700);
 }
+
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
   const{data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='index.html';return;}
   currentUser=session.user;
+
   const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
-  userProfile=p;setupUser(p,'announcements');
-  if(p?.role==='admin')document.getElementById('postCard').style.display='block';
+  userProfile=p;
+  const isAdmin=p?.role==='admin';
+  document.getElementById('navLinks').innerHTML=renderNav('announcements',isAdmin);
+  const name=p?.name||currentUser.email?.split('@')[0]||'Intern';
+  document.getElementById('navUserName').textContent=name;
+  document.getElementById('navUserRole').textContent=p?.role||'intern';
+
+  const av=document.getElementById('navAvatar');
+  if(p?.avatar_url){
+    av.innerHTML=`<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);
+  }
+
+  if(isAdmin) document.getElementById('postCard').style.display='block';
+
+  // ── Enable sidebar profile click ──
+  enableSidebarProfileClick(sb, currentUser.id, p);
+
   await loadAnns();
   document.getElementById('loadingOverlay').classList.add('hidden');
-
-  // ── Announcement modal on login ──────────────────────
   await HubAnnouncements.checkOnLogin(sb, currentUser.id);
-
-  // ── Poll for new messages every 10s ─────────────────
   HubMsgPoller.start(sb, currentUser.id);
 }
 boot();
-</script>
 
+// Re-render content if current user updates their own profile
+window.onHubProfileSaved = function(prof) { loadAnns(); };
+</script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
 </body></html>

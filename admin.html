@@ -13,90 +13,45 @@
 <link rel="stylesheet" href="./style.css">
 <title>Admin — The Interns Hub</title>
 <style>
-/* ── Admin-page extras ───────────────────────────────── */
-.pw-wrap { position: relative; }
-.pw-wrap input { padding-right: 44px; }
-.pw-toggle {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; color: var(--text-dim); cursor: pointer;
-  font-size: 15px; padding: 4px; transition: color .15s;
-}
-.pw-toggle:hover { color: var(--primary); }
-
-.pw-info {
-  display: flex; align-items: flex-start; gap: 8px;
-  background: var(--primary-g); border: 1px solid rgba(56,189,248,.2);
-  border-radius: 9px; padding: 12px 14px; margin-bottom: 16px;
-  font-family: var(--font-mono); font-size: 10px; line-height: 1.6; color: var(--text-muted);
-}
-.pw-info svg { flex-shrink: 0; margin-top: 1px; }
-
-.action-legend {
-  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
-  font-family: var(--font-mono); font-size: 9px; color: var(--text-dim);
-}
-.action-legend span { display: flex; align-items: center; gap: 5px; }
-.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
-
-/* ── Mobile admin optimisations ──────────────────────── */
-@media (max-width: 768px) {
-  /* Stat grid: 2 cols on phone */
-  .stat-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
-  .stat-value { font-size: 24px; }
-
-  /* Tabs: scroll row instead of squishing */
-  .admin-tabs {
-    overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; gap: 4px; padding: 4px;
-  }
-  .admin-tabs::-webkit-scrollbar { display: none; }
-  .admin-tab { flex: 0 0 auto; white-space: nowrap; font-size: 10px; padding: 8px 14px; }
-
-  /* Users tab: card layout instead of table */
-  #internTable thead { display: none; }
-  #internTable, #internTable tbody, #internTable tr, #internTable td { display: block; width: 100%; }
-  #internTable tr {
-    background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 10px; margin-bottom: 10px; padding: 14px 14px 10px;
-    position: relative;
-  }
-  #internTable tr:hover td { background: none; }
-  #internTable td { border: none; padding: 3px 0; font-size: 12px; white-space: normal; }
-  #internTable td:first-child { padding-bottom: 8px; border-bottom: 1px solid var(--glass-border); margin-bottom: 6px; }
-  #internTable td:nth-child(2)::before { content: "Email: "; color: var(--text-dim); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
-  #internTable td:nth-child(3)::before { content: "Dept: ";  color: var(--text-dim); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
-  #internTable td:nth-child(4) { display: inline-block; }
-  #internTable td:nth-child(5) { color: var(--text-dim); font-size: 10px; }
-  #internTable td:nth-child(6) { padding-top: 10px; border-top: 1px solid var(--glass-border); margin-top: 4px; }
-  /* Action buttons: wrap nicely */
-  #internTable .act-btn { margin: 2px 2px 2px 0; padding: 5px 10px; font-size: 9px; }
-
-  /* Time logs table: scroll horizontally */
-  #tab-timelogs .tbl-wrap { overflow-x: auto; }
-  #tab-timelogs table { min-width: 560px; }
-
-  /* Filter rows: stack on very small screens */
-  .filter-row { flex-direction: column; align-items: stretch; gap: 8px; }
-  .filter-row .fi, .filter-row input, .filter-row button { width: 100%; }
-
-  /* Announcements tab: single column */
-  #tab-announcements > div { display: flex; flex-direction: column-reverse; gap: 16px; }
-
-  /* Action legend: wrap */
-  .action-legend { gap: 8px; }
-
-  /* Hide "Joined" column label on time logs too */
-  #tab-timelogs table { font-size: 11px; }
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:15px;padding:4px;transition:color .15s;}
+.pw-toggle:hover{color:var(--primary);}
+.pw-info{display:flex;align-items:flex-start;gap:8px;background:var(--primary-g);border:1px solid rgba(56,189,248,.2);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-family:var(--font-mono);font-size:10px;line-height:1.6;color:var(--text-muted);}
+.pw-info svg{flex-shrink:0;margin-top:1px;}
+.action-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-family:var(--font-mono);font-size:9px;color:var(--text-dim);}
+.action-legend span{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:7px;height:7px;border-radius:50%;}
+@media(max-width:768px){
+  .stat-grid{grid-template-columns:1fr 1fr !important;gap:10px;}
+  .stat-value{font-size:24px;}
+  .admin-tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:4px;padding:4px;}
+  .admin-tabs::-webkit-scrollbar{display:none;}
+  .admin-tab{flex:0 0 auto;white-space:nowrap;font-size:10px;padding:8px 14px;}
+  #internTable thead{display:none;}
+  #internTable,#internTable tbody,#internTable tr,#internTable td{display:block;width:100%;}
+  #internTable tr{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;margin-bottom:10px;padding:14px 14px 10px;position:relative;}
+  #internTable tr:hover td{background:none;}
+  #internTable td{border:none;padding:3px 0;font-size:12px;white-space:normal;}
+  #internTable td:first-child{padding-bottom:8px;border-bottom:1px solid var(--glass-border);margin-bottom:6px;}
+  #internTable td:nth-child(2)::before{content:"Email: ";color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+  #internTable td:nth-child(3)::before{content:"Dept: ";color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+  #internTable td:nth-child(4){display:inline-block;}
+  #internTable td:nth-child(5){color:var(--text-dim);font-size:10px;}
+  #internTable td:nth-child(6){padding-top:10px;border-top:1px solid var(--glass-border);margin-top:4px;}
+  #internTable .act-btn{margin:2px 2px 2px 0;padding:5px 10px;font-size:9px;}
+  #tab-timelogs .tbl-wrap{overflow-x:auto;}
+  #tab-timelogs table{min-width:560px;}
+  .filter-row{flex-direction:column;align-items:stretch;gap:8px;}
+  .filter-row .fi,.filter-row input,.filter-row button{width:100%;}
+  #tab-announcements>div{display:flex;flex-direction:column-reverse;gap:16px;}
+  .action-legend{gap:8px;}
+  #tab-timelogs table{font-size:11px;}
 }
 </style>
 </head>
 <body>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">Loading Admin Panel…</div>
-</div>
-
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading Admin Panel…</div></div>
 <div class="toasts" id="toasts"></div>
 
 <!-- Confirm Dialog -->
@@ -143,13 +98,11 @@
 </div>
 
 <div class="platform-layout">
-  <!-- Mobile Header -->
-  <header class="mob-header" id="mobHeader"><span class="mob-page-title">Admin</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+<header class="mob-header" id="mobHeader"><span class="mob-page-title">Admin</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
 
-  <!-- Sidebar -->
-  <nav class="sidebar-nav" id="sidebarNav">
-    <div class="snav-brand">
+<nav class="sidebar-nav" id="sidebarNav">
+  <div class="snav-brand">
     <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
     <div style="flex:1;min-width:0">
       <div class="snav-brand-name">The Interns Hub</div>
@@ -159,481 +112,290 @@
   </div>
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
-    <div class="snav-footer">
-      <div class="snav-user">
-        <div class="snav-user-avatar" id="navAvatar"></div>
-        <div style="overflow:hidden;min-width:0">
-          <div class="snav-user-name" id="navUserName">Loading…</div>
-          <div class="snav-user-role" id="navUserRole">admin</div>
-        </div>
+  <div class="snav-footer">
+    <div class="snav-user">
+      <div class="snav-user-avatar" id="navAvatar"></div>
+      <div style="overflow:hidden;min-width:0">
+        <div class="snav-user-name" id="navUserName">Loading…</div>
+        <div class="snav-user-role" id="navUserRole">admin</div>
       </div>
-      <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
     </div>
-  </nav>
+    <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+  </div>
+</nav>
 
-  <main class="main-content">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Admin Panel</div>
-        <div class="page-subtitle">Platform management &amp; user control</div>
-      </div>
-      <span class="badge badge-admin" style="font-size:11px;padding:6px 14px">⚙ ADMIN</span>
+<main class="main-content">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Admin Panel</div>
+      <div class="page-subtitle">Platform management &amp; user control</div>
     </div>
-
-    <div class="page-body">
-      <div class="stat-grid" id="statsRow"></div>
-
-      <div class="admin-tabs">
-        <button class="admin-tab active" onclick="switchTab('interns',this)">👥 Users</button>
-        <button class="admin-tab" onclick="switchTab('timelogs',this)">⏱ Time Logs</button>
-        <button class="admin-tab" onclick="switchTab('announcements',this)">📣 Announcements</button>
+    <span class="badge badge-admin" style="font-size:11px;padding:6px 14px">⚙ ADMIN</span>
+  </div>
+  <div class="page-body">
+    <div class="stat-grid" id="statsRow"></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('interns',this)">👥 Users</button>
+      <button class="admin-tab" onclick="switchTab('timelogs',this)">⏱ Time Logs</button>
+      <button class="admin-tab" onclick="switchTab('announcements',this)">📣 Announcements</button>
+    </div>
+    <!-- USERS TAB -->
+    <div class="tab-panel active" id="tab-interns">
+      <div class="filter-row">
+        <input class="fi" id="internSearch" placeholder="Search by name or email…" oninput="filterInternTable()" style="flex:1;min-width:180px">
+        <input class="fi" id="internRoleFilter" placeholder="Filter by role…" oninput="filterInternTable()" style="min-width:140px">
       </div>
-
-      <!-- USERS TAB -->
-      <div class="tab-panel active" id="tab-interns">
-        <div class="filter-row">
-          <input class="fi" id="internSearch" placeholder="Search by name or email…" oninput="filterInternTable()" style="flex:1;min-width:180px">
-          <input class="fi" id="internRoleFilter" placeholder="Filter by role…" oninput="filterInternTable()" style="min-width:140px">
-        </div>
-        <div class="action-legend">
-          <span><span class="legend-dot" style="background:var(--purple)"></span>Promote / Demote</span>
-          <span><span class="legend-dot" style="background:var(--primary)"></span>Change Password</span>
-          <span><span class="legend-dot" style="background:var(--amber)"></span>Disable Account</span>
-          <span><span class="legend-dot" style="background:var(--red)"></span>Delete Account</span>
-        </div>
-        <div class="tbl-wrap">
-          <div class="tbl-scroll">
-            <table id="internTable">
-              <thead><tr>
-                <th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Joined</th><th>Actions</th>
-              </tr></thead>
-              <tbody id="internTbody"></tbody>
-            </table>
+      <div class="action-legend">
+        <span><span class="legend-dot" style="background:var(--purple)"></span>Promote / Demote</span>
+        <span><span class="legend-dot" style="background:var(--primary)"></span>Change Password</span>
+        <span><span class="legend-dot" style="background:var(--amber)"></span>Disable Account</span>
+        <span><span class="legend-dot" style="background:var(--red)"></span>Delete Account</span>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-scroll">
+        <table id="internTable">
+          <thead><tr><th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="internTbody"></tbody>
+        </table>
+      </div></div>
+    </div>
+    <!-- TIME LOGS TAB -->
+    <div class="tab-panel" id="tab-timelogs">
+      <div class="filter-row">
+        <input class="fi" id="logSearch" placeholder="Search by name…" oninput="filterLogs()" style="flex:1">
+        <input class="fi" type="date" id="logDate" onchange="filterLogs()">
+        <input class="fi" type="month" id="logMonth" onchange="filterLogs()">
+        <button class="btn btn-ghost btn-sm" onclick="clearLogFilters()">Clear</button>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Name</th><th>Date</th><th>AM IN</th><th>AM OUT</th><th>PM IN</th><th>PM OUT</th><th>Total</th></tr></thead>
+          <tbody id="logTbody"></tbody>
+        </table>
+      </div></div>
+    </div>
+    <!-- ANNOUNCEMENTS TAB -->
+    <div class="tab-panel" id="tab-announcements">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+        <div id="adminAnnList"></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Post Announcement</div></div>
+          <div class="card-body">
+            <div class="field"><label>Title</label><input type="text" id="adminAnnTitle" placeholder="Announcement title…"></div>
+            <div class="field"><label>Message</label><textarea id="adminAnnBody" rows="5" placeholder="Write your message…"></textarea></div>
+            <button class="btn btn-primary" style="width:100%" onclick="postAnn()">📣 Post Announcement</button>
           </div>
         </div>
       </div>
-
-      <!-- TIME LOGS TAB -->
-      <div class="tab-panel" id="tab-timelogs">
-        <div class="filter-row">
-          <input class="fi" id="logSearch" placeholder="Search by name…" oninput="filterLogs()" style="flex:1">
-          <input class="fi" type="date" id="logDate" onchange="filterLogs()">
-          <input class="fi" type="month" id="logMonth" onchange="filterLogs()">
-          <button class="btn btn-ghost btn-sm" onclick="clearLogFilters()">Clear</button>
-        </div>
-        <div class="tbl-wrap">
-          <div class="tbl-scroll">
-            <table>
-              <thead><tr>
-                <th>Name</th><th>Date</th><th>AM IN</th><th>AM OUT</th><th>PM IN</th><th>PM OUT</th><th>Total</th>
-              </tr></thead>
-              <tbody id="logTbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANNOUNCEMENTS TAB -->
-      <div class="tab-panel" id="tab-announcements">
-        <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
-          <div id="adminAnnList"></div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">Post Announcement</div></div>
-            <div class="card-body">
-              <div class="field"><label>Title</label><input type="text" id="adminAnnTitle" placeholder="Announcement title…"></div>
-              <div class="field"><label>Message</label><textarea id="adminAnnBody" rows="5" placeholder="Write your message…"></textarea></div>
-              <button class="btn btn-primary" style="width:100%" onclick="postAnn()">📣 Post Announcement</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /page-body -->
-  </main>
-</div><!-- /platform-layout -->
+    </div>
+  </div>
+</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
+<script src="./profile.js"></script>
 <script src="./notifications.js"></script>
 <script src="./push.js"></script>
 <script>
-// ─── State ────────────────────────────────────────────────────────────────────
-let currentUser, allUsers = [], allLogs = [], allAnns = [], cbFn = null;
-let pwTargetUser = null;
+let currentUser, allUsers=[], allLogs=[], allAnns=[], cbFn=null, pwTargetUser=null;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function toMins(t) {
-  if (!t) return null;
-  const [h, m] = (t + ':00').split(':').map(Number);
-  return h * 60 + (m || 0);
-}
-function calcLogHours(l) {
-  if (l.total_hours) return l.total_hours;
-  let tot = 0;
-  const ai = toMins(l.am_in), ao = toMins(l.am_out);
-  const pi = toMins(l.pm_in), po = toMins(l.pm_out);
-  if (ai !== null && ao !== null && ao > ai) tot += ao - ai;
-  if (pi !== null && po !== null && po > pi) tot += po - pi;
-  return tot > 0 ? tot / 60 : null;
-}
-function fmtHours(h) {
-  if (h === null || h === undefined) return '—';
-  return Math.floor(h) + 'h ' + String(Math.round((h % 1) * 60)).padStart(2, '0') + 'm';
-}
+function toMins(t){if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);}
+function calcLogHours(l){if(l.total_hours)return l.total_hours;let tot=0;const ai=toMins(l.am_in),ao=toMins(l.am_out),pi=toMins(l.pm_in),po=toMins(l.pm_out);if(ai!==null&&ao!==null&&ao>ai)tot+=ao-ai;if(pi!==null&&po!==null&&po>pi)tot+=po-pi;return tot>0?tot/60:null;}
+function fmtHours(h){if(h===null||h===undefined)return'—';return Math.floor(h)+'h '+String(Math.round((h%1)*60)).padStart(2,'0')+'m';}
 
-// ─── Confirm dialog ───────────────────────────────────────────────────────────
-function showConfirm(title, msg, cb, okLabel = 'Confirm', isDanger = true) {
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmMsg').textContent = msg;
-  const btn = document.getElementById('confirmOkBtn');
-  btn.textContent = okLabel;
-  btn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
-  cbFn = cb;
-  document.getElementById('confirmOv').classList.add('open');
+function showConfirm(title,msg,cb,okLabel='Confirm',isDanger=true){
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  const btn=document.getElementById('confirmOkBtn');btn.textContent=okLabel;btn.className=isDanger?'btn btn-danger':'btn btn-primary';
+  cbFn=cb;document.getElementById('confirmOv').classList.add('open');
 }
-function closeConfirm() {
-  document.getElementById('confirmOv').classList.remove('open');
-  cbFn = null;
-}
-// Attach directly — script is at bottom of body so DOM is already ready
-document.getElementById('confirmOkBtn').addEventListener('click', async () => {
-  const fn = cbFn;
-  closeConfirm();
-  if (fn) {
-    try { await fn(); }
-    catch(e) { console.error('Action error:', e); toast('Error: ' + e.message, 'err'); }
-  }
-});
+function closeConfirm(){document.getElementById('confirmOv').classList.remove('open');cbFn=null;}
+document.getElementById('confirmOkBtn').addEventListener('click',async()=>{const fn=cbFn;closeConfirm();if(fn){try{await fn();}catch(e){toast('Error: '+e.message,'err');}}});
 
-// ─── Tab switching ────────────────────────────────────────────────────────────
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (name === 'announcements') renderAdminAnns();
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='announcements')renderAdminAnns();
 }
 
-// ─── User table ───────────────────────────────────────────────────────────────
-function filterInternTable() {
-  const q = document.getElementById('internSearch').value.toLowerCase();
-  const r = document.getElementById('internRoleFilter').value.toLowerCase();
-  renderInternTable(allUsers.filter(u =>
-    (!q || (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q)) &&
-    (!r || (u.role || '').toLowerCase().includes(r))
-  ));
+function filterInternTable(){
+  const q=document.getElementById('internSearch').value.toLowerCase();
+  const r=document.getElementById('internRoleFilter').value.toLowerCase();
+  renderInternTable(allUsers.filter(u=>(!q||(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q))&&(!r||(u.role||'').toLowerCase().includes(r))));
 }
 
-function handleAction(action, id) {
-  const u = allUsers.find(x => x.id === id);
-  if (!u) { toast('User not found', 'err'); return; }
-  const name = u.name || u.email || id;
-  if      (action === 'promote')  promoteUser(id, name);
-  else if (action === 'demote')   demoteUser(id, name);
-  else if (action === 'disable')  disableUser(id, name, u.role);
-  else if (action === 'enable')   enableUser(id, name);
-  else if (action === 'delete')   deleteUser(id, name);
-  else if (action === 'resetpw')  openPwModal(u);
+function handleAction(action,id){
+  const u=allUsers.find(x=>x.id===id);if(!u){toast('User not found','err');return;}
+  const name=u.name||u.email||id;
+  if(action==='promote')promoteUser(id,name);
+  else if(action==='demote')demoteUser(id,name);
+  else if(action==='disable')disableUser(id,name,u.role);
+  else if(action==='enable')enableUser(id,name);
+  else if(action==='delete')deleteUser(id,name);
+  else if(action==='resetpw')openPwModal(u);
 }
 
-function renderInternTable(list) {
-  const tb = document.getElementById('internTbody');
-  if (!list.length) {
-    tb.innerHTML = `<tr><td colspan="6" class="empty-state" style="padding:30px"><p class="empty-sub">No users found</p></td></tr>`;
-    return;
-  }
-
-  // Guard: don't show actions for self
-  tb.innerHTML = list.map(u => {
-    const col = avatarColor(u.name);
-    const isAdm = u.role === 'admin';
-    const isDis = u.role === 'disabled';
-    const isSelf = u.id === currentUser?.id;
-    const id = u.id;
-
-    const promoteBtn = (!isAdm && !isDis) ? `<button class="act-btn promote" onclick="handleAction('promote','${id}')">↑ Admin</button>` : '';
-    const demoteBtn  = (isAdm && !isSelf) ? `<button class="act-btn"         onclick="handleAction('demote','${id}')">↓ Intern</button>` : '';
-    const disableBtn = (!isDis && !isSelf) ? `<button class="act-btn warn"    onclick="handleAction('disable','${id}')">⊘ Disable</button>` : '';
-    const enableBtn  = isDis               ? `<button class="act-btn"         onclick="handleAction('enable','${id}')">✓ Enable</button>` : '';
-    const pwBtn      = !isSelf             ? `<button class="act-btn"         onclick="handleAction('resetpw','${id}')">🔑 PW</button>` : '';
-    const delBtn     = !isSelf             ? `<button class="act-btn danger"   onclick="handleAction('delete','${id}')">🗑 Delete</button>` : '';
-
-    const badge = isAdm ? 'badge-admin' : isDis ? 'badge-disabled' : 'badge-intern';
-
-    return `<tr>
+function renderInternTable(list){
+  const tb=document.getElementById('internTbody');
+  if(!list.length){tb.innerHTML=`<tr><td colspan="6" class="empty-state" style="padding:30px"><p class="empty-sub">No users found</p></td></tr>`;return;}
+  tb.innerHTML=list.map(u=>{
+    const col=avatarColor(u.name);
+    const isAdm=u.role==='admin',isDis=u.role==='disabled',isSelf=u.id===currentUser?.id,id=u.id;
+    const promoteBtn=(!isAdm&&!isDis)?`<button class="act-btn promote" onclick="handleAction('promote','${id}')">↑ Admin</button>`:'';
+    const demoteBtn=(isAdm&&!isSelf)?`<button class="act-btn" onclick="handleAction('demote','${id}')">↓ Intern</button>`:'';
+    const disableBtn=(!isDis&&!isSelf)?`<button class="act-btn warn" onclick="handleAction('disable','${id}')">⊘ Disable</button>`:'';
+    const enableBtn=isDis?`<button class="act-btn" onclick="handleAction('enable','${id}')">✓ Enable</button>`:'';
+    const pwBtn=!isSelf?`<button class="act-btn" onclick="handleAction('resetpw','${id}')">🔑 PW</button>`:'';
+    const delBtn=!isSelf?`<button class="act-btn danger" onclick="handleAction('delete','${id}')">🗑 Delete</button>`:'';
+    const badge=isAdm?'badge-admin':isDis?'badge-disabled':'badge-intern';
+    const avatarHtml=u.avatar_url?`<img src="${escHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(u.name);
+    return`<tr>
       <td><div style="display:flex;align-items:center;gap:9px">
-        <div class="avatar avatar-sm" style="background:${col}22;color:${col}">${avatarInitials(u.name)}</div>
-        <span style="color:var(--text);font-weight:500">${escHtml(u.name || '—')}</span>
-        ${isSelf ? '<span style="font-size:8px;color:var(--text-dim);margin-left:3px">(you)</span>' : ''}
+        <div class="avatar avatar-sm" style="background:${u.avatar_url?'transparent':col+'22'};color:${col};overflow:hidden">${avatarHtml}</div>
+        <span style="color:var(--text);font-weight:500">${escHtml(u.name||'—')}</span>
+        ${isSelf?'<span style="font-size:8px;color:var(--text-dim);margin-left:3px">(you)</span>':''}
       </div></td>
-      <td style="color:var(--text-muted)">${escHtml(u.email || '—')}</td>
-      <td style="color:var(--blue)">${escHtml(u.department || '—')}</td>
-      <td><span class="badge ${badge}">${u.role || 'intern'}</span></td>
+      <td style="color:var(--text-muted)">${escHtml(u.email||'—')}</td>
+      <td style="color:var(--blue)">${escHtml(u.department||'—')}</td>
+      <td><span class="badge ${badge}">${u.role||'intern'}</span></td>
       <td style="color:var(--text-dim)">${fmtDate(u.created_at)}</td>
-      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
-        ${demoteBtn}${promoteBtn}${pwBtn}${disableBtn}${enableBtn}${delBtn}
-      </div></td>
+      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">${demoteBtn}${promoteBtn}${pwBtn}${disableBtn}${enableBtn}${delBtn}</div></td>
     </tr>`;
   }).join('');
 }
 
-// ─── Promote / Demote ─────────────────────────────────────────────────────────
-// ─── Shared action helper ─────────────────────────────────────────────────────
-async function doUserUpdate(id, updates, successMsg) {
-  const { data, error } = await sb.from('users').update(updates).eq('id', id).select().single();
-  if (error) {
-    console.error('Update error:', error);
-    toast('Error: ' + (error.message || error.code || JSON.stringify(error)), 'err');
-    return false;
-  }
-  toast(successMsg, 'ok');
-  return true;
+async function doUserUpdate(id,updates,successMsg){
+  const{data,error}=await sb.from('users').update(updates).eq('id',id).select().single();
+  if(error){toast('Error: '+(error.message||error.code||JSON.stringify(error)),'err');return false;}
+  toast(successMsg,'ok');return true;
+}
+async function promoteUser(id,name){showConfirm('Promote to Admin',`Promote "${name}" to admin?`,async()=>{if(await doUserUpdate(id,{role:'admin'},`${name} promoted!`))setTimeout(()=>location.reload(),1000);},'Promote',false);}
+async function demoteUser(id,name){showConfirm('Demote to Intern',`Demote "${name}" to intern?`,async()=>{if(await doUserUpdate(id,{role:'intern'},`${name} demoted.`))setTimeout(()=>location.reload(),1000);});}
+async function disableUser(id,name){showConfirm('Disable Account',`Disable "${name}"?`,async()=>{if(await doUserUpdate(id,{role:'disabled'},`${name} disabled.`))setTimeout(()=>location.reload(),1000);});}
+async function enableUser(id,name){showConfirm('Re-enable Account',`Re-enable "${name}"?`,async()=>{if(await doUserUpdate(id,{role:'intern'},`${name} re-enabled.`))setTimeout(()=>location.reload(),1000);},'Enable',false);}
+async function deleteUser(id,name){
+  showConfirm('⚠ Delete User',`Permanently delete "${name}" and ALL data? Cannot be undone.`,async()=>{
+    const{data,error}=await sb.from('users').delete().eq('id',id).select();
+    if(error){toast('Delete failed: '+(error.message||JSON.stringify(error)),'err');return;}
+    if(!data||data.length===0){toast('No rows deleted — check RLS policy','err');return;}
+    toast(`${name} deleted.`,'ok');setTimeout(()=>location.reload(),1000);
+  });
 }
 
-async function promoteUser(id, name) {
-  showConfirm('Promote to Admin', `Promote "${name}" to admin? They will gain full platform access.`,
-    async () => {
-      if (await doUserUpdate(id, { role: 'admin' }, `${name} promoted to admin!`))
-        setTimeout(() => location.reload(), 1000);
-    }, 'Promote', false
-  );
-}
-async function demoteUser(id, name) {
-  showConfirm('Demote to Intern', `Demote "${name}" back to intern?`,
-    async () => {
-      if (await doUserUpdate(id, { role: 'intern' }, `${name} demoted to intern.`))
-        setTimeout(() => location.reload(), 1000);
-    }
-  );
-}
-
-// ─── Disable / Enable ─────────────────────────────────────────────────────────
-async function disableUser(id, name) {
-  showConfirm('Disable Account', `Disable "${name}"'s account? They will be unable to sign in until re-enabled.`,
-    async () => {
-      if (await doUserUpdate(id, { role: 'disabled' }, `${name}'s account disabled.`))
-        setTimeout(() => location.reload(), 1000);
-    }
-  );
-}
-async function enableUser(id, name) {
-  showConfirm('Re-enable Account', `Re-enable "${name}"'s account? They will be restored as intern.`,
-    async () => {
-      if (await doUserUpdate(id, { role: 'intern' }, `${name}'s account re-enabled.`))
-        setTimeout(() => location.reload(), 1000);
-    }, 'Enable', false
-  );
-}
-
-// ─── Delete ───────────────────────────────────────────────────────────────────
-async function deleteUser(id, name) {
-  showConfirm(
-    '⚠ Delete User',
-    `Permanently delete "${name}"'s account and ALL their data? This cannot be undone.`,
-    async () => {
-      const { data, error } = await sb.from('users').delete().eq('id', id).select();
-      if (error) {
-        console.error('Delete error:', error);
-        toast('Delete failed: ' + (error.message || error.code || JSON.stringify(error)), 'err');
-        return;
-      }
-      if (!data || data.length === 0) {
-        toast('No rows deleted — check RLS policy in Supabase', 'err');
-        return;
-      }
-      toast(`${name} deleted.`, 'ok');
-      setTimeout(() => location.reload(), 1000);
-    }
-  );
-}
-
-// ─── Change Password ──────────────────────────────────────────────────────────
-function openPwModal(u) {
-  pwTargetUser = u;
-  const col = avatarColor(u.name);
-  const av = document.getElementById('pwAvatar');
-  av.style.background = col + '22'; av.style.color = col;
-  av.textContent = avatarInitials(u.name);
-  document.getElementById('pwUserName').textContent = u.name || '—';
-  document.getElementById('pwUserEmail').textContent = u.email || '—';
-  document.getElementById('pwOverrideEmail').value = '';
+function openPwModal(u){
+  pwTargetUser=u;const col=avatarColor(u.name);
+  const av=document.getElementById('pwAvatar');av.style.background=col+'22';av.style.color=col;av.textContent=avatarInitials(u.name);
+  document.getElementById('pwUserName').textContent=u.name||'—';
+  document.getElementById('pwUserEmail').textContent=u.email||'—';
+  document.getElementById('pwOverrideEmail').value='';
   document.getElementById('pwModal').classList.add('open');
 }
-function closePwModal() {
-  document.getElementById('pwModal').classList.remove('open');
-  pwTargetUser = null;
+function closePwModal(){document.getElementById('pwModal').classList.remove('open');pwTargetUser=null;}
+async function sendPwReset(){
+  if(!pwTargetUser)return;
+  const override=document.getElementById('pwOverrideEmail').value.trim();
+  const email=override||pwTargetUser.email;
+  const btn=document.getElementById('pwSendBtn');btn.disabled=true;btn.textContent='Sending…';
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/index.html'});
+  btn.disabled=false;btn.textContent='Send Reset Email';
+  if(error){toast('Failed: '+error.message,'err');return;}
+  toast(`Reset email sent to ${email}`,'ok');closePwModal();
 }
-async function sendPwReset() {
-  if (!pwTargetUser) return;
-  const override = document.getElementById('pwOverrideEmail').value.trim();
-  const email = override || pwTargetUser.email;
-  const btn = document.getElementById('pwSendBtn');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/index.html'
+document.getElementById('pwModal').addEventListener('click',e=>{if(e.target===document.getElementById('pwModal'))closePwModal();});
+
+function filterLogs(){
+  const q=document.getElementById('logSearch').value.toLowerCase();
+  const dt=document.getElementById('logDate').value;
+  const mo=document.getElementById('logMonth').value;
+  renderLogs(allLogs.filter(l=>(!q||(l.users?.name||'').toLowerCase().includes(q))&&(!dt||l.date===dt)&&(!mo||l.date?.startsWith(mo))));
+}
+function clearLogFilters(){document.getElementById('logSearch').value='';document.getElementById('logDate').value='';document.getElementById('logMonth').value='';renderLogs(allLogs);}
+function renderLogs(list){
+  const tb=document.getElementById('logTbody');
+  if(!list.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No logs found</td></tr>`;return;}
+  tb.innerHTML=list.map(l=>`<tr>
+    <td style="color:var(--text)">${escHtml(l.users?.name||'—')}</td>
+    <td style="color:var(--text-muted)">${l.date||'—'}</td>
+    <td style="color:var(--blue)">${l.am_in||'—'}</td>
+    <td style="color:var(--blue)">${l.am_out||'—'}</td>
+    <td style="color:var(--primary)">${l.pm_in||'—'}</td>
+    <td style="color:var(--primary)">${l.pm_out||'—'}</td>
+    <td style="color:var(--green);font-weight:700">${fmtHours(calcLogHours(l))}</td>
+  </tr>`).join('');
+}
+
+async function postAnn(){
+  const title=document.getElementById('adminAnnTitle').value.trim(),msg=document.getElementById('adminAnnBody').value.trim();
+  if(!title||!msg){toast('Fill in both fields','err');return;}
+  const{data:inserted,error}=await sb.from('announcements').insert({title,message:msg,created_by:currentUser.id}).select().single();
+  if(error){toast('Failed: '+(error.message||JSON.stringify(error)),'err');return;}
+  if(!inserted){toast('Post blocked — check RLS policy','err');return;}
+  document.getElementById('adminAnnTitle').value='';document.getElementById('adminAnnBody').value='';
+  toast('Posted!','ok');setTimeout(()=>location.reload(),600);
+}
+async function delAnn(id){
+  showConfirm('Delete Announcement','Delete this announcement permanently?',async()=>{
+    const{error}=await sb.from('announcements').delete().eq('id',id);
+    if(error){toast('Error: '+error.message,'err');return;}
+    toast('Deleted.','ok');setTimeout(()=>location.reload(),800);
   });
-  btn.disabled = false; btn.textContent = 'Send Reset Email';
-  if (error) { toast('Failed: ' + error.message, 'err'); return; }
-  toast(`Password reset email sent to ${email}`, 'ok');
-  closePwModal();
 }
-document.getElementById('pwModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('pwModal')) closePwModal();
-});
-
-// ─── Time Logs ────────────────────────────────────────────────────────────────
-function filterLogs() {
-  const q  = document.getElementById('logSearch').value.toLowerCase();
-  const dt = document.getElementById('logDate').value;
-  const mo = document.getElementById('logMonth').value;
-  renderLogs(allLogs.filter(l =>
-    (!q  || (l.users?.name || '').toLowerCase().includes(q)) &&
-    (!dt || l.date === dt) &&
-    (!mo || l.date?.startsWith(mo))
-  ));
-}
-function clearLogFilters() {
-  document.getElementById('logSearch').value = '';
-  document.getElementById('logDate').value = '';
-  document.getElementById('logMonth').value = '';
-  renderLogs(allLogs);
-}
-function renderLogs(list) {
-  const tb = document.getElementById('logTbody');
-  if (!list.length) {
-    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No logs found</td></tr>`;
-    return;
-  }
-  tb.innerHTML = list.map(l => {
-    const h = fmtHours(calcLogHours(l));
-    return `<tr>
-      <td style="color:var(--text)">${escHtml(l.users?.name || '—')}</td>
-      <td style="color:var(--text-muted)">${l.date || '—'}</td>
-      <td style="color:var(--blue)">${l.am_in || '—'}</td>
-      <td style="color:var(--blue)">${l.am_out || '—'}</td>
-      <td style="color:var(--primary)">${l.pm_in || '—'}</td>
-      <td style="color:var(--primary)">${l.pm_out || '—'}</td>
-      <td style="color:var(--green);font-weight:700">${h}</td>
-    </tr>`;
-  }).join('');
+function renderAdminAnns(){
+  const c=document.getElementById('adminAnnList');
+  if(!allAnns.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-sub">No announcements yet</div></div>`;return;}
+  c.innerHTML=allAnns.map(a=>`<div class="card" style="margin-bottom:12px">
+    <div class="card-header"><div class="card-title" style="font-size:11px">${escHtml(a.title)}</div><button class="act-btn danger" onclick="delAnn('${a.id}')">✕ Delete</button></div>
+    <div class="card-body"><p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.65">${escHtml(a.message)}</p><p style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:10px">${fmtDate(a.created_at)} · ${timeAgo(a.created_at)}</p></div>
+  </div>`).join('');
 }
 
-// ─── Announcements ────────────────────────────────────────────────────────────
-async function postAnn() {
-  const title = document.getElementById('adminAnnTitle').value.trim();
-  const msg   = document.getElementById('adminAnnBody').value.trim();
-  if (!title || !msg) { toast('Fill in both fields', 'err'); return; }
-  const { data: inserted, error } = await sb
-    .from('announcements')
-    .insert({ title, message: msg, created_by: currentUser.id })
-    .select()
-    .single();
-  if (error) {
-    console.error('postAnn error:', JSON.stringify(error));
-    toast('Failed: ' + (error.message || error.code || JSON.stringify(error)), 'err');
-    return;
-  }
-  if (!inserted) {
-    toast('Post blocked — check RLS policy in Supabase', 'err');
-    return;
-  }
-  document.getElementById('adminAnnTitle').value = '';
-  document.getElementById('adminAnnBody').value = '';
-  toast('Posted!', 'ok');
-  setTimeout(() => location.reload(), 600);
-}
-async function delAnn(id) {
-  showConfirm('Delete Announcement', 'Delete this announcement permanently?',
-    async () => {
-      const { error } = await sb.from('announcements').delete().eq('id', id);
-      if (error) { toast('Error: ' + error.message, 'err'); return; }
-      toast('Deleted.', 'ok');
-      setTimeout(() => location.reload(), 800);
-    }
-  );
-}
-function renderAdminAnns() {
-  const c = document.getElementById('adminAnnList');
-  if (!allAnns.length) {
-    c.innerHTML = `<div class="empty-state"><div class="empty-icon">📣</div><div class="empty-sub">No announcements yet</div></div>`;
-    return;
-  }
-  c.innerHTML = allAnns.map(a => `
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-header">
-        <div class="card-title" style="font-size:11px">${escHtml(a.title)}</div>
-        <button class="act-btn danger" onclick="delAnn('${a.id}')">✕ Delete</button>
-      </div>
-      <div class="card-body">
-        <p style="font-family:var(--font-body);font-size:13px;color:var(--text-muted);line-height:1.65">${escHtml(a.message)}</p>
-        <p style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:10px">${fmtDate(a.created_at)} · ${timeAgo(a.created_at)}</p>
-      </div>
-    </div>`).join('');
-}
-
-// ─── Load data ────────────────────────────────────────────────────────────────
-async function loadUsers() {
-  const { data } = await sb.from('users').select('*').order('created_at', { ascending: false });
-  allUsers = data || [];
-  renderInternTable(allUsers);
-
-  const total  = allUsers.length;
-  const interns = allUsers.filter(u => u.role === 'intern').length;
-  const admins  = allUsers.filter(u => u.role === 'admin').length;
-  const disabled = allUsers.filter(u => u.role === 'disabled').length;
-
-  document.getElementById('statsRow').innerHTML = `
+async function loadUsers(){
+  const{data}=await sb.from('users').select('*').order('created_at',{ascending:false});
+  allUsers=data||[];renderInternTable(allUsers);
+  const total=allUsers.length,interns=allUsers.filter(u=>u.role==='intern').length,admins=allUsers.filter(u=>u.role==='admin').length,disabled=allUsers.filter(u=>u.role==='disabled').length;
+  document.getElementById('statsRow').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">${total}</div></div>
     <div class="stat-card"><div class="stat-label">Interns</div><div class="stat-value" style="color:var(--blue)">${interns}</div></div>
     <div class="stat-card"><div class="stat-label">Admins</div><div class="stat-value" style="color:var(--purple)">${admins}</div></div>
     <div class="stat-card"><div class="stat-label">Disabled</div><div class="stat-value" style="color:var(--red)">${disabled}</div></div>
-    <div class="stat-card"><div class="stat-label">Time Logs</div><div class="stat-value" style="color:var(--green)">${allLogs.length}</div></div>
-  `;
+    <div class="stat-card"><div class="stat-label">Time Logs</div><div class="stat-value" style="color:var(--green)">${allLogs.length}</div></div>`;
 }
-async function loadLogs() {
-  const { data } = await sb.from('time_logs').select('*,users(name)').order('date', { ascending: false });
-  allLogs = data || [];
-  renderLogs(allLogs);
-}
-async function loadAnns() {
-  const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false });
-  allAnns = data || [];
-  renderAdminAnns();
-}
+async function loadLogs(){const{data}=await sb.from('time_logs').select('*,users(name)').order('date',{ascending:false});allLogs=data||[];renderLogs(allLogs);}
+async function loadAnns(){const{data}=await sb.from('announcements').select('*').order('created_at',{ascending:false});allAnns=data||[];renderAdminAnns();}
 
-// ─── Auth + boot ──────────────────────────────────────────────────────────────
-async function doLogout() {
-  await sb.auth.signOut();
-  window.location.href = 'index.html';
-}
+async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 
-async function boot() {
-  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = 'index.html'; return; }
-  currentUser = session.user;
+async function boot(){
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='index.html';return;}
+  currentUser=session.user;
 
-  const { data: p } = await sb.from('users').select('*').eq('id', currentUser.id).single();
-  if (p?.role !== 'admin') {
-    toast('Admin access required', 'err');
-    setTimeout(() => window.location.href = 'dashboard.html', 1500);
-    document.getElementById('loadingOverlay').classList.add('hidden');
-    return;
+  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
+  if(p?.role!=='admin'){toast('Admin access required','err');setTimeout(()=>window.location.href='dashboard.html',1500);document.getElementById('loadingOverlay').classList.add('hidden');return;}
+
+  document.getElementById('navLinks').innerHTML=renderNav('admin',true);
+  setupSidebarUser(p.name||currentUser.email?.split('@')[0]||'Admin',p.role,true);
+
+  // Show profile photo if set
+  if(p?.avatar_url){
+    const av=document.getElementById('navAvatar');
+    av.innerHTML=`<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   }
 
-  // Render nav
-  document.getElementById('navLinks').innerHTML = renderNav('admin', true);
-  setupSidebarUser(p.name || currentUser.email?.split('@')[0] || 'Admin', p.role, true);
+  // ── Enable sidebar profile click ──
+  enableSidebarProfileClick(sb, currentUser.id, p);
 
-  await Promise.all([loadLogs(), loadAnns()]);
+  await Promise.all([loadLogs(),loadAnns()]);
   await loadUsers();
   document.getElementById('loadingOverlay').classList.add('hidden');
-
-  if (typeof HubMsgPoller !== 'undefined') HubMsgPoller.start(sb, currentUser.id);
+  if(typeof HubMsgPoller!=='undefined')HubMsgPoller.start(sb,currentUser.id);
 }
 boot();
 </script>
-<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
 </body>
 </html>

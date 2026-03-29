@@ -11,95 +11,13 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./favicon.ico">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-
 <title>Messages — The Interns Hub</title>
 <style>
-:root{--bg-SKIP;--surface-SKIP;--panel-SKIP;--border-SKIP;--border-bright-SKIP;--primary:var(--primary);--primary-glow:rgba(56,189,248,.15);--green:var(--green);--red:var(--red);--red-dim:#da3633;--blue:var(--blue);--purple:var(--purple);--text:var(--text);--text-muted:var(--text-muted);--text-dim:var(--text-dim);--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
+:root{--primary-glow:rgba(56,189,248,.15);--red-dim:#da3633;--mono:var(--font-mono);--display:var(--font-display);--body:var(--font-body);--nav-w:220px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .btn-primary:hover{background:#7dd3fc;transform:translateY(-1px);}
-
 .btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
-
-.btn-danger:hover{background:rgba(248,81,73,.1);}
-
-
-
-
-
-
-.field input::placeholder,.field textarea::placeholder{color:var(--text-dim);}
-
-
-
-
-
-
-
-
-.card-title::before{content:"";display:block;width:3px;height:13px;background:var(--primary);border-radius:2px;}
-
-
-
-.tbl-scroll::-webkit-scrollbar{width:5px;height:5px;}
-.tbl-scroll::-webkit-scrollbar-thumb{background:var(--glass-border-b);border-radius:3px;}
-
-
-
-
-tr:last-child 
-tr:hover 
-
-
-
-
-
-
-
-
-
-to{transform:translateX(0);opacity:1}}
-to{opacity:0;transform:translateX(110%)}}
-
-
-
-}
-
-
-
-
-
-
-
-
-
 @media(max-width:768px){.sidebar-nav.open{transform:translateX(0);}.sidebar-overlay.show{display:block;}}
-
-
 .inbox-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 65px);}
 .inbox-sidebar{background:var(--glass);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;overflow:hidden;}
 .inbox-search-wrap{padding:12px;border-bottom:1px solid var(--glass-border);}
@@ -122,17 +40,12 @@ to{opacity:0;transform:translateX(110%)}}
 .user-sug-name{font-family:var(--font-mono);font-size:11px;color:var(--text);}
 .user-sug-dept{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);}
 @media(max-width:768px){.inbox-layout{grid-template-columns:1fr;height:calc(100vh - 120px);}.inbox-sidebar{height:100%;}.inbox-main{display:none;}}
-
-/* ── BOTTOM NAV (mobile) ───────────────────── */
-
-
-/* ── SIDEBAR SVG ICON FIX ───────────────────── */
-.snav-icon { width: 22px; height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.snav-icon svg { width: 18px; height: 18px; display: block; }
-.snav-item { color: var(--text-muted); }
-.snav-item svg { stroke: var(--blue); }
-.snav-item.active svg { stroke: #93c5fd; }
-.snav-item:hover svg { stroke: #7dd3fc; }
+.snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.snav-icon svg{width:18px;height:18px;display:block;}
+.snav-item{color:var(--text-muted);}
+.snav-item svg{stroke:var(--blue);}
+.snav-item.active svg{stroke:#93c5fd;}
+.snav-item:hover svg{stroke:#7dd3fc;}
 </style>
 <link rel="stylesheet" href="./style.css">
 </head>
@@ -140,12 +53,15 @@ to{opacity:0;transform:translateX(110%)}}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
+<script src="./profile.js"></script>
 <script src="./notifications.js"></script>
 <script src="./push.js"></script>
+
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading Messages…</div></div>
 <div class="toasts" id="toasts"></div>
 <header class="mob-header" id="mobHeader"><span class="mob-page-title">Messages</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+
 <div class="platform-layout">
 <nav class="sidebar-nav" id="sidebarNav">
   <div class="snav-brand">
@@ -156,7 +72,6 @@ to{opacity:0;transform:translateX(110%)}}
     </div>
     <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
   </div>
-  <!-- collapse-btn clone: only visible when sidebar is collapsed, sits at top of icon rail -->
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
   <div class="snav-footer">
@@ -164,74 +79,107 @@ to{opacity:0;transform:translateX(110%)}}
     <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
   </div>
 </nav>
-  <main class="main-content">
-    <div class="page-header"><div><div class="page-title">MESSAGES</div><div class="page-subtitle">Private conversations</div></div></div>
-    <div class="inbox-layout">
-      <div class="inbox-sidebar">
-        <div class="inbox-search-wrap">
-          <input class="inbox-search" id="userSearch" placeholder="Find someone to message…" oninput="searchUsers()">
-          <div id="userSuggestions"></div>
-        </div>
-        <div class="convo-list" id="convoList"><div style="padding:20px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">Loading…</div></div>
+
+<main class="main-content">
+  <div class="page-header"><div><div class="page-title">MESSAGES</div><div class="page-subtitle">Private conversations</div></div></div>
+  <div class="inbox-layout">
+    <div class="inbox-sidebar">
+      <div class="inbox-search-wrap">
+        <input class="inbox-search" id="userSearch" placeholder="Find someone to message…" oninput="searchUsers()">
+        <div id="userSuggestions"></div>
       </div>
-      <div class="inbox-main">
-        <div class="inbox-welcome-icon"></div>
-        <div class="inbox-welcome-title">Your Messages</div>
-        <div class="inbox-welcome-sub">Select a conversation or search for someone above</div>
-      </div>
+      <div class="convo-list" id="convoList"><div style="padding:20px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">Loading…</div></div>
     </div>
-  </main>
-</div><!-- /platform-layout -->
+    <div class="inbox-main">
+      <div class="inbox-welcome-icon">💬</div>
+      <div class="inbox-welcome-title">Your Messages</div>
+      <div class="inbox-welcome-sub">Select a conversation or search for someone above</div>
+    </div>
+  </div>
+</main>
+</div>
 
 <script>
-
 let currentUser;
-function fmtDate(ts){if(!ts)return'—';return new Date(ts).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
-function toast(msg,type='inf'){let c=document.getElementById('toasts');if(!c){c=document.createElement('div');c.id='toasts';c.className='toasts';document.body.appendChild(c);}const d=document.createElement('div');d.className='toast '+type;d.textContent=msg;c.appendChild(d);setTimeout(()=>d.remove(),3100);}
-// ─── Nav Icons (Lucide SVG) ───────────────────────────────────────────────────
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
-function setupUser(p){const isAdmin=p?.role==='admin';document.getElementById('navLinks').innerHTML=renderNav('messages',isAdmin);const name=p?.name||currentUser.email?.split('@')[0]||'Intern';document.getElementById('navUserName').textContent=name;document.getElementById('navUserRole').textContent=p?.role||'intern';const av=document.getElementById('navAvatar');const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);}
 
 let allUsers=[];
+
 async function searchUsers(){
   const q=document.getElementById('userSearch').value.trim().toLowerCase();
   const c=document.getElementById('userSuggestions');
   if(!q){c.innerHTML='';return;}
   const matches=allUsers.filter(u=>u.id!==currentUser.id&&(u.name||'').toLowerCase().includes(q)).slice(0,5);
-  c.innerHTML=matches.map(u=>{const col=avatarColor(u.name);return`<a href="chat.html?uid=${u.id}" class="user-suggestion"><div class="avatar avatar-sm" style="background:${col}20;color:${col}">${avatarInitials(u.name)}</div><div><div class="user-sug-name">${escHtml(u.name)}</div><div class="user-sug-dept">${escHtml(u.department||'No dept')}</div></div></a>`;}).join('')||'<div style="padding:8px 12px;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">No results</div>';
+  c.innerHTML=matches.map(u=>{
+    const col=avatarColor(u.name);
+    const avatarHtml = u.avatar_url
+      ? `<img src="${escHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : avatarInitials(u.name);
+    return`<a href="chat.html?uid=${u.id}" class="user-suggestion">
+      <div class="avatar avatar-sm" style="background:${u.avatar_url?'transparent':col+'20'};color:${col};overflow:hidden">${avatarHtml}</div>
+      <div><div class="user-sug-name">${escHtml(u.name)}</div><div class="user-sug-dept">${escHtml(u.department||'No dept')}</div></div>
+    </a>`;
+  }).join('')||'<div style="padding:8px 12px;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">No results</div>';
 }
+
 async function loadConvos(){
-  const{data}=await sb.from('messages').select('*,sender:sender_id(id,name),receiver:receiver_id(id,name)').or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`).order('created_at',{ascending:false});
+  const{data}=await sb.from('messages').select('*,sender:sender_id(id,name,avatar_url),receiver:receiver_id(id,name,avatar_url)').or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`).order('created_at',{ascending:false});
   const cl=document.getElementById('convoList');
   if(!data||!data.length){cl.innerHTML='<div style="padding:30px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">No conversations yet.<br><br>Search above to start chatting.</div>';return;}
   const convos={};
-  for(const m of data){const pid=m.sender_id===currentUser.id?m.receiver_id:m.sender_id;const p2=m.sender_id===currentUser.id?m.receiver:m.sender;if(!convos[pid])convos[pid]={partner:p2,msg:m.message,time:m.created_at};}
-  cl.innerHTML=Object.entries(convos).map(([pid,c])=>{const name=c.partner?.name||'Unknown';const col=avatarColor(name);return`<a href="chat.html?uid=${pid}" class="convo-item"><div class="avatar avatar-sm" style="background:${col}20;color:${col}">${avatarInitials(name)}</div><div class="convo-info"><div class="convo-name">${escHtml(name)}</div><div class="convo-preview">${escHtml(c.msg)}</div></div><div class="convo-time">${timeAgo(c.time)}</div></a>`;}).join('');
+  for(const m of data){
+    const pid=m.sender_id===currentUser.id?m.receiver_id:m.sender_id;
+    const p2=m.sender_id===currentUser.id?m.receiver:m.sender;
+    if(!convos[pid])convos[pid]={partner:p2,msg:m.message,time:m.created_at,avatar:p2?.avatar_url||null};
+  }
+  cl.innerHTML=Object.entries(convos).map(([pid,c])=>{
+    const name=c.partner?.name||'Unknown';
+    const col=avatarColor(name);
+    const cavHtml=c.avatar?`<img src="${escHtml(c.avatar)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(name);
+    const cavBg=c.avatar?'transparent':col+'20';
+    return`<a href="chat.html?uid=${pid}" class="convo-item">
+      <div class="avatar avatar-sm" style="background:${cavBg};color:${col};overflow:hidden">${cavHtml}</div>
+      <div class="convo-info"><div class="convo-name">${escHtml(name)}</div><div class="convo-preview">${escHtml(c.msg)}</div></div>
+      <div class="convo-time">${timeAgo(c.time)}</div>
+    </a>`;
+  }).join('');
 }
+
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
   const{data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='index.html';return;}
   currentUser=session.user;
+
   const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
-  setupUser(p);
+  const isAdmin=p?.role==='admin';
+  document.getElementById('navLinks').innerHTML=renderNav('messages',isAdmin);
+  const name=p?.name||currentUser.email?.split('@')[0]||'Intern';
+  document.getElementById('navUserName').textContent=name;
+  document.getElementById('navUserRole').textContent=p?.role||'intern';
+
+  const av=document.getElementById('navAvatar');
+  if(p?.avatar_url){
+    av.innerHTML=`<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);
+  }
+
+  // ── Enable sidebar profile click ──
+  enableSidebarProfileClick(sb, currentUser.id, p);
+
   const{data:users}=await sb.from('users').select('*').neq('id',currentUser.id).order('name');
   allUsers=users||[];
   await loadConvos();
   document.getElementById('loadingOverlay').classList.add('hidden');
-
-  // ── Announcement modal on login ──────────────────────
   await HubAnnouncements.checkOnLogin(sb, currentUser.id);
-
-  // ── Poll for new messages every 10s ─────────────────
   HubMsgPoller.start(sb, currentUser.id);
 }
-
 boot();
-</script>
 
-<script>
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+// Re-render content if current user updates their own profile
+window.onHubProfileSaved = function(prof) { loadConvos(); };
 </script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
 </body>
 </html>

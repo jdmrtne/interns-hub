@@ -339,7 +339,7 @@ function showOSNotification(title, body, url, type) {
 }
 
 // ─── Audio ───────────────────────────────────────────────
-let _audioCtx = null, _audioBuffer = null, _audioReady = false, _audioLoadPromise = null;
+let _audioCtx = null, _audioBuffer = null, _audioEl = null, _audioReady = false, _audioLoadPromise = null;
 function _getAudioCtx() { if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return _audioCtx; }
 function _loadMp3() {
   if (_audioLoadPromise) return _audioLoadPromise;
@@ -347,18 +347,25 @@ function _loadMp3() {
     .then(r => { if (!r.ok) throw new Error(); return r.arrayBuffer(); })
     .then(buf => _getAudioCtx().decodeAudioData(buf))
     .then(decoded => { _audioBuffer = decoded; _audioReady = true; })
-    .catch(() => {});
+    .catch(() => {
+      // Fallback for file:// protocol where fetch() is blocked by CORS
+      try { _audioEl = new Audio('./notification.mp3'); _audioReady = true; } catch(e) {}
+    });
   return _audioLoadPromise;
 }
 _loadMp3();
 function _playNotifSound() {
-  if (!_audioReady || !_audioBuffer) return;
-  try {
-    const ctx = _getAudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
-    const src = ctx.createBufferSource();
-    src.buffer = _audioBuffer; src.connect(ctx.destination); src.start(0);
-  } catch(e) {}
+  if (!_audioReady) return;
+  if (_audioBuffer) {
+    try {
+      const ctx = _getAudioCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const src = ctx.createBufferSource();
+      src.buffer = _audioBuffer; src.connect(ctx.destination); src.start(0);
+    } catch(e) {}
+  } else if (_audioEl) {
+    try { _audioEl.currentTime = 0; _audioEl.play(); } catch(e) {}
+  }
 }
 ['click','touchstart','keydown'].forEach(ev =>
   document.addEventListener(ev, () => { if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume(); }, { passive: true })
@@ -366,7 +373,7 @@ function _playNotifSound() {
 
 // ─── Floating toast ──────────────────────────────────────
 window.HubNotif = {
-  showMessage(senderName, text, senderId) {
+  showMessage(senderName, text, senderId, senderAvatar) {
     if (window.location.pathname.includes('chat.html')) {
       const uid = new URLSearchParams(window.location.search).get('uid');
       if (uid === senderId) return;
@@ -378,10 +385,14 @@ window.HubNotif = {
       showOSNotification('💬 ' + senderName, text, 'messages.html?uid=' + senderId, 'message');
     }
     const col = avatarColor(senderName);
+    const avatarHtml = senderAvatar
+      ? `<img src="${senderAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : avatarInitials(senderName);
+    const avatarBg = senderAvatar ? 'transparent' : col + '22';
     const el = document.createElement('a');
     el.className = 'msg-notif'; el.href = 'messages.html?uid=' + senderId;
     el.innerHTML = `
-      <div class="msg-notif-avatar" style="background:${col}22;color:${col}">${avatarInitials(senderName)}</div>
+      <div class="msg-notif-avatar" style="background:${avatarBg};color:${col};overflow:hidden">${avatarHtml}</div>
       <div class="msg-notif-body">
         <div class="msg-notif-name">${senderName}</div>
         <div class="msg-notif-text">${text}</div>
@@ -390,7 +401,7 @@ window.HubNotif = {
     tray.appendChild(el);
     setTimeout(() => HubNotif._dismiss(el), 6000);
     // Also add to bell panel
-    HubBell._addItem({ type: 'message', senderName, text, senderId, ts: new Date().toISOString() });
+    HubBell._addItem({ type: 'message', senderName, text, senderId, senderAvatar, ts: new Date().toISOString() });
   },
   _dismiss(el) { if (!el || !el.parentNode) return; el.classList.add('out'); setTimeout(() => el.remove(), 300); }
 };
@@ -558,8 +569,12 @@ window.HubBell = {
     list.innerHTML = sorted.map(item => {
       if (item.type === 'message') {
         const col = avatarColor(item.senderName || '');
+        const bellAvatarHtml = item.senderAvatar
+          ? `<img src="${item.senderAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+          : avatarInitials(item.senderName || '');
+        const bellAvatarBg = item.senderAvatar ? 'transparent' : col + '22';
         return `<a class="hn-item${item.read ? '' : ' unread'}" href="messages.html?uid=${item.senderId}" data-id="${item.id}">
-          <div class="hn-avatar" style="background:${col}22;color:${col}">${avatarInitials(item.senderName || '')}</div>
+          <div class="hn-avatar" style="background:${bellAvatarBg};color:${col};overflow:hidden">${bellAvatarHtml}</div>
           <div class="hn-body">
             <div class="hn-sender">${item.senderName || 'Someone'}</div>
             <div class="hn-text">${item.text || ''}</div>
@@ -624,9 +639,9 @@ window.HubMsgPoller = {
         }, async (payload) => {
           const msg = payload.new;
           if (msg.created_at && msg.created_at > this._lastTs) this._lastTs = msg.created_at;
-          const { data: sender } = await sb.from('users').select('name').eq('id', msg.sender_id).single();
+          const { data: sender } = await sb.from('users').select('name,avatar_url').eq('id', msg.sender_id).single();
           const name = sender?.name || 'Someone';
-          HubNotif.showMessage(name, msg.message, msg.sender_id);
+          HubNotif.showMessage(name, msg.message, msg.sender_id, sender?.avatar_url || null);
           if (typeof loadMessages === 'function') loadMessages();
           if (typeof loadConvos  === 'function') loadConvos();
         }).subscribe();
@@ -637,17 +652,17 @@ window.HubMsgPoller = {
     if (!this._sb || !this._userId) return;
     try {
       const { data } = await this._sb
-        .from('messages').select('id,message,sender_id,created_at,sender:sender_id(name)')
+        .from('messages').select('id,message,sender_id,created_at,sender:sender_id(name,avatar_url)')
         .eq('receiver_id', this._userId).gt('created_at', this._lastTs)
         .order('created_at', { ascending: true });
       if (!data || !data.length) return;
       this._lastTs = data[data.length - 1].created_at;
       const seen = {};
       for (const m of data) {
-        if (!seen[m.sender_id]) seen[m.sender_id] = { name: m.sender?.name || 'Someone', text: m.message, id: m.sender_id };
+        if (!seen[m.sender_id]) seen[m.sender_id] = { name: m.sender?.name || 'Someone', avatar: m.sender?.avatar_url || null, text: m.message, id: m.sender_id };
         else seen[m.sender_id].text = m.message;
       }
-      for (const s of Object.values(seen)) HubNotif.showMessage(s.name, s.text, s.id);
+      for (const s of Object.values(seen)) HubNotif.showMessage(s.name, s.text, s.id, s.avatar);
       if (typeof loadMessages === 'function') loadMessages();
       if (typeof loadConvos  === 'function') loadConvos();
     } catch(e) {}

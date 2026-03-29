@@ -8,10 +8,8 @@
 <meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
 <meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme:light)">
 <link rel="manifest" href="./manifest.json"><link rel="icon" href="./favicon.ico"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
-
 <title>Interns — The Interns Hub</title>
 <style>
-/* ── CSS variable aliases (bridging style.css naming to this page's usage) ── */
 :root{
   --mono:var(--font-mono);
   --display:var(--font-display);
@@ -30,7 +28,6 @@
 .search-select{background:var(--panel);border:1px solid var(--border-bright);border-radius:6px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;cursor:pointer;min-width:160px;}
 .search-select:focus{border-color:var(--primary);}
 .search-select option{background:var(--panel);}
-
 .btn-primary:hover{background:#7dd3fc;transform:translateY(-1px);}
 
 /* ── TOAST ANIMATIONS ───────────────────────────────────────────── */
@@ -39,16 +36,41 @@
 
 /* ── INTERN GRID & CARDS ────────────────────────────────────────── */
 .intern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
-.intern-card{background:var(--panel);border:1px solid var(--border-bright);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:border-color .2s,transform .15s,box-shadow .2s;animation:fadeUp .3s ease both;box-shadow:0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);}
+.intern-card{background:var(--panel);border:1px solid var(--border-bright);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:border-color .2s,transform .15s,box-shadow .2s;animation:fadeUp .3s ease both;box-shadow:0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);cursor:pointer;}
 .intern-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.intern-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;border:2px solid transparent;transition:border-color .2s;}
+.intern-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;border:2px solid transparent;transition:border-color .2s;overflow:hidden;flex-shrink:0;}
 .intern-card:hover .intern-avatar{border-color:var(--primary);}
 .intern-name{font-family:var(--mono);font-size:14px;color:var(--text);letter-spacing:.06em;}
 .intern-dept{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-6px;}
-.intern-actions{display:flex;gap:8px;margin-top:4px;}
 .results-count{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:16px;}
 @media(max-width:768px){.sidebar-nav.open{transform:translateX(0);}.sidebar-overlay.show{display:block;}}
+
+/* ── INTERN PROFILE POPUP ───────────────────────────────────────── */
+.iprofile-ov{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
+.iprofile-ov.open{display:flex;}
+.iprofile-box{background:var(--panel,#161b22);border:1px solid var(--border-bright,#30363d);border-radius:16px;width:100%;max-width:340px;overflow:hidden;animation:ipIn .22s ease both;}
+@keyframes ipIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.iprofile-header{padding:22px 22px 0;display:flex;justify-content:flex-end;}
+.iprofile-close-btn{background:none;border:1px solid var(--border-bright,#30363d);border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);cursor:pointer;transition:all .15s;}
+.iprofile-close-btn:hover{border-color:#f85149;color:#f85149;}
+.iprofile-body{padding:18px 28px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+.iprofile-avatar{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:30px;font-weight:700;border:2px solid var(--border-bright,#30363d);overflow:hidden;flex-shrink:0;}
+.iprofile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.iprofile-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:.05em;color:var(--text,#e6edf3);}
+.iprofile-dept{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);}
+.iprofile-actions{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:4px;}
+.iprofile-you-tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim,#484f58);margin-top:4px;}
+.iprofile-records-link{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text-dim,#484f58);cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:4px;background:none;border:none;padding:0;}
+.iprofile-records-link:hover{color:var(--primary,#38bdf8);}
+
+/* ── LIGHT MODE: intern profile popup ──────────────────────────── */
+@media(prefers-color-scheme:light){
+  .iprofile-box{background:#f6f8fa;border-color:#d0d7de;}
+  .iprofile-close-btn{border-color:#d0d7de;color:#57606a;}
+  .iprofile-name{color:#24292f;}
+  .iprofile-dept{color:#57606a;}
+}
 
 /* ── TIME RECORDS MODAL ─────────────────────────────────────────── */
 .modal-ov{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;}
@@ -72,7 +94,6 @@
 .modal-empty{text-align:center;padding:48px 20px;font-family:var(--mono);font-size:11px;color:var(--text-dim);}
 .modal-loading{text-align:center;padding:40px;font-family:var(--mono);font-size:11px;color:var(--text-muted);}
 
-/* ── DARK MODE: TIME RECORDS MODAL ─────────────────────────────── */
 @media(prefers-color-scheme:dark){
   .modal-box{background:#161b22;border-color:#30363d;}
   .modal-header{border-bottom-color:#21262d;background:#161b22;}
@@ -91,8 +112,6 @@
   .modal-empty{color:#484f58;}
   .modal-loading{color:#7d8590;}
 }
-
-/* ── LIGHT MODE: TIME RECORDS MODAL ────────────────────────────── */
 @media(prefers-color-scheme:light){
   .modal-ov{background:rgba(0,0,0,.45);}
   .modal-box{background:#f6f8fa;border-color:#d0d7de;}
@@ -112,9 +131,6 @@
   .modal-empty{color:#57606a;}
   .modal-loading{color:#57606a;}
 }
-
-.intern-card.admin-view{cursor:pointer;}
-.intern-card.admin-view:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(56,189,248,.15);}
 @media(max-width:600px){.modal-stats{grid-template-columns:1fr 1fr;}.modal-box{max-height:95vh;}}
 
 /* ── SIDEBAR SVG ICON FIX ───────────────────────────────────────── */
@@ -131,123 +147,228 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
+<script src="./profile.js"></script>
 <script src="./notifications.js"></script>
 <script src="./push.js"></script>
+
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading Interns…</div></div>
 <div class="toasts" id="toasts"></div>
 <header class="mob-header" id="mobHeader"><span class="mob-page-title">Interns</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
-<div class="platform-layout">
-  <nav class="sidebar-nav" id="sidebarNav">
-    <div class="snav-brand">
-      <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
-      <div style="flex:1;min-width:0">
-        <div class="snav-brand-name">The Interns Hub</div>
-        <div class="snav-brand-sub">Intern Portal</div>
-      </div>
-      <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
-    </div>
-    <!-- collapse-btn-rail: only visible when sidebar is collapsed, sits at top of icon rail -->
-    <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
-    <div class="snav-links" id="navLinks"></div>
-    <div class="snav-footer">
-      <div class="snav-user"><div class="snav-user-avatar" id="navAvatar"></div><div style="overflow:hidden"><div class="snav-user-name" id="navUserName">Loading…</div><div class="snav-user-role" id="navUserRole">intern</div></div></div>
-      <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
-    </div>
-  </nav>
-  <main class="main-content">
-    <div class="page-header"><div><div class="page-title">INTERNS</div><div class="page-subtitle">Search your co-interns</div></div></div>
-    <div class="page-body">
-      <div class="search-bar">
-        <input class="search-input" id="searchInput" placeholder="Search by name…" oninput="filterInterns()">
-        <select class="search-select" id="deptFilter" onchange="filterInterns()"><option value="">All Departments</option></select>
-      </div>
-      <div class="results-count" id="resultsCount"></div>
-      <div class="intern-grid" id="internGrid"><div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"></div><div class="empty-sub">Loading interns…</div></div></div>
-    </div>
-  </main>
 
-  <!-- TIME RECORDS MODAL (admin only) -->
-  <div class="modal-ov" id="timeModal" onclick="handleModalBgClick(event)">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title" id="modalInternName">Intern Name</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;margin-top:4px" id="modalInternDept"></div>
-        </div>
-        <button class="modal-close" onclick="closeTimeModal()">✕ Close</button>
+<div class="platform-layout">
+<nav class="sidebar-nav" id="sidebarNav">
+  <div class="snav-brand">
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div style="flex:1;min-width:0">
+      <div class="snav-brand-name">The Interns Hub</div>
+      <div class="snav-brand-sub">Intern Portal</div>
+    </div>
+    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
+  </div>
+  <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
+  <div class="snav-links" id="navLinks"></div>
+  <div class="snav-footer">
+    <div class="snav-user">
+      <div class="snav-user-avatar" id="navAvatar"></div>
+      <div style="overflow:hidden">
+        <div class="snav-user-name" id="navUserName">Loading…</div>
+        <div class="snav-user-role" id="navUserRole">intern</div>
       </div>
-      <div class="modal-stats" id="modalStats"></div>
-      <div class="modal-body" id="modalBody">
-        <div class="modal-loading">Loading records…</div>
-      </div>
+    </div>
+    <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+  </div>
+</nav>
+
+<main class="main-content">
+  <div class="page-header">
+    <div>
+      <div class="page-title">INTERNS</div>
+      <div class="page-subtitle">Search your co-interns</div>
     </div>
   </div>
+  <div class="page-body">
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" placeholder="Search by name…" oninput="filterInterns()">
+      <select class="search-select" id="deptFilter" onchange="filterInterns()"><option value="">All Departments</option></select>
+    </div>
+    <div class="results-count" id="resultsCount"></div>
+    <div class="intern-grid" id="internGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"></div><div class="empty-sub">Loading interns…</div></div>
+    </div>
+  </div>
+</main>
 
+<!-- ── INTERN PROFILE POPUP ────────────────────────────────────── -->
+<div class="iprofile-ov" id="internProfileOv" onclick="handleIPBgClick(event)">
+  <div class="iprofile-box">
+    <div class="iprofile-header">
+      <button class="iprofile-close-btn" onclick="closeInternProfile()">✕ Close</button>
+    </div>
+    <div class="iprofile-body">
+      <div class="iprofile-avatar" id="ipAvatar"></div>
+      <div>
+        <div class="iprofile-name" id="ipName">—</div>
+        <div class="iprofile-dept" id="ipDept">—</div>
+      </div>
+      <div id="ipBadgeWrap"></div>
+      <div class="iprofile-actions" id="ipActions"></div>
+    </div>
+  </div>
 </div>
+
+<!-- ── TIME RECORDS MODAL (admin only) ────────────────────────── -->
+<div class="modal-ov" id="timeModal" onclick="handleModalBgClick(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalInternName">Intern Name</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;margin-top:4px" id="modalInternDept"></div>
+      </div>
+      <button class="modal-close" onclick="closeTimeModal()">✕ Close</button>
+    </div>
+    <div class="modal-stats" id="modalStats"></div>
+    <div class="modal-body" id="modalBody"><div class="modal-loading">Loading records…</div></div>
+  </div>
+</div>
+
+</div><!-- end platform-layout -->
+
 <script>
-let currentUser,allInterns=[];
-async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
+let currentUser, allInterns = [], isAdmin = false, currentUserProfile = null;
+
+async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }
+
+// ── Filtering ──────────────────────────────────────────────────────────────
 function filterInterns(){
-  const q=document.getElementById('searchInput').value.toLowerCase().trim(),dept=document.getElementById('deptFilter').value;
-  const filtered=allInterns.filter(i=>(!q||(i.name||'').toLowerCase().includes(q))&&(!dept||i.department===dept));
-  document.getElementById('resultsCount').textContent=filtered.length+' intern'+(filtered.length!==1?'s':'')+' found';
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const dept = document.getElementById('deptFilter').value;
+  const filtered = allInterns.filter(i =>
+    (!q || (i.name||'').toLowerCase().includes(q)) &&
+    (!dept || i.department === dept)
+  );
+  document.getElementById('resultsCount').textContent =
+    filtered.length + ' intern' + (filtered.length !== 1 ? 's' : '') + ' found';
   renderInterns(filtered);
 }
-let isAdmin=false;
 
-/* ── FIXED: fmtHours now correctly handles 0 and avoids "oh oom" ── */
-function fmtMin(m){if(m===null||m===undefined)return'—';return Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m';}
+// ── Utility ────────────────────────────────────────────────────────────────
 function fmtHours(h){
   if(h===null||h===undefined||h==='')return'—';
-  const hrs=Math.floor(h);
-  const mins=Math.round((h%1)*60);
+  const hrs=Math.floor(h), mins=Math.round((h%1)*60);
   return hrs+'h '+String(mins).padStart(2,'0')+'m';
 }
-
 function toMins(t){if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);}
-function calcLogHours(l){if(l.total_hours)return l.total_hours;let tot=0;const amIn=toMins(l.am_in),amOut=toMins(l.am_out),pmIn=toMins(l.pm_in),pmOut=toMins(l.pm_out);if(amIn!==null&&amOut!==null&&amOut>amIn)tot+=amOut-amIn;if(pmIn!==null&&pmOut!==null&&pmOut>pmIn)tot+=pmOut-pmIn;return tot>0?tot/60:null;}
+function calcLogHours(l){
+  if(l.total_hours)return l.total_hours;
+  let tot=0;
+  const amIn=toMins(l.am_in),amOut=toMins(l.am_out),pmIn=toMins(l.pm_in),pmOut=toMins(l.pm_out);
+  if(amIn!==null&&amOut!==null&&amOut>amIn)tot+=amOut-amIn;
+  if(pmIn!==null&&pmOut!==null&&pmOut>pmIn)tot+=pmOut-pmIn;
+  return tot>0?tot/60:null;
+}
 function fmtDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});}
 
+// ── Render intern cards (all clickable) ────────────────────────────────────
 function renderInterns(list){
-  const grid=document.getElementById('internGrid');
-  if(!list.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"></div><div class="empty-title">No Interns Found</div><div class="empty-sub">Try adjusting your search</div></div>';return;}
-  grid.innerHTML=list.map((i,idx)=>{
-    const col=avatarColor(i.name),isSelf=i.id===currentUser?.id;
-    const clickAttr=isAdmin&&!isSelf?`onclick="openTimeModal('${i.id}','${escHtml(i.name)}','${escHtml(i.department||'')}')"`:'';
-    const cardClass=`intern-card${isAdmin&&!isSelf?' admin-view':''}`;
-    return`<div class="${cardClass}" style="animation-delay:${idx*40}ms" ${clickAttr}>
-      <div class="intern-avatar" style="background:${col}20;color:${col}">${avatarInitials(i.name)}</div>
-      <div class="intern-name">${escHtml(i.name||'Unknown')}</div>
-      <div class="intern-dept">${escHtml(i.department||'No Department')}</div>
-      <span class="badge ${i.role==='admin'?'badge-admin':'badge-intern'}">${i.role||'intern'}</span>
-      ${!isSelf?`<div class="intern-actions"><a href="chat.html?uid=${i.id}" class="btn btn-primary btn-sm" onclick="event.stopPropagation()"> Message</a></div>`:'<span style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em">YOU</span>'}
-      ${isAdmin&&!isSelf?'<div style="font-family:var(--mono);font-size:8px;color:var(--text-dim);letter-spacing:.08em;margin-top:-4px"> View Records</div>':''}
+  const grid = document.getElementById('internGrid');
+  if(!list.length){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"></div><div class="empty-title">No Interns Found</div><div class="empty-sub">Try adjusting your search</div></div>';
+    return;
+  }
+  grid.innerHTML = list.map((intern, idx) => {
+    const col = avatarColor(intern.name);
+    const isSelf = intern.id === currentUser?.id;
+    // Avatar: photo or initials
+    const avatarHtml = intern.avatar_url
+      ? `<img src="${escHtml(intern.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : avatarInitials(intern.name);
+    const avatarStyle = intern.avatar_url
+      ? `background:transparent`
+      : `background:${col}20;color:${col}`;
+
+    return `<div class="intern-card" style="animation-delay:${idx*40}ms"
+        onclick="openInternProfile('${intern.id}')">
+      <div class="intern-avatar" style="${avatarStyle}">${avatarHtml}</div>
+      <div class="intern-name">${escHtml(intern.name||'Unknown')}</div>
+      <div class="intern-dept">${escHtml(intern.department||'No Department')}</div>
+      <span class="badge ${intern.role==='admin'?'badge-admin':'badge-intern'}">${intern.role||'intern'}</span>
+      ${isSelf ? '<span style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em">YOU</span>' : ''}
     </div>`;
   }).join('');
 }
 
-async function openTimeModal(uid,name,dept){
-  document.getElementById('modalInternName').textContent=name;
-  document.getElementById('modalInternDept').textContent=dept||'No Department';
-  document.getElementById('modalStats').innerHTML='';
-  document.getElementById('modalBody').innerHTML='<div class="modal-loading">Loading records…</div>';
+// ── Intern Profile Popup ───────────────────────────────────────────────────
+function openInternProfile(internId) {
+  const intern = allInterns.find(i => i.id === internId);
+  if (!intern) return;
+  const isSelf = intern.id === currentUser?.id;
+  const col = avatarColor(intern.name);
+
+  // Avatar
+  const avEl = document.getElementById('ipAvatar');
+  avEl.style.background = intern.avatar_url ? 'transparent' : col + '20';
+  avEl.style.color = col;
+  if (intern.avatar_url) {
+    avEl.innerHTML = `<img src="${escHtml(intern.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    avEl.innerHTML = avatarInitials(intern.name);
+  }
+
+  document.getElementById('ipName').textContent = intern.name || 'Unknown';
+  document.getElementById('ipDept').textContent = intern.department || 'No Department';
+
+  // Role badge
+  document.getElementById('ipBadgeWrap').innerHTML =
+    `<span class="badge ${intern.role==='admin'?'badge-admin':'badge-intern'}">${intern.role||'intern'}</span>`;
+
+  // Actions
+  const actionsEl = document.getElementById('ipActions');
+  if (isSelf) {
+    actionsEl.innerHTML = `
+      <div class="iprofile-you-tag">This is you</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); enableSidebarProfileClick(sb, currentUser.id, currentUserProfile);" style="font-size:11px">✏️ Edit My Profile</button>
+    `;
+  } else {
+    let html = `<a href="chat.html?uid=${intern.id}" class="btn btn-primary" style="width:100%;text-align:center" onclick="event.stopPropagation()">💬 Message</a>`;
+    if (isAdmin) {
+      html += `<button class="btn btn-ghost btn-sm iprofile-records-link" onclick="closeInternProfile(); openTimeModal('${intern.id}','${escHtml(intern.name)}','${escHtml(intern.department||'')}')">📋 View Time Records</button>`;
+    }
+    actionsEl.innerHTML = html;
+  }
+
+  document.getElementById('internProfileOv').classList.add('open');
+}
+
+function closeInternProfile(){
+  document.getElementById('internProfileOv').classList.remove('open');
+}
+function handleIPBgClick(e){
+  if(e.target === document.getElementById('internProfileOv')) closeInternProfile();
+}
+
+// ── Time Records Modal (admin) ─────────────────────────────────────────────
+async function openTimeModal(uid, name, dept){
+  document.getElementById('modalInternName').textContent = name;
+  document.getElementById('modalInternDept').textContent = dept || 'No Department';
+  document.getElementById('modalStats').innerHTML = '';
+  document.getElementById('modalBody').innerHTML = '<div class="modal-loading">Loading records…</div>';
   document.getElementById('timeModal').classList.add('open');
-  const{data:logs}=await sb.from('time_logs').select('*').eq('user_id',uid).order('date',{ascending:false});
+
+  const {data:logs} = await sb.from('time_logs').select('*').eq('user_id',uid).order('date',{ascending:false});
   if(!logs||!logs.length){
-    document.getElementById('modalBody').innerHTML='<div class="modal-empty">No time records found.</div>';
-    document.getElementById('modalStats').innerHTML='<div class="modal-stat"><div class="modal-stat-label">Days Logged</div><div class="modal-stat-value">0</div></div><div class="modal-stat"><div class="modal-stat-label">Total Hours</div><div class="modal-stat-value">—</div></div><div class="modal-stat"><div class="modal-stat-label">Avg / Day</div><div class="modal-stat-value">—</div></div>';
+    document.getElementById('modalBody').innerHTML = '<div class="modal-empty">No time records found.</div>';
+    document.getElementById('modalStats').innerHTML = '<div class="modal-stat"><div class="modal-stat-label">Days Logged</div><div class="modal-stat-value">0</div></div><div class="modal-stat"><div class="modal-stat-label">Total Hours</div><div class="modal-stat-value">—</div></div><div class="modal-stat"><div class="modal-stat-label">Avg / Day</div><div class="modal-stat-value">—</div></div>';
     return;
   }
-  const totalH=logs.reduce((s,l)=>s+(calcLogHours(l)||0),0);
-  const logsWithHours=logs.filter(l=>calcLogHours(l)!==null);
-  const avgH=logsWithHours.length?totalH/logsWithHours.length:0;
-  document.getElementById('modalStats').innerHTML=`
+  const totalH = logs.reduce((s,l)=>s+(calcLogHours(l)||0),0);
+  const logsWithHours = logs.filter(l=>calcLogHours(l)!==null);
+  const avgH = logsWithHours.length ? totalH/logsWithHours.length : 0;
+  document.getElementById('modalStats').innerHTML = `
     <div class="modal-stat"><div class="modal-stat-label">Days Logged</div><div class="modal-stat-value">${logs.length}</div></div>
     <div class="modal-stat"><div class="modal-stat-label">Total Hours</div><div class="modal-stat-value" style="font-size:18px">${fmtHours(totalH)}</div></div>
-    <div class="modal-stat"><div class="modal-stat-label">Avg / Day</div><div class="modal-stat-value" style="font-size:18px;color:var(--blue)">${fmtHours(avgH)}</div></div>
-  `;
-  document.getElementById('modalBody').innerHTML=`<table>
+    <div class="modal-stat"><div class="modal-stat-label">Avg / Day</div><div class="modal-stat-value" style="font-size:18px;color:var(--blue)">${fmtHours(avgH)}</div></div>`;
+  document.getElementById('modalBody').innerHTML = `<table>
     <thead><tr><th>Date</th><th>AM In</th><th>AM Out</th><th>PM In</th><th>PM Out</th><th>Total</th></tr></thead>
     <tbody>${logs.map(l=>`<tr>
       <td style="color:var(--text-muted)">${fmtDate(l.date)}</td>
@@ -259,36 +380,65 @@ async function openTimeModal(uid,name,dept){
     </tr>`).join('')}</tbody>
   </table>`;
 }
-function closeTimeModal(){document.getElementById('timeModal').classList.remove('open');}
-function handleModalBgClick(e){if(e.target===document.getElementById('timeModal'))closeTimeModal();}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTimeModal();});
+function closeTimeModal(){ document.getElementById('timeModal').classList.remove('open'); }
+function handleModalBgClick(e){ if(e.target===document.getElementById('timeModal')) closeTimeModal(); }
+
+// ── Keyboard shortcut ──────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape'){ closeInternProfile(); closeTimeModal(); }
+});
+
+// ── Boot ───────────────────────────────────────────────────────────────────
 async function boot(){
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
-  document.getElementById('navLinks').innerHTML=renderNav('interns',p?.role==='admin');
-  if(p?.role==='admin'){isAdmin=true;}
-  const name=p?.name||currentUser.email?.split('@')[0]||'Intern';
-  document.getElementById('navUserName').textContent=name;document.getElementById('navUserRole').textContent=p?.role||'intern';
-  const av=document.getElementById('navAvatar');const col=avatarColor(name);av.style.background=col+'20';av.style.color=col;av.textContent=avatarInitials(name);
-  const{data}=await sb.from('users').select('*').order('name');
-  allInterns=data||[];
-  const depts=[...new Set(allInterns.map(i=>i.department).filter(Boolean))].sort();
-  const sel=document.getElementById('deptFilter');
-  depts.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const {data:{session}} = await sb.auth.getSession();
+  if(!session){ window.location.href='index.html'; return; }
+  currentUser = session.user;
+
+  const {data:p} = await sb.from('users').select('*').eq('id',currentUser.id).single();
+  currentUserProfile = p;
+
+  document.getElementById('navLinks').innerHTML = renderNav('interns', p?.role==='admin');
+  if(p?.role==='admin') isAdmin = true;
+
+  const name = p?.name || currentUser.email?.split('@')[0] || 'Intern';
+  document.getElementById('navUserName').textContent = name;
+  document.getElementById('navUserRole').textContent = p?.role || 'intern';
+
+  // Nav avatar — show photo if available, else initials
+  const av = document.getElementById('navAvatar');
+  if(p?.avatar_url){
+    av.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    const col = avatarColor(name);
+    av.style.background = col + '20';
+    av.style.color = col;
+    av.textContent = avatarInitials(name);
+  }
+
+  // ── Enable sidebar profile click (from profile.js) ──
+  enableSidebarProfileClick(sb, currentUser.id, p);
+
+  // ── Load all interns ──
+  const {data} = await sb.from('users').select('*').order('name');
+  allInterns = data || [];
+
+  const depts = [...new Set(allInterns.map(i=>i.department).filter(Boolean))].sort();
+  const sel = document.getElementById('deptFilter');
+  depts.forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=d; sel.appendChild(o); });
+
   filterInterns();
   document.getElementById('loadingOverlay').classList.add('hidden');
 
-  // ── Announcement modal on login ──────────────────────
   await HubAnnouncements.checkOnLogin(sb, currentUser.id);
-
-  // ── Poll for new messages every 10s ─────────────────
   HubMsgPoller.start(sb, currentUser.id);
 }
+
 boot();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+// Re-render content if current user updates their own profile
+window.onHubProfileSaved = function(prof) { if(prof) { const u=allInterns.find(i=>i.id===currentUser?.id); if(u){u.name=prof.name;u.department=prof.department;u.avatar_url=prof.avatar_url;} filterInterns(); } };
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>

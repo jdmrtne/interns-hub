@@ -1,0 +1,312 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// profile.js — The Interns Hub
+// Shared module: profile-edit modal (sidebar click) + image compression
+// Include on every page: <script src="./profile.js"></script>
+// After boot(), call: enableSidebarProfileClick(sb, currentUser.id, profileObj)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Image compression ──────────────────────────────────────────────────────
+// Resizes to maxDim px on longest side, then JPEG-compresses until ≤ targetKB
+async function compressImage(file, maxDim = 400, targetKB = 80) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const blobUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(blobUrl);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const ratio = Math.min(maxDim / width, maxDim / height);
+        width  = Math.round(width  * ratio);
+        height = Math.round(height * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+      // Reduce quality until size is within target
+      // Base64 ≈ 1.37× raw byte size
+      const maxB64 = targetKB * 1024 * 1.37;
+      let quality = 0.85, dataUrl;
+      do {
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        quality = Math.round((quality - 0.05) * 100) / 100;
+      } while (dataUrl.length > maxB64 && quality > 0.15);
+
+      resolve(dataUrl);
+    };
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('Image load failed')); };
+    img.src = blobUrl;
+  });
+}
+
+// ── Helper: render avatar (photo or initials) in a container element ───────
+function renderAvatarInEl(el, avatarUrl, name, size = 40) {
+  if (!el) return;
+  const col = (typeof avatarColor === 'function') ? avatarColor(name) : '#38bdf8';
+  const ini = (typeof avatarInitials === 'function') ? avatarInitials(name) : (name?.[0] || '?').toUpperCase();
+  el.style.width  = size + 'px';
+  el.style.height = size + 'px';
+  el.style.borderRadius = '50%';
+  el.style.overflow = 'hidden';
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+  el.style.justifyContent = 'center';
+  if (avatarUrl) {
+    el.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    el.innerHTML = '';
+    el.style.background = col + '22';
+    el.style.color = col;
+    el.style.fontFamily = 'var(--font-mono)';
+    el.style.fontWeight = '700';
+    el.style.fontSize = Math.round(size * 0.4) + 'px';
+    el.textContent = ini;
+  }
+}
+
+// ── Inject profile-edit modal HTML (idempotent) ────────────────────────────
+function _injectProfileModalHTML() {
+  if (document.getElementById('hubProfileModal')) return;
+
+  const div = document.createElement('div');
+  div.innerHTML = `
+<style>
+#hubProfileModal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
+#hubProfileModal.open{display:flex;}
+.hub-pmodal-box{background:var(--panel,#161b22);border:1px solid var(--border-bright,#30363d);border-radius:16px;width:100%;max-width:420px;overflow:hidden;animation:hubPmIn .2s ease both;}
+@keyframes hubPmIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.hub-pmodal-hdr{padding:20px 22px 16px;border-bottom:1px solid var(--border,#21262d);display:flex;align-items:center;justify-content:space-between;}
+.hub-pmodal-title{font-family:var(--font-display,'Syne',sans-serif);font-size:20px;font-weight:800;letter-spacing:.06em;color:var(--text,#e6edf3);}
+.hub-pmodal-close{background:none;border:1px solid var(--border-bright,#30363d);border-radius:6px;padding:5px 11px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);cursor:pointer;transition:all .15s;}
+.hub-pmodal-close:hover{border-color:#f85149;color:#f85149;}
+.hub-pmodal-body{padding:22px;}
+.hub-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:22px;}
+.hub-avatar-ring{width:86px;height:86px;border-radius:50%;position:relative;cursor:pointer;flex-shrink:0;overflow:hidden;border:2px solid var(--border-bright,#30363d);transition:border-color .2s;}
+.hub-avatar-ring:hover{border-color:var(--primary,#38bdf8);}
+.hub-avatar-ring img,.hub-avatar-ring .hub-av-initials{width:100%;height:100%;object-fit:cover;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.hub-av-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.1em;color:#fff;text-transform:uppercase;}
+.hub-avatar-ring:hover .hub-av-overlay{opacity:1;}
+.hub-photo-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.hub-field-label{font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;color:var(--text-muted,#7d8590);text-transform:uppercase;display:block;margin-bottom:6px;}
+.hub-field-input{width:100%;background:var(--surface,#111418);border:1px solid var(--border-bright,#30363d);border-radius:8px;padding:10px 14px;color:var(--text,#e6edf3);font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.hub-field-input:focus{border-color:var(--primary,#38bdf8);box-shadow:0 0 0 3px rgba(56,189,248,.15);}
+.hub-pmodal-footer{padding:0 22px 20px;display:flex;gap:10px;}
+.hub-pmodal-msg{padding:0 22px 14px;font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:10px;letter-spacing:.06em;text-align:center;display:none;}
+@media(prefers-color-scheme:light){
+  .hub-pmodal-box{background:#f6f8fa;border-color:#d0d7de;}
+  .hub-pmodal-hdr{border-bottom-color:#d0d7de;}
+  .hub-pmodal-title{color:#24292f;}
+  .hub-pmodal-close{border-color:#d0d7de;color:#57606a;}
+  .hub-field-input{background:#fff;border-color:#d0d7de;color:#24292f;}
+}
+</style>
+<div id="hubProfileModal">
+  <div class="hub-pmodal-box">
+    <div class="hub-pmodal-hdr">
+      <div class="hub-pmodal-title">Edit Profile</div>
+      <button class="hub-pmodal-close" onclick="hubCloseProfileModal()">✕ Close</button>
+    </div>
+    <div class="hub-pmodal-body">
+      <div class="hub-avatar-wrap">
+        <div class="hub-avatar-ring" id="hubAvRing" onclick="document.getElementById('hubImgInput').click()" title="Click to change photo">
+          <div class="hub-av-initials" id="hubAvInitialsEl" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:28px;font-weight:700;display:flex;align-items:center;justify-content:center;width:100%;height:100%;"></div>
+          <div class="hub-av-overlay">Change</div>
+        </div>
+        <input type="file" id="hubImgInput" accept="image/*" style="display:none" onchange="hubHandleImgChange(event)">
+        <div class="hub-photo-btns">
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('hubImgInput').click()" style="font-size:10px">📷 Change Photo</button>
+          <button class="btn btn-ghost btn-sm" id="hubRemovePhotoBtn" onclick="hubRemovePhoto()" style="font-size:10px;color:#f85149;display:none">✕ Remove</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label class="hub-field-label">Display Name</label>
+          <input class="hub-field-input" id="hubNameInput" placeholder="Your full name" maxlength="60">
+        </div>
+        <div>
+          <label class="hub-field-label">Department</label>
+          <input class="hub-field-input" id="hubDeptInput" placeholder="e.g. Engineering, Marketing…" maxlength="80">
+        </div>
+      </div>
+    </div>
+    <div class="hub-pmodal-msg" id="hubPModalMsg"></div>
+    <div class="hub-pmodal-footer">
+      <button class="btn btn-primary" style="flex:1" id="hubSaveProfileBtn" onclick="hubSaveProfile()">Save Changes</button>
+      <button class="btn btn-ghost" onclick="hubCloseProfileModal()">Cancel</button>
+    </div>
+  </div>
+</div>`;
+  document.body.appendChild(div.firstElementChild); // <style>
+  document.body.appendChild(div.children[0]);       // modal div
+}
+
+// ── Internal state ─────────────────────────────────────────────────────────
+const _hub = { sb: null, uid: null, profile: null, newAvatar: null, removeAvatar: false };
+
+// ── Open profile-edit modal ────────────────────────────────────────────────
+function hubOpenProfileModal(sbClient, userId, profile) {
+  _injectProfileModalHTML();
+  _hub.sb = sbClient;
+  _hub.uid = userId;
+  _hub.profile = profile;
+  _hub.newAvatar = null;
+  _hub.removeAvatar = false;
+
+  document.getElementById('hubNameInput').value = profile?.name || '';
+  document.getElementById('hubDeptInput').value = profile?.department || '';
+  document.getElementById('hubPModalMsg').style.display = 'none';
+
+  _hubRefreshAvatarPreview(profile?.avatar_url, profile?.name || '');
+  document.getElementById('hubProfileModal').classList.add('open');
+}
+
+function _hubRefreshAvatarPreview(avatarUrl, name) {
+  const ring = document.getElementById('hubAvRing');
+  const initEl = document.getElementById('hubAvInitialsEl');
+  const removeBtn = document.getElementById('hubRemovePhotoBtn');
+  const col = (typeof avatarColor === 'function') ? avatarColor(name) : '#38bdf8';
+  const ini = (typeof avatarInitials === 'function') ? avatarInitials(name) : (name?.[0] || '?').toUpperCase();
+
+  // Remove old preview images
+  ring.querySelectorAll('img.hub-prev-img').forEach(e => e.remove());
+
+  if (avatarUrl) {
+    initEl.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = avatarUrl;
+    img.className = 'hub-prev-img';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;inset:0';
+    ring.insertBefore(img, ring.firstChild);
+    removeBtn.style.display = '';
+  } else {
+    initEl.style.display = 'flex';
+    initEl.style.background = col + '22';
+    initEl.style.color = col;
+    initEl.textContent = ini;
+    removeBtn.style.display = 'none';
+  }
+}
+
+async function hubHandleImgChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('hubSaveProfileBtn');
+  btn.textContent = 'Compressing…'; btn.disabled = true;
+
+  try {
+    const dataUrl = await compressImage(file, 400, 80);
+    _hub.newAvatar = dataUrl;
+    _hub.removeAvatar = false;
+
+    const ring = document.getElementById('hubAvRing');
+    ring.querySelectorAll('img.hub-prev-img').forEach(e => e.remove());
+    document.getElementById('hubAvInitialsEl').style.display = 'none';
+
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    img.className = 'hub-prev-img';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;inset:0';
+    ring.insertBefore(img, ring.firstChild);
+
+    document.getElementById('hubRemovePhotoBtn').style.display = '';
+    const kb = Math.round(dataUrl.length * 0.75 / 1024);
+    _hubShowMsg(`✓ Compressed to ~${kb} KB`, '#34d399');
+  } catch {
+    _hubShowMsg('Failed to process image', '#f85149');
+  }
+
+  btn.textContent = 'Save Changes'; btn.disabled = false;
+  event.target.value = '';
+}
+
+function hubRemovePhoto() {
+  _hub.removeAvatar = true;
+  _hub.newAvatar = null;
+  const name = document.getElementById('hubNameInput').value || _hub.profile?.name || '';
+  _hubRefreshAvatarPreview(null, name);
+}
+
+function _hubShowMsg(msg, color) {
+  const el = document.getElementById('hubPModalMsg');
+  el.textContent = msg;
+  el.style.color = color || 'var(--text-muted)';
+  el.style.display = 'block';
+}
+
+async function hubSaveProfile() {
+  const name = document.getElementById('hubNameInput').value.trim();
+  const dept = document.getElementById('hubDeptInput').value.trim();
+  if (!name) { _hubShowMsg('Name cannot be empty', '#f85149'); return; }
+
+  const btn = document.getElementById('hubSaveProfileBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  const updates = { name, department: dept };
+  if (_hub.newAvatar)    updates.avatar_url = _hub.newAvatar;
+  if (_hub.removeAvatar) updates.avatar_url = null;
+
+  const { error } = await _hub.sb.from('users').update(updates).eq('id', _hub.uid);
+  if (error) {
+    _hubShowMsg('Save failed: ' + error.message, '#f85149');
+    btn.textContent = 'Save Changes'; btn.disabled = false;
+    return;
+  }
+
+  // ── Update sidebar avatar live ──
+  const navAv = document.getElementById('navAvatar');
+  if (navAv) {
+    renderAvatarInEl(navAv, updates.avatar_url !== undefined ? updates.avatar_url : _hub.profile?.avatar_url, name, navAv.offsetWidth || 36);
+  }
+  const navName = document.getElementById('navUserName');
+  if (navName) navName.textContent = name;
+
+  // Update cached profile
+  if (_hub.profile) {
+    _hub.profile.name = name;
+    _hub.profile.department = dept;
+    if (updates.avatar_url !== undefined) _hub.profile.avatar_url = updates.avatar_url;
+  }
+
+  _hubShowMsg('✓ Profile saved!', '#34d399');
+  btn.textContent = 'Save Changes'; btn.disabled = false;
+
+  // Notify page if it defines a hook
+  if (typeof window.onHubProfileSaved === 'function') window.onHubProfileSaved(_hub.profile);
+
+  setTimeout(hubCloseProfileModal, 900);
+}
+
+function hubCloseProfileModal() {
+  const m = document.getElementById('hubProfileModal');
+  if (m) m.classList.remove('open');
+}
+
+// ── Wire sidebar user section to open profile modal ────────────────────────
+// Call this AFTER your boot() has set up the nav and fetched the profile.
+// e.g.:  enableSidebarProfileClick(sb, currentUser.id, profileObj);
+function enableSidebarProfileClick(sbClient, userId, profileObj) {
+  const el = document.querySelector('.snav-user');
+  if (!el) return;
+
+  // Render photo if profile has one
+  const navAv = document.getElementById('navAvatar');
+  if (navAv && profileObj?.avatar_url) {
+    renderAvatarInEl(navAv, profileObj.avatar_url, profileObj?.name || '', navAv.offsetWidth || 36);
+  }
+
+  el.style.cursor = 'pointer';
+  el.title = 'Edit your profile';
+  el.style.borderRadius = '8px';
+  el.style.transition = 'background .15s';
+  el.addEventListener('mouseenter', () => el.style.background = 'rgba(255,255,255,.05)');
+  el.addEventListener('mouseleave', () => el.style.background = '');
+  el.addEventListener('click', () => hubOpenProfileModal(sbClient, userId, profileObj));
+
+  // Inject modal early so it's ready
+  _injectProfileModalHTML();
+}
+
+// Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { hubCloseProfileModal(); }
+});

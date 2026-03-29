@@ -482,6 +482,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
+<script src="./profile.js"></script>
 <script src="./notifications.js"></script>
 <script src="./push.js"></script>
 
@@ -566,7 +567,7 @@
   <div class="snav-links" id="sideNavLinks"></div>
   <div class="snav-footer">
     <div class="snav-user">
-      <div class="snav-user-avatar" id="sideNavAvatar"></div>
+      <div class="snav-user-avatar" id="navAvatar"></div>
       <div style="overflow:hidden;min-width:0">
         <div class="snav-user-name" id="sideNavName">—</div>
         <div class="snav-user-role" id="sideNavRole">intern</div>
@@ -896,7 +897,7 @@ async function onSignedIn(user){
   document.getElementById('empName').value=displayName;
   let isAdm=false;
   try{
-    const{data:prof}=await sb.from('users').select('role,name').eq('id',user.id).single();
+    const{data:prof}=await sb.from('users').select('*').eq('id',user.id).single();
     const role=prof?.role||'intern';
     if(role==='disabled'){await sb.auth.signOut();setLoginErr('Your account has been disabled. Contact an admin.');document.getElementById('loginScreen').classList.remove('hidden');hideLoading();return;}
     isAdm=role==='admin';
@@ -904,6 +905,7 @@ async function onSignedIn(user){
     if(isAdm){ window.location.href='daily-logs.html'; return; }
     renderClockSideNav(false);
     setupSidebarUser(displayName, role, false);
+    if(typeof enableSidebarProfileClick==='function') enableSidebarProfileClick(sb, user.id, prof);
   }catch(e){ renderClockSideNav(false); setupSidebarUser(displayName,'intern',false); }
   showLoading('Loading your records…');
   await loadUserData();
@@ -1348,7 +1350,7 @@ function renderClockSideNav(isAdmin){
 function setupSidebarUser(name, role, isAdmin){
   const nm=document.getElementById('sideNavName');
   const rl=document.getElementById('sideNavRole');
-  const av=document.getElementById('sideNavAvatar');
+  const av=document.getElementById('navAvatar');
   const mh=document.getElementById('mobHeader');
   if(nm) nm.textContent=name;
   if(rl) rl.textContent=role||'intern';
