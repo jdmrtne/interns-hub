@@ -80,6 +80,19 @@
       <a href="announcements.html" class="ql-card board"><div class="ql-icon">📣</div><div class="ql-title">Board</div><div class="ql-desc">Announcements</div></a>
     </div>
     <div class="stat-grid" id="statsRow" style="margin-bottom:22px"></div>
+    <div id="internshipProgressCard" style="display:none" class="progress-card">
+      <div class="progress-card-header">
+        <div class="progress-card-title">🎓 Internship Progress</div>
+        <div class="progress-card-hours" id="progHoursLabel">0h / 0h</div>
+      </div>
+      <div class="progress-card-bar">
+        <div class="progress-card-fill" id="progFill" style="width:0%"></div>
+      </div>
+      <div class="progress-card-meta">
+        <span id="progPctLabel">0% complete</span>
+        <span id="progRemaining"></span>
+      </div>
+    </div>
     <div class="two-col">
       <div class="card">
         <div class="card-header"><div class="card-title">Announcements</div><a href="announcements.html" class="btn btn-ghost btn-sm">View All</a></div>
@@ -153,15 +166,16 @@ async function loadStats(){
   const [{data:users},{data:todayLog},{data:allLogs}] = await Promise.all([
     sb.from('users').select('id,role'),
     sb.from('time_logs').select('*').eq('user_id',currentUser.id).eq('date',today).maybeSingle(),
-    sb.from('time_logs').select('am_in,am_out,pm_in,pm_out').eq('user_id',currentUser.id)
+    sb.from('time_logs').select('am_in,am_out,pm_in,pm_out,total_hours').eq('user_id',currentUser.id)
   ]);
   const activeUsers = (users||[]).filter(u=>u.role!=='disabled').length;
-  let totalMins = 0;
+  let totalMins = 0, totalHrsLogged = 0;
   (allLogs||[]).forEach(l => {
+    if (l.total_hours) { totalHrsLogged += parseFloat(l.total_hours); totalMins += parseFloat(l.total_hours) * 60; return; }
     const toM = t => {if(!t)return null;const[h,m]=(t+':00').split(':').map(Number);return h*60+(m||0);};
     const ai=toM(l.am_in),ao=toM(l.am_out),pi=toM(l.pm_in),po=toM(l.pm_out);
-    if(ai&&ao&&ao>ai)totalMins+=ao-ai;
-    if(pi&&po&&po>pi)totalMins+=po-pi;
+    if(ai&&ao&&ao>ai){totalMins+=ao-ai;totalHrsLogged+=(ao-ai)/60;}
+    if(pi&&po&&po>pi){totalMins+=po-pi;totalHrsLogged+=(po-pi)/60;}
   });
   const fmtM = m => `${Math.floor(m/60)}h ${m%60}m`;
   const todayStatus = todayLog ? (todayLog.pm_out ? '✓ Complete' : todayLog.am_in ? 'Clocked In' : 'Not started') : 'Not started';
@@ -171,6 +185,22 @@ async function loadStats(){
     <div class="stat-card"><div class="stat-label">Total Hours Logged</div><div class="stat-value">${totalMins>0?fmtM(totalMins):'0h'}</div></div>
     <div class="stat-card"><div class="stat-label">Days Logged</div><div class="stat-value">${(allLogs||[]).length}</div></div>
     <div class="stat-card"><div class="stat-label">Active Users</div><div class="stat-value" style="color:var(--blue)">${activeUsers}</div></div>`;
+
+  // ── Internship progress card ──
+  const internHours = userProfile?.internship_hours;
+  if (internHours && internHours > 0) {
+    const pct = Math.min(100, (totalHrsLogged / internHours) * 100);
+    const remaining = Math.max(0, internHours - totalHrsLogged);
+    const complete = totalHrsLogged >= internHours;
+    const card = document.getElementById('internshipProgressCard');
+    card.style.display = '';
+    document.getElementById('progHoursLabel').textContent = `${totalHrsLogged.toFixed(1)}h / ${internHours}h`;
+    const fill = document.getElementById('progFill');
+    fill.style.width = pct.toFixed(1) + '%';
+    if (complete) fill.classList.add('complete');
+    document.getElementById('progPctLabel').textContent = Math.round(pct) + '% complete';
+    document.getElementById('progRemaining').textContent = complete ? '🎉 Internship complete!' : `${remaining.toFixed(1)}h remaining`;
+  }
 }
 
 async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }

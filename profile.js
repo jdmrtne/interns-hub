@@ -128,6 +128,18 @@ function _injectProfileModalHTML() {
           <input class="hub-field-input" id="hubDeptInput" placeholder="e.g. Engineering, Marketing…" maxlength="80">
         </div>
       </div>
+      <!-- Internship Progress (shown only if internship_hours is set) -->
+      <div id="hubInternProgressSection" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--border-bright,#30363d)">
+        <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);margin-bottom:10px">Internship Progress</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span id="hubProgHours" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;color:var(--text-muted,#7d8590)">0h / 0h</span>
+          <span id="hubProgPct" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;font-weight:600;color:var(--primary,#38bdf8)">0%</span>
+        </div>
+        <div style="width:100%;height:8px;background:var(--glass,rgba(255,255,255,.06));border-radius:99px;overflow:hidden;border:1px solid var(--border-bright,#30363d)">
+          <div id="hubProgFill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .6s ease;width:0%"></div>
+        </div>
+        <div id="hubProgMeta" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-dim,#484f58);margin-top:6px;text-align:right"></div>
+      </div>
     </div>
     <div class="hub-pmodal-msg" id="hubPModalMsg"></div>
     <div class="hub-pmodal-footer">
@@ -157,7 +169,38 @@ function hubOpenProfileModal(sbClient, userId, profile) {
   document.getElementById('hubPModalMsg').style.display = 'none';
 
   _hubRefreshAvatarPreview(profile?.avatar_url, profile?.name || '');
+
+  // ── Internship progress ──
+  const progSection = document.getElementById('hubInternProgressSection');
+  if (profile?.internship_hours && profile.internship_hours > 0) {
+    progSection.style.display = '';
+    _hubLoadInternProgress(sbClient, userId, profile.internship_hours);
+  } else {
+    progSection.style.display = 'none';
+  }
+
   document.getElementById('hubProfileModal').classList.add('open');
+}
+
+async function _hubLoadInternProgress(sbClient, userId, totalHours) {
+  const { data: logs } = await sbClient.from('time_logs').select('total_hours, am_in, am_out, pm_in, pm_out').eq('user_id', userId);
+  let logged = 0;
+  (logs || []).forEach(l => {
+    if (l.total_hours) { logged += parseFloat(l.total_hours); return; }
+    const toM = t => { if (!t) return null; const [h, m] = (t + ':00').split(':').map(Number); return h * 60 + (m || 0); };
+    const ai = toM(l.am_in), ao = toM(l.am_out), pi = toM(l.pm_in), po = toM(l.pm_out);
+    if (ai && ao && ao > ai) logged += (ao - ai) / 60;
+    if (pi && po && po > pi) logged += (po - pi) / 60;
+  });
+  const pct = Math.min(100, (logged / totalHours) * 100);
+  const remaining = Math.max(0, totalHours - logged);
+  const complete = logged >= totalHours;
+  document.getElementById('hubProgHours').textContent = `${logged.toFixed(1)}h / ${totalHours}h`;
+  document.getElementById('hubProgPct').textContent = Math.round(pct) + '%';
+  const fill = document.getElementById('hubProgFill');
+  fill.style.width = pct.toFixed(1) + '%';
+  fill.style.background = complete ? 'linear-gradient(90deg,#34d399,#38bdf8)' : 'linear-gradient(90deg,#38bdf8,#60a5fa)';
+  document.getElementById('hubProgMeta').textContent = complete ? '🎉 Internship complete!' : `${remaining.toFixed(1)}h remaining`;
 }
 
 function _hubRefreshAvatarPreview(avatarUrl, name) {

@@ -37,9 +37,12 @@
   #internTable td:nth-child(2)::before{content:"Email: ";color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
   #internTable td:nth-child(3)::before{content:"Dept: ";color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
   #internTable td:nth-child(4){display:inline-block;}
-  #internTable td:nth-child(5){color:var(--text-dim);font-size:10px;}
-  #internTable td:nth-child(6){padding-top:10px;border-top:1px solid var(--glass-border);margin-top:4px;}
+  #internTable td:nth-child(5)::before{content:"Progress: ";color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+  #internTable td:nth-child(6){color:var(--text-dim);font-size:10px;}
+  #internTable td:nth-child(7){padding-top:10px;border-top:1px solid var(--glass-border);margin-top:4px;}
   #internTable .act-btn{margin:2px 2px 2px 0;padding:5px 10px;font-size:9px;}
+  .intern-progress-wrap{margin-top:2px;}
+  .intern-progress-bar{height:5px;margin-top:4px;}
   #tab-timelogs .tbl-wrap{overflow-x:auto;}
   #tab-timelogs table{min-width:560px;}
   .filter-row{flex-direction:column;align-items:stretch;gap:8px;}
@@ -93,6 +96,25 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         Send Reset Email
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Internship Hours Modal -->
+<div class="confirm-ov" id="internHoursOv">
+  <div class="confirm-box" style="max-width:380px;width:100%">
+    <div class="confirm-title">Set Internship Period</div>
+    <div class="confirm-msg" id="internHoursName" style="margin-bottom:16px;color:var(--primary)"></div>
+    <div class="mf" style="margin-bottom:4px">
+      <label style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px">Total Required Hours</label>
+      <input type="number" id="internHoursInput" placeholder="e.g. 300" min="1" max="9999" step="1"
+        style="width:100%;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font-mono);font-size:14px;outline:none"
+        onkeydown="if(event.key==='Enter')saveInternHours()">
+    </div>
+    <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-bottom:16px">Leave blank / 0 to remove the period</div>
+    <div class="confirm-acts">
+      <button class="btn btn-ghost" onclick="closeInternHoursModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveInternHours()">💾 Save</button>
     </div>
   </div>
 </div>
@@ -153,7 +175,7 @@
       </div>
       <div class="tbl-wrap"><div class="tbl-scroll">
         <table id="internTable">
-          <thead><tr><th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+          <thead><tr><th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Progress</th><th>Joined</th><th>Actions</th></tr></thead>
           <tbody id="internTbody"></tbody>
         </table>
       </div></div>
@@ -238,9 +260,12 @@ function handleAction(action,id){
   else if(action==='resetpw')openPwModal(u);
 }
 
+let allLogTotals = {}; // user_id -> total hours logged
+let internHoursTarget = null; // { id, name } for the modal
+
 function renderInternTable(list){
   const tb=document.getElementById('internTbody');
-  if(!list.length){tb.innerHTML=`<tr><td colspan="6" class="empty-state" style="padding:30px"><p class="empty-sub">No users found</p></td></tr>`;return;}
+  if(!list.length){tb.innerHTML=`<tr><td colspan="7" class="empty-state" style="padding:30px"><p class="empty-sub">No users found</p></td></tr>`;return;}
   tb.innerHTML=list.map(u=>{
     const col=avatarColor(u.name);
     const isAdm=u.role==='admin',isDis=u.role==='disabled',isSelf=u.id===currentUser?.id,id=u.id;
@@ -252,6 +277,28 @@ function renderInternTable(list){
     const delBtn=!isSelf?`<button class="act-btn danger" onclick="handleAction('delete','${id}')">🗑 Delete</button>`:'';
     const badge=isAdm?'badge-admin':isDis?'badge-disabled':'badge-intern';
     const avatarHtml=u.avatar_url?`<img src="${escHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(u.name);
+
+    // Progress bar
+    const loggedHrs = allLogTotals[u.id] || 0;
+    const totalHrs = u.internship_hours;
+    let progressHtml;
+    if (totalHrs) {
+      const pct = Math.min(100, Math.round((loggedHrs / totalHrs) * 100));
+      const complete = loggedHrs >= totalHrs;
+      progressHtml = `
+        <div class="intern-progress-wrap">
+          <div class="intern-progress-label">
+            <span>${loggedHrs.toFixed(1)}h / ${totalHrs}h</span>
+            <span class="prog-pct">${pct}%</span>
+          </div>
+          <div class="intern-progress-bar">
+            <div class="intern-progress-fill ${complete?'complete':''}" style="width:${pct}%"></div>
+          </div>
+        </div>`;
+    } else {
+      progressHtml = `<span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim)">Not set</span>`;
+    }
+
     return`<tr>
       <td><div style="display:flex;align-items:center;gap:9px">
         <div class="avatar avatar-sm" style="background:${u.avatar_url?'transparent':col+'22'};color:${col};overflow:hidden">${avatarHtml}</div>
@@ -261,11 +308,43 @@ function renderInternTable(list){
       <td style="color:var(--text-muted)">${escHtml(u.email||'—')}</td>
       <td style="color:var(--blue)">${escHtml(u.department||'—')}</td>
       <td><span class="badge ${badge}">${u.role||'intern'}</span></td>
+      <td style="min-width:140px">${progressHtml}</td>
       <td style="color:var(--text-dim)">${fmtDate(u.created_at)}</td>
-      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">${demoteBtn}${promoteBtn}${pwBtn}${disableBtn}${enableBtn}${delBtn}</div></td>
+      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+        ${demoteBtn}${promoteBtn}${pwBtn}${disableBtn}${enableBtn}${delBtn}
+        <button class="act-btn" style="color:var(--green);border-color:var(--green)" onclick="openInternHoursModal('${id}')">⏳ Hours</button>
+      </div></td>
     </tr>`;
   }).join('');
 }
+
+function openInternHoursModal(id) {
+  const u = allUsers.find(x => x.id === id);
+  if (!u) return;
+  internHoursTarget = u;
+  document.getElementById('internHoursName').textContent = u.name || u.email || 'Unknown';
+  document.getElementById('internHoursInput').value = u.internship_hours || '';
+  document.getElementById('internHoursOv').classList.add('open');
+  setTimeout(() => document.getElementById('internHoursInput').focus(), 80);
+}
+function closeInternHoursModal() {
+  document.getElementById('internHoursOv').classList.remove('open');
+  internHoursTarget = null;
+}
+async function saveInternHours() {
+  if (!internHoursTarget) return;
+  const raw = document.getElementById('internHoursInput').value.trim();
+  const hours = raw === '' || Number(raw) <= 0 ? null : Number(raw);
+  const { error } = await sb.from('users').update({ internship_hours: hours }).eq('id', internHoursTarget.id);
+  if (error) { toast('Failed: ' + error.message, 'err'); return; }
+  // Update local cache
+  const u = allUsers.find(x => x.id === internHoursTarget.id);
+  if (u) u.internship_hours = hours;
+  toast(hours ? `Set to ${hours}h for ${internHoursTarget.name}` : `Period removed for ${internHoursTarget.name}`, 'ok');
+  closeInternHoursModal();
+  renderInternTable(allUsers);
+}
+document.getElementById('internHoursOv').addEventListener('click', e => { if (e.target === document.getElementById('internHoursOv')) closeInternHoursModal(); });
 
 async function doUserUpdate(id,updates,successMsg){
   const{data,error}=await sb.from('users').update(updates).eq('id',id).select().single();
@@ -353,8 +432,16 @@ function renderAdminAnns(){
 }
 
 async function loadUsers(){
-  const{data}=await sb.from('users').select('*').order('created_at',{ascending:false});
-  allUsers=data||[];renderInternTable(allUsers);
+  const [{data: usersData}, {data: logSums}] = await Promise.all([
+    sb.from('users').select('*').order('created_at',{ascending:false}),
+    sb.from('time_logs').select('user_id, total_hours')
+  ]);
+  // Build per-user log totals
+  allLogTotals = {};
+  (logSums||[]).forEach(l => {
+    allLogTotals[l.user_id] = (allLogTotals[l.user_id]||0) + (parseFloat(l.total_hours)||0);
+  });
+  allUsers=usersData||[];renderInternTable(allUsers);
   const total=allUsers.length,interns=allUsers.filter(u=>u.role==='intern').length,admins=allUsers.filter(u=>u.role==='admin').length,disabled=allUsers.filter(u=>u.role==='disabled').length;
   document.getElementById('statsRow').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">${total}</div></div>

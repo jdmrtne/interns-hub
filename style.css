@@ -2,7 +2,7 @@
    THE INTERNS HUB v2 — Design System
    Glassmorphism · System dark/light mode
    ═══════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /* ── Dark Mode (default) ── */
 :root {
@@ -34,8 +34,8 @@
   --blue:          #60a5fa;
   --nav-w:         230px;
   --nav-w-col:     52px;   /* collapsed sidebar width */
-  --font-display:  'Syne', sans-serif;
-  --font-body:     'Outfit', sans-serif;
+  --font-display:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-body:     'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:     'JetBrains Mono', monospace;
 }
 
@@ -469,3 +469,98 @@ tr:hover td { background: var(--glass-hover); }
   z-index: 400; margin-left: 4px;
 }
 .sidebar-nav.collapsed .snav-group:hover .snav-subitem { padding: 8px 12px; width: 100%; }
+
+/* ══════════════════════════════════════════
+   INTERNSHIP PROGRESS BAR
+══════════════════════════════════════════ */
+.intern-progress-wrap {
+  margin-top: 4px;
+}
+.intern-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.intern-progress-label .prog-pct {
+  color: var(--primary);
+  font-weight: 600;
+}
+.intern-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--glass);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+.intern-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary), var(--blue));
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+.intern-progress-fill.complete {
+  background: linear-gradient(90deg, var(--green), #34d399aa);
+}
+
+/* Progress card for dashboard / profile */
+.progress-card {
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 22px;
+}
+.progress-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.progress-card-title {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .01em;
+}
+.progress-card-hours {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.progress-card-bar {
+  width: 100%;
+  height: 10px;
+  background: var(--glass);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 8px;
+}
+.progress-card-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary), var(--blue));
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+.progress-card-fill.complete {
+  background: linear-gradient(90deg, var(--green), var(--primary));
+}
+.progress-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
