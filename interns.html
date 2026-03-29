@@ -50,26 +50,54 @@
 .iprofile-ov{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
 .iprofile-ov.open{display:flex;}
 .iprofile-box{background:var(--panel,#161b22);border:1px solid var(--border-bright,#30363d);border-radius:16px;width:100%;max-width:340px;overflow:hidden;animation:ipIn .22s ease both;}
+.iprofile-box.admin-view{max-width:480px;}
 @keyframes ipIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
-.iprofile-header{padding:22px 22px 0;display:flex;justify-content:flex-end;}
+.iprofile-header{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-bright,#30363d);}
+.iprofile-header-title{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted,#7d8590);}
 .iprofile-close-btn{background:none;border:1px solid var(--border-bright,#30363d);border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);cursor:pointer;transition:all .15s;}
 .iprofile-close-btn:hover{border-color:#f85149;color:#f85149;}
-.iprofile-body{padding:18px 28px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+.iprofile-body{padding:20px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
 .iprofile-avatar{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:30px;font-weight:700;border:2px solid var(--border-bright,#30363d);overflow:hidden;flex-shrink:0;}
 .iprofile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.iprofile-name{font-family:var(--display);font-size:20px;font-weight:800;letter-spacing:.05em;color:var(--text,#e6edf3);}
+.iprofile-name{font-family:var(--font-body);font-size:18px;font-weight:700;color:var(--text,#e6edf3);}
 .iprofile-dept{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);}
 .iprofile-actions{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:4px;}
 .iprofile-you-tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim,#484f58);margin-top:4px;}
 .iprofile-records-link{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text-dim,#484f58);cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:4px;background:none;border:none;padding:0;}
 .iprofile-records-link:hover{color:var(--primary,#38bdf8);}
 
+/* Admin detail panel inside popup */
+.ip-detail{width:100%;text-align:left;}
+.ip-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.ip-stat-grid.three{grid-template-columns:1fr 1fr 1fr;}
+.ip-stat{background:rgba(255,255,255,.04);border:1px solid var(--border-bright,#30363d);border-radius:8px;padding:10px 12px;}
+.ip-stat-label{font-family:var(--mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim,#484f58);margin-bottom:4px;}
+.ip-stat-value{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--text,#e6edf3);}
+.ip-stat-value.accent{color:var(--primary,#38bdf8);}
+.ip-stat-value.green{color:#34d399;}
+.ip-stat-value.amber{color:#fbbf24;}
+.ip-stat-value.muted{color:var(--text-muted,#7d8590);font-size:13px;}
+.ip-section-label{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#484f58);margin-bottom:8px;}
+.ip-progress-bar{width:100%;height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin:6px 0;}
+.ip-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .6s ease;}
+.ip-progress-fill.done{background:linear-gradient(90deg,#34d399,#38bdf8);}
+.ip-progress-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--text-dim,#484f58);}
+.ip-divider{width:100%;height:1px;background:var(--border-bright,#30363d);margin:4px 0;}
+.ip-loading{text-align:center;padding:24px;font-family:var(--mono);font-size:10px;color:var(--text-dim,#484f58);}
+
 /* ── LIGHT MODE: intern profile popup ──────────────────────────── */
 @media(prefers-color-scheme:light){
   .iprofile-box{background:#f6f8fa;border-color:#d0d7de;}
+  .iprofile-header{border-bottom-color:#d0d7de;}
   .iprofile-close-btn{border-color:#d0d7de;color:#57606a;}
   .iprofile-name{color:#24292f;}
   .iprofile-dept{color:#57606a;}
+  .ip-stat{background:rgba(0,0,0,.03);border-color:#d0d7de;}
+  .ip-stat-label{color:#8c959f;}
+  .ip-stat-value{color:#24292f;}
+  .ip-progress-bar{background:rgba(0,0,0,.08);}
+  .ip-divider{background:#d0d7de;}
+  .ip-loading{color:#8c959f;}
 }
 
 /* ── TIME RECORDS MODAL ─────────────────────────────────────────── */
@@ -213,8 +241,9 @@
 
 <!-- ── INTERN PROFILE POPUP ────────────────────────────────────── -->
 <div class="iprofile-ov" id="internProfileOv" onclick="handleIPBgClick(event)">
-  <div class="iprofile-box">
+  <div class="iprofile-box" id="internProfileBox">
     <div class="iprofile-header">
+      <span class="iprofile-header-title" id="ipHeaderTitle">Intern Profile</span>
       <button class="iprofile-close-btn" onclick="closeInternProfile()">✕ Close</button>
     </div>
     <div class="iprofile-body">
@@ -224,6 +253,8 @@
         <div class="iprofile-dept" id="ipDept">—</div>
       </div>
       <div id="ipBadgeWrap"></div>
+      <!-- Admin detail section (injected dynamically) -->
+      <div class="ip-detail" id="ipAdminDetail"></div>
       <div class="iprofile-actions" id="ipActions"></div>
     </div>
   </div>
@@ -329,7 +360,7 @@ function renderInterns(list){
 }
 
 // ── Intern Profile Popup ───────────────────────────────────────────────────
-function openInternProfile(internId) {
+async function openInternProfile(internId) {
   const intern = allInterns.find(i => i.id === internId);
   if (!intern) return;
   const isSelf = intern.id === currentUser?.id;
@@ -339,35 +370,134 @@ function openInternProfile(internId) {
   const avEl = document.getElementById('ipAvatar');
   avEl.style.background = intern.avatar_url ? 'transparent' : col + '20';
   avEl.style.color = col;
-  if (intern.avatar_url) {
-    avEl.innerHTML = `<img src="${escHtml(intern.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-  } else {
-    avEl.innerHTML = avatarInitials(intern.name);
-  }
+  avEl.innerHTML = intern.avatar_url
+    ? `<img src="${escHtml(intern.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    : avatarInitials(intern.name);
 
   document.getElementById('ipName').textContent = intern.name || 'Unknown';
   document.getElementById('ipDept').textContent = intern.department || 'No Department';
-
-  // Role badge
   document.getElementById('ipBadgeWrap').innerHTML =
     `<span class="badge ${intern.role==='admin'?'badge-admin':'badge-intern'}">${intern.role||'intern'}</span>`;
 
-  // Actions
-  const actionsEl = document.getElementById('ipActions');
-  if (isSelf) {
-    actionsEl.innerHTML = `
-      <div class="iprofile-you-tag">This is you</div>
-      <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); enableSidebarProfileClick(sb, currentUser.id, currentUserProfile);" style="font-size:11px">✏️ Edit My Profile</button>
-    `;
-  } else {
-    let html = `<a href="chat.html?uid=${intern.id}" class="btn btn-primary" style="width:100%;text-align:center" onclick="event.stopPropagation()">💬 Message</a>`;
-    if (isAdmin) {
-      html += `<button class="btn btn-ghost btn-sm iprofile-records-link" onclick="closeInternProfile(); openTimeModal('${intern.id}','${escHtml(intern.name)}','${escHtml(intern.department||'')}')">📋 View Time Records</button>`;
-    }
-    actionsEl.innerHTML = html;
-  }
+  // Widen box for admin, normal for interns
+  const box = document.getElementById('internProfileBox');
+  const detailEl = document.getElementById('ipAdminDetail');
 
-  document.getElementById('internProfileOv').classList.add('open');
+  if (isAdmin && !isSelf) {
+    box.classList.add('admin-view');
+    document.getElementById('ipHeaderTitle').textContent = 'Intern Details';
+    detailEl.innerHTML = '<div class="ip-loading">Loading details…</div>';
+    document.getElementById('internProfileOv').classList.add('open');
+
+    // Fetch logs
+    const { data: logs } = await sb.from('time_logs')
+      .select('*').eq('user_id', intern.id).order('date', { ascending: true });
+
+    // Compute stats
+    let totalHrs = 0;
+    (logs || []).forEach(l => { totalHrs += calcLogHours(l) || 0; });
+    const days = (logs || []).length;
+    const avgHrs = days ? totalHrs / days : 0;
+    const firstLog = logs && logs.length ? logs[0].date : null;
+    const lastLog  = logs && logs.length ? logs[logs.length - 1].date : null;
+    const joined   = intern.created_at ? new Date(intern.created_at).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—';
+    const startedStr = firstLog ? new Date(firstLog + 'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : 'No logs yet';
+    const lastStr    = lastLog  ? new Date(lastLog  + 'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—';
+
+    // Progress
+    const totalRequired = intern.internship_hours || 0;
+    const remaining = totalRequired ? Math.max(0, totalRequired - totalHrs) : null;
+    const pct = totalRequired ? Math.min(100, (totalHrs / totalRequired) * 100) : null;
+    const complete = totalRequired && totalHrs >= totalRequired;
+
+    // Estimate finish date based on avg pace
+    let estFinishHtml = '—';
+    if (totalRequired && !complete && avgHrs > 0) {
+      const daysLeft = Math.ceil(remaining / avgHrs);
+      const est = new Date();
+      est.setDate(est.getDate() + daysLeft);
+      estFinishHtml = est.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'});
+    } else if (complete) {
+      estFinishHtml = '🎉 Complete';
+    }
+
+    // Build progress section HTML
+    const progressSection = totalRequired ? `
+      <div class="ip-divider"></div>
+      <div class="ip-section-label" style="margin-top:4px">Internship Progress</div>
+      <div class="ip-stat-grid three">
+        <div class="ip-stat">
+          <div class="ip-stat-label">Logged</div>
+          <div class="ip-stat-value accent">${totalHrs.toFixed(1)}h</div>
+        </div>
+        <div class="ip-stat">
+          <div class="ip-stat-label">Required</div>
+          <div class="ip-stat-value">${totalRequired}h</div>
+        </div>
+        <div class="ip-stat">
+          <div class="ip-stat-label">Remaining</div>
+          <div class="ip-stat-value ${complete?'green':'amber'}">${complete ? '0h' : remaining.toFixed(1)+'h'}</div>
+        </div>
+      </div>
+      <div style="width:100%">
+        <div class="ip-progress-bar">
+          <div class="ip-progress-fill ${complete?'done':''}" style="width:${pct.toFixed(1)}%"></div>
+        </div>
+        <div class="ip-progress-meta">
+          <span>${Math.round(pct)}% complete</span>
+          <span>Est. finish: ${estFinishHtml}</span>
+        </div>
+      </div>` : '';
+
+    detailEl.innerHTML = `
+      <div class="ip-divider"></div>
+      <div class="ip-section-label" style="margin-top:4px">Time Summary</div>
+      <div class="ip-stat-grid">
+        <div class="ip-stat">
+          <div class="ip-stat-label">Started</div>
+          <div class="ip-stat-value ${firstLog?'':'muted'}">${startedStr}</div>
+        </div>
+        <div class="ip-stat">
+          <div class="ip-stat-label">Last Active</div>
+          <div class="ip-stat-value ${lastLog?'':'muted'}">${lastStr}</div>
+        </div>
+        <div class="ip-stat">
+          <div class="ip-stat-label">Days Logged</div>
+          <div class="ip-stat-value accent">${days}</div>
+        </div>
+        <div class="ip-stat">
+          <div class="ip-stat-label">Avg / Day</div>
+          <div class="ip-stat-value">${days ? (Math.floor(avgHrs)+'h '+String(Math.round((avgHrs%1)*60)).padStart(2,'0')+'m') : '—'}</div>
+        </div>
+      </div>
+      <div class="ip-stat-grid" style="grid-template-columns:1fr">
+        <div class="ip-stat">
+          <div class="ip-stat-label">Joined Platform</div>
+          <div class="ip-stat-value muted">${joined}</div>
+        </div>
+      </div>
+      ${progressSection}`;
+
+    // Actions
+    document.getElementById('ipActions').innerHTML = `
+      <a href="chat.html?uid=${intern.id}" class="btn btn-primary" style="width:100%;text-align:center;margin-top:4px" onclick="event.stopPropagation()">💬 Message</a>
+      <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); openTimeModal('${intern.id}','${escHtml(intern.name)}','${escHtml(intern.department||'')}')">📋 View Full Time Records</button>`;
+
+  } else {
+    // Regular intern view (or self)
+    box.classList.remove('admin-view');
+    document.getElementById('ipHeaderTitle').textContent = 'Intern Profile';
+    detailEl.innerHTML = '';
+    const actionsEl = document.getElementById('ipActions');
+    if (isSelf) {
+      actionsEl.innerHTML = `
+        <div class="iprofile-you-tag">This is you</div>
+        <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); enableSidebarProfileClick(sb, currentUser.id, currentUserProfile);" style="font-size:11px">✏️ Edit My Profile</button>`;
+    } else {
+      actionsEl.innerHTML = `<a href="chat.html?uid=${intern.id}" class="btn btn-primary" style="width:100%;text-align:center" onclick="event.stopPropagation()">💬 Message</a>`;
+    }
+    document.getElementById('internProfileOv').classList.add('open');
+  }
 }
 
 function closeInternProfile(){
