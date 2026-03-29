@@ -7,52 +7,90 @@
 // ─── Styles ──────────────────────────────────────────────
 const style = document.createElement('style');
 style.textContent = `
-/* ── Notification Bell (nav) ──────────────────────────── */
+/* ── Floating Notification Bell (FAB) ─────────────────── */
 #hub-notif-bell {
-  position: relative;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 10001;
   display: flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  cursor: pointer; flex-shrink: 0;
-  transition: background .2s, border-color .2s;
-  color: #7a8ba0;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1.5px solid rgba(167,139,250,.35);
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 0 rgba(167,139,250,.4);
+  cursor: pointer;
+  transition: transform .2s cubic-bezier(.175,.885,.32,1.275),
+              box-shadow .2s ease,
+              border-color .2s ease;
+  color: #a78bfa;
+  animation: hubBellAppear .4s cubic-bezier(.175,.885,.32,1.275);
 }
-#hub-notif-bell:hover { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.4); color: #a78bfa; }
-#hub-notif-bell svg { width: 18px; height: 18px; }
+#hub-notif-bell:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0,0,0,.65), 0 0 0 8px rgba(167,139,250,.12);
+  border-color: rgba(167,139,250,.65);
+}
+#hub-notif-bell:active { transform: scale(.95); }
+#hub-notif-bell svg { width: 24px; height: 24px; }
+@keyframes hubBellAppear {
+  from { opacity: 0; transform: scale(0) rotate(-20deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* pulse ring when there are unread notifs */
+#hub-notif-bell.has-unread {
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 0 rgba(167,139,250,.55);
+  animation: hubBellPulse 2.5s cubic-bezier(.455,.03,.515,.955) infinite;
+}
+@keyframes hubBellPulse {
+  0%   { box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 0   rgba(167,139,250,.5); }
+  60%  { box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 14px rgba(167,139,250,0); }
+  100% { box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 0   rgba(167,139,250,0); }
+}
+
 #hub-notif-badge {
-  position: absolute; top: -4px; right: -4px;
-  min-width: 18px; height: 18px; border-radius: 9px;
+  position: absolute; top: -2px; right: -2px;
+  min-width: 20px; height: 20px; border-radius: 10px;
   background: #ef4444; color: #fff;
   font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
-  padding: 0 4px; border: 2px solid var(--bg, #070b14);
+  padding: 0 5px; border: 2px solid #0f172a;
   animation: badgePop .3s cubic-bezier(.175,.885,.32,1.275);
   pointer-events: none;
 }
 #hub-notif-badge.hidden { display: none; }
 @keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
 
-/* ── Dropdown panel ───────────────────────────────────── */
+/* ── Floating Modal Panel ─────────────────────────────── */
 #hub-notif-panel {
-  position: fixed; top: 0; right: 0; bottom: 0;
-  width: min(360px, 100vw);
-  background: rgba(10,14,26,0.98);
-  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-  border-left: 1px solid rgba(255,255,255,.1);
-  box-shadow: -12px 0 48px rgba(0,0,0,.6);
+  position: fixed;
+  bottom: 96px; right: 24px;
+  width: 380px;
+  max-height: min(560px, calc(100vh - 120px));
+  background: rgba(9,13,24,0.97);
+  backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04) inset;
   z-index: 10000;
   display: flex; flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  transform-origin: bottom right;
+  transform: scale(.88) translateY(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s cubic-bezier(.175,.885,.32,1.275),
+              opacity .2s ease;
+  overflow: hidden;
 }
-#hub-notif-panel.open { transform: translateX(0); }
+#hub-notif-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
 #hub-notif-panel-overlay {
   position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,.4);
-  backdrop-filter: blur(2px);
+  background: transparent;
   opacity: 0; pointer-events: none;
-  transition: opacity .3s;
+  transition: opacity .2s;
 }
 #hub-notif-panel-overlay.show { opacity: 1; pointer-events: all; }
 
@@ -280,10 +318,24 @@ style.textContent = `
 .ann-modal-btn.ghost:hover { border-color: #a78bfa; color: #a78bfa; }
 
 @media(max-width:480px){
-  #notif-tray { bottom: 80px; right: 12px; left: 12px; max-width: 100%; }
+  /* FAB moves slightly closer to edge on small screens */
+  #hub-notif-bell { bottom: 20px; right: 16px; width: 54px; height: 54px; }
+  /* Panel becomes bottom sheet on mobile */
+  #hub-notif-panel {
+    bottom: 86px; right: 8px; left: 8px;
+    width: auto;
+    border-radius: 18px;
+    max-height: min(520px, calc(100vh - 120px));
+    transform-origin: bottom center;
+  }
+  /* Toast tray clears the FAB */
+  #notif-tray { bottom: 88px; right: 12px; left: 12px; max-width: 100%; }
   #ann-modal { padding: 24px; }
   .ann-modal-title { font-size: 22px; }
-  #hub-notif-panel { width: 100vw; }
+}
+@media(min-width:481px){
+  /* Desktop: tray clears the FAB */
+  #notif-tray { bottom: 96px; }
 }
 `;
 document.head.appendChild(style);
@@ -477,9 +529,8 @@ window.HubBell = {
       <span id="hub-notif-badge" class="hidden"></span>`;
     bell.onclick = () => this.open();
 
-    // Insert bell into nav — try multiple common spots
-    const inserted = this._insertBell(bell);
-    if (!inserted) document.body.appendChild(bell); // fallback
+    // Bell is now a floating FAB — always attach to body
+    document.body.appendChild(bell);
 
     // Wire up panel events
     document.getElementById('hnp-close').onclick = () => this.close();
@@ -495,23 +546,6 @@ window.HubBell = {
     });
   },
 
-  _insertBell(bell) {
-    // Try: mobile header actions area
-    const mobHeader = document.getElementById('mobHeader');
-    if (mobHeader) {
-      const actions = mobHeader.querySelector('.mob-actions') || mobHeader;
-      const hamburger = actions.querySelector('button');
-      if (hamburger) { actions.insertBefore(bell, hamburger); return true; }
-      actions.appendChild(bell); return true;
-    }
-    // Try: sidebar nav user section
-    const navUser = document.querySelector('.nav-user, .snav-user, #navUser');
-    if (navUser) { navUser.appendChild(bell); return true; }
-    // Try: sidebar header
-    const sidebarHead = document.querySelector('.snav-header, .sidebar-header');
-    if (sidebarHead) { sidebarHead.appendChild(bell); return true; }
-    return false;
-  },
 
   _animateBell() {
     const bell = document.getElementById('hub-notif-bell');
@@ -531,6 +565,9 @@ window.HubBell = {
       badge.textContent = unread > 99 ? '99+' : unread;
       badge.classList.toggle('hidden', unread === 0);
     }
+    // Toggle pulse ring on FAB
+    const bell = document.getElementById('hub-notif-bell');
+    if (bell) bell.classList.toggle('has-unread', unread > 0);
     this._updateTabCounts();
     this._renderList();
   },
