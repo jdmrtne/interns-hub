@@ -454,10 +454,11 @@ async function boot(){
   allInterns = data || [];
 
   if (isAdmin) {
-    const {data: logRows} = await sb.from('time_logs').select('user_id, total_hours');
+    const {data: logRows} = await sb.from('time_logs').select('user_id, total_hours, am_in, am_out, pm_in, pm_out');
     logTotals = {};
     (logRows || []).forEach(l => {
-      logTotals[l.user_id] = (logTotals[l.user_id] || 0) + (parseFloat(l.total_hours) || 0);
+      const hrs = calcLogHours(l);
+      if (hrs) logTotals[l.user_id] = (logTotals[l.user_id] || 0) + hrs;
     });
   }
 
