@@ -122,6 +122,9 @@ tr:hover td{background:rgba(255,255,255,.018);}
 .msg-bubble.mine .bubble-content{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25);border-radius:12px 4px 12px 12px;}
 .msg-bubble.theirs .bubble-content{border-radius:4px 12px 12px 12px;}
 .bubble-time{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);margin-top:3px;letter-spacing:.06em;display:flex;align-items:center;gap:4px;}
+.msg-tick{font-size:10px;line-height:1;transition:color .3s;}
+.msg-tick.sent{color:var(--text-dim);}
+.msg-tick.seen{color:var(--primary);}
 .msg-bubble.mine .bubble-time{justify-content:flex-end;}
 .date-div{text-align:center;font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;margin:6px 0;display:flex;align-items:center;gap:10px;}
 .date-div::before,.date-div::after{content:"";flex:1;height:1px;background:var(--glass-border);}
@@ -219,6 +222,8 @@ function renderMsg(msg,append=true){
   const canDelete=isMine||currentUserIsAdmin;
   const trashIcon=`<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
   const delBtn=canDelete?`<button class="btn-del-msg" title="Delete message" onclick="deleteMsg('${msg.id}',this)">${trashIcon}</button>`:'';
+  // Seen tick for own messages: ✓ sent, ✓✓ seen (blue)
+  const tick=isMine?`<span class="msg-tick ${msg.seen_at?'seen':'sent'}" data-tick="${msg.id}">${msg.seen_at?'✓✓':'✓'}</span>`:'';
   // Avatar next to their bubbles
   const avatarHtml = !isMine
     ? (partnerUser?.avatar_url
@@ -228,7 +233,7 @@ function renderMsg(msg,append=true){
   if(msg.is_deleted){
     el.innerHTML=avatarHtml+`<div><div class="bubble-content bubble-content--deleted"><span class="bubble-deleted">Message deleted</span></div></div>`;
   }else{
-    el.innerHTML=avatarHtml+`<div><div class="bubble-content">${escHtml(msg.message)}</div><div class="bubble-time">${time}${delBtn}</div></div>`;
+    el.innerHTML=avatarHtml+`<div><div class="bubble-content">${escHtml(msg.message)}</div><div class="bubble-time">${time}${tick}${delBtn}</div></div>`;
   }
   if(append){area.appendChild(el);scrollBottom();}else area.prepend(el);
 }
@@ -250,6 +255,22 @@ async function loadMessages(){
   const{data}=await sb.from('messages').select('*').or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${partnerUser.id}),and(sender_id.eq.${partnerUser.id},receiver_id.eq.${currentUser.id})`).order('created_at',{ascending:true});
   if(!data||!data.length){area.innerHTML='<div style="text-align:center;padding:40px;font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">No messages yet — say hello!</div>';return;}
   for(const m of data)renderMsg(m,true);scrollBottom();
+  // Mark all incoming unread messages as seen
+  await markMessagesSeen();
+}
+
+// Mark all unread messages from partner as seen and clear their notification
+async function markMessagesSeen(){
+  await sb.from('messages')
+    .update({seen_at:new Date().toISOString()})
+    .eq('sender_id',partnerUser.id)
+    .eq('receiver_id',currentUser.id)
+    .is('seen_at',null);
+  // Clear matching bell notifications so count goes down
+  if(window.HubBell){
+    HubBell._items.forEach(i=>{if(i.type==='message'&&i.senderId===partnerUser.id)i.read=true;});
+    HubBell._save();HubBell._render();
+  }
 }
 async function sendMessage(){
   const inp=document.getElementById('msgInput'),text=inp.value.trim();
@@ -316,19 +337,35 @@ function applyDeleteToUI(msgId){
   if(timeEl)timeEl.remove();
   bubble.classList.remove('deleting');
 }
+function applySeenToUI(seenAt){
+  // Flip all grey ✓ ticks to blue ✓✓ for the partner's messages we sent
+  document.querySelectorAll('.msg-bubble.mine .msg-tick').forEach(tick=>{
+    tick.textContent='✓✓';tick.className='msg-tick seen';
+  });
+}
 function setupRealtime(){
   rtChannel=sb.channel('chat-'+[currentUser.id,partnerUser.id].sort().join('-'))
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>{
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async payload=>{
       const m=payload.new;
       if((m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id)){
         renderMsg(m,true);
-        if(m.sender_id!==currentUser.id)playMsgSound();
+        if(m.sender_id!==currentUser.id){
+          playMsgSound();
+          // We're actively in this chat — mark it seen right away
+          await markMessagesSeen();
+        }
       }
     })
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},payload=>{
       const m=payload.new;
-      if(m&&m.is_deleted&&((m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id))){
-        applyDeleteToUI(m.id);
+      if(!m)return;
+      const inConvo=(m.sender_id===currentUser.id&&m.receiver_id===partnerUser.id)||(m.sender_id===partnerUser.id&&m.receiver_id===currentUser.id);
+      if(!inConvo)return;
+      if(m.is_deleted){applyDeleteToUI(m.id);return;}
+      // Sender sees their tick flip to ✓✓ when receiver opens the chat
+      if(m.seen_at&&m.sender_id===currentUser.id){
+        const tick=document.querySelector(`.msg-tick[data-tick="${m.id}"]`);
+        if(tick){tick.textContent='✓✓';tick.className='msg-tick seen';}
       }
     })
     .subscribe();

@@ -26,11 +26,16 @@
 .inbox-search::placeholder{color:var(--text-dim);}
 .convo-list{flex:1;overflow-y:auto;}
 .convo-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--glass-border);cursor:pointer;transition:background .15s;text-decoration:none;}
-.convo-item:hover{background:rgba(255,255,255,.03);}
+.convo-item:hover{background:var(--glass-hover);}
+.convo-item.has-unread{background:var(--primary-g);}
 .convo-info{flex:1;overflow:hidden;}
 .convo-name{font-family:var(--font-mono);font-size:12px;color:var(--text);margin-bottom:2px;}
+.convo-item.has-unread .convo-name{color:var(--primary);font-weight:700;}
 .convo-preview{font-family:var(--font-body);font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.convo-item.has-unread .convo-preview{color:var(--text);}
 .convo-time{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;}
+.convo-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.convo-unread-badge{background:var(--primary);color:var(--bg);border-radius:10px;min-width:18px;height:18px;font-family:var(--font-mono);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;}
 .inbox-main{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg);}
 .inbox-welcome-icon{font-size:60px;opacity:.15;margin-bottom:16px;}
 .inbox-welcome-title{font-family:var(--font-display);font-size:28px;letter-spacing:.1em;color:var(--text-muted);margin-bottom:8px;}
@@ -126,21 +131,34 @@ async function loadConvos(){
   const{data}=await sb.from('messages').select('*,sender:sender_id(id,name,avatar_url),receiver:receiver_id(id,name,avatar_url)').or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`).order('created_at',{ascending:false});
   const cl=document.getElementById('convoList');
   if(!data||!data.length){cl.innerHTML='<div style="padding:30px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-dim)">No conversations yet.<br><br>Search above to start chatting.</div>';return;}
+
+  // Build conversation map with latest message
   const convos={};
   for(const m of data){
     const pid=m.sender_id===currentUser.id?m.receiver_id:m.sender_id;
     const p2=m.sender_id===currentUser.id?m.receiver:m.sender;
-    if(!convos[pid])convos[pid]={partner:p2,msg:m.message,time:m.created_at,avatar:p2?.avatar_url||null};
+    if(!convos[pid])convos[pid]={partner:p2,msg:m.message,time:m.created_at,avatar:p2?.avatar_url||null,unread:0};
   }
+
+  // Count unread (messages sent TO me from each partner that have no seen_at)
+  for(const m of data){
+    if(m.receiver_id===currentUser.id&&!m.seen_at&&!m.is_deleted){
+      const pid=m.sender_id;
+      if(convos[pid])convos[pid].unread++;
+    }
+  }
+
   cl.innerHTML=Object.entries(convos).map(([pid,c])=>{
     const name=c.partner?.name||'Unknown';
     const col=avatarColor(name);
     const cavHtml=c.avatar?`<img src="${escHtml(c.avatar)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avatarInitials(name);
     const cavBg=c.avatar?'transparent':col+'20';
-    return`<a href="chat.html?uid=${pid}" class="convo-item">
+    const unreadBadge=c.unread>0?`<span class="convo-unread-badge">${c.unread>99?'99+':c.unread}</span>`:'';
+    const hasUnread=c.unread>0?' has-unread':'';
+    return`<a href="chat.html?uid=${pid}" class="convo-item${hasUnread}">
       <div class="avatar avatar-sm" style="background:${cavBg};color:${col};overflow:hidden">${cavHtml}</div>
       <div class="convo-info"><div class="convo-name">${escHtml(name)}</div><div class="convo-preview">${escHtml(c.msg)}</div></div>
-      <div class="convo-time">${timeAgo(c.time)}</div>
+      <div class="convo-meta"><div class="convo-time">${timeAgo(c.time)}</div>${unreadBadge}</div>
     </a>`;
   }).join('');
 }
@@ -174,6 +192,18 @@ async function boot(){
   document.getElementById('loadingOverlay').classList.add('hidden');
   await HubAnnouncements.checkOnLogin(sb, currentUser.id);
   HubMsgPoller.start(sb, currentUser.id);
+
+  // Live refresh convo list when new messages arrive or are seen
+  sb.channel('inbox-live')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>{
+      const m=payload.new;
+      if(m.sender_id===currentUser.id||m.receiver_id===currentUser.id)loadConvos();
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},payload=>{
+      const m=payload.new;
+      if(m&&m.seen_at&&m.receiver_id===currentUser.id)loadConvos();
+    })
+    .subscribe();
 }
 boot();
 
