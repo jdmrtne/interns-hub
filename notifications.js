@@ -428,7 +428,7 @@ window.HubNotif = {
     // Fire OS banner when the tab isn't in focus — new Notification() is silently
     // blocked by browsers in that state; reg.showNotification() is not.
     if (document.visibilityState !== 'visible' || !document.hasFocus()) {
-      showOSNotification('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ' + senderName, text, 'messages.html?uid=' + senderId, 'message');
+      showOSNotification(senderName, text, 'messages.html?uid=' + senderId, 'message');
     }
     const col = avatarColor(senderName);
     const avatarHtml = senderAvatar
@@ -784,7 +784,7 @@ window.HubAnnouncements = {
     _playNotifSound();
     // Fire OS banner for announcement when tab is unfocused
     if (document.visibilityState !== 'visible' || !document.hasFocus()) {
-      showOSNotification('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> ' + (ann.title || 'New Announcement'), ann.message || '', 'announcements.html', 'announcement');
+      showOSNotification(ann.title || 'New Announcement', ann.message || '', 'announcements.html', 'announcement');
     }
   },
   _close() { document.getElementById('ann-modal-ov').classList.add('hidden'); }
@@ -800,7 +800,7 @@ if ('serviceWorker' in navigator) {
     if (d.pushType === 'message') {
       // Extract senderId from the URL (?uid=...)
       const uid = d.url ? new URL(d.url, location.origin).searchParams.get('uid') : null;
-      if (window.HubNotif) HubNotif.showMessage(d.senderName?.replace('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ','') || 'Someone', d.body, uid || '');
+      if (window.HubNotif) HubNotif.showMessage(d.senderName || 'Someone', d.body, uid || '');
     }
     if (window.HubBell) HubBell._render();
   });

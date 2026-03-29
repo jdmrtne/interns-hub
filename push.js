@@ -86,7 +86,7 @@ window.HubPush = {
       if (error) {
         console.warn('[HubPush] Supabase save error:', error);
       } else {
-        console.info('[HubPush] <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> Push subscription saved — you will now receive OS notifications');
+        console.info('[HubPush] ✓ Push subscription saved — you will now receive OS notifications');
       }
       this._hideBanner();
     } catch (err) {
