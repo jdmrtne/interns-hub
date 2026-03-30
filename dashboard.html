@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8">
+<script>
+(function(){var t=localStorage.getItem("hub-theme");if(!t){t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
 <meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme:light)">
@@ -36,6 +39,31 @@
 .msg-preview-name{font-family:var(--font-mono);font-size:12px;color:var(--text);margin-bottom:3px;}
 .msg-preview-text{font-family:var(--font-body);font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .msg-preview-time{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;}
+
+/* ── PERFORMANCE CHART ─────────────────────────────────────────── */
+.perf-chart-wrap{position:relative;width:100%;padding:4px 0 8px;}
+.perf-tab-row{display:flex;gap:6px;flex-wrap:wrap;}
+.perf-tab{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:6px;padding:5px 14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.perf-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.perf-tab:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+.rank-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--glass-border);}
+.rank-item:last-child{border-bottom:none;}
+.rank-num{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-dim);width:22px;text-align:right;flex-shrink:0;}
+.rank-num.gold{color:#fbbf24;}.rank-num.silver{color:#94a3b8;}.rank-num.bronze{color:#cd7f32;}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-family:var(--font-mono);font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-dept{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.08em;}
+.rank-hours{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--primary);flex-shrink:0;}
+.comp-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--glass-border);}
+.comp-item:last-child{border-bottom:none;}
+.comp-info{flex:1;min-width:0;}
+.comp-name{font-family:var(--font-mono);font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.comp-meta{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);}
+.comp-pct{font-family:var(--font-mono);font-size:12px;font-weight:700;flex-shrink:0;}
+.comp-pct.near{color:var(--blue);}.comp-pct.done{color:#34d399;}
+.comp-bar{width:100%;height:4px;background:var(--glass);border-radius:99px;overflow:hidden;margin-top:4px;}
+.comp-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);}
+.comp-bar-fill.done{background:linear-gradient(90deg,#34d399,#38bdf8);}
 </style>
 </head>
 <body>
@@ -55,6 +83,18 @@
   </div>
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
+  <div class="snav-theme-row">
+    <label class="theme-switch" title="Toggle light/dark mode">
+        <input class="theme-switch-input" type="checkbox" onchange="hubToggleTheme()">
+        <span class="theme-switch-track">
+          <span class="theme-switch-thumb">
+            <svg class="theme-switch-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="theme-switch-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+        </span>
+        <span class="theme-switch-label-text snav-label">Dark</span>
+      </label>
+  </div>
   <div class="snav-footer">
     <div class="snav-user">
       <div class="snav-user-avatar" id="navAvatar"></div>
@@ -63,7 +103,12 @@
         <div class="snav-user-role" id="navUserRole">intern</div>
       </div>
     </div>
-    <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+    <div class="snav-footer-actions">
+      <button class="btn-logout-nav" onclick="doLogout()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:-0.1em;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+    </div>
+      <button class="btn-logout-rail" onclick="doLogout()" title="Sign out">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
   </div>
 </nav>
 <main class="main-content">
@@ -93,6 +138,55 @@
         <span id="progRemaining"></span>
       </div>
     </div>
+    <!-- ── PERSONAL: Performance Chart ────────────────────────────── -->
+    <div id="perfChartCard" style="display:none;margin-bottom:22px" class="card">
+      <div class="card-header">
+        <div class="card-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-.15em"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> My Performance</div>
+        <div class="perf-tab-row" id="myPerfTabs">
+          <button class="perf-tab active" onclick="switchMyPerf('daily',this)">Daily</button>
+          <button class="perf-tab" onclick="switchMyPerf('weekly',this)">Weekly</button>
+          <button class="perf-tab" onclick="switchMyPerf('monthly',this)">Monthly</button>
+        </div>
+      </div>
+      <div class="card-body" style="padding-bottom:8px">
+        <div class="perf-chart-wrap"><canvas id="myPerfChart" height="110"></canvas></div>
+        <div id="myPerfSummary" style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;padding-top:10px;border-top:1px solid var(--glass-border)"></div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN: Performance Rankings ──────────────────────────── -->
+    <div id="adminPerfCard" style="display:none;margin-bottom:22px" class="card">
+      <div class="card-header">
+        <div class="card-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-.15em"><path d="M18 20V10M12 20V4M6 20v-6"/></svg> Performance Rankings</div>
+        <div class="perf-tab-row" id="adminPerfTabs">
+          <button class="perf-tab active" onclick="switchAdminPerf('daily',this)">Today</button>
+          <button class="perf-tab" onclick="switchAdminPerf('weekly',this)">This Week</button>
+          <button class="perf-tab" onclick="switchAdminPerf('monthly',this)">This Month</button>
+        </div>
+      </div>
+      <div class="card-body" id="adminPerfList"><div class="empty-state"><div class="empty-sub">Loading…</div></div></div>
+    </div>
+
+    <!-- ── ADMIN: Nearly Completing + Completed ──────────────────── -->
+    <div id="adminCompletionSection" style="display:none;margin-bottom:22px">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-.15em;color:var(--blue)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Nearly Completing</div>
+            <span id="nearlyBadge" style="font-family:var(--font-mono);font-size:9px;background:rgba(56,189,248,.12);color:var(--primary);border:1px solid rgba(56,189,248,.2);border-radius:20px;padding:2px 8px"></span>
+          </div>
+          <div class="card-body" id="nearlyCompletingList"><div class="empty-state"><div class="empty-sub">Loading…</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-.15em;color:#34d399"><polyline points="20 6 9 17 4 12"/></svg> Completed</div>
+            <span id="completedBadge" style="font-family:var(--font-mono);font-size:9px;background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2);border-radius:20px;padding:2px 8px"></span>
+          </div>
+          <div class="card-body" id="completedList"><div class="empty-state"><div class="empty-sub">Loading…</div></div></div>
+        </div>
+      </div>
+    </div>
+
     <div class="two-col">
       <div class="card">
         <div class="card-header"><div class="card-title">Announcements</div><a href="announcements.html" class="btn btn-ghost btn-sm">View All</a></div>
@@ -107,6 +201,7 @@
 </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
@@ -122,6 +217,206 @@ function updateClock(){
   document.getElementById('pageDate').textContent = now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 setInterval(updateClock, 1000); updateClock();
+
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function fmtH(h){ if(!h||h===0) return '0h 00m'; const hrs=Math.floor(h),mins=Math.round((h%1)*60); return hrs+'h '+String(mins).padStart(2,'0')+'m'; }
+function calcL(l){ if(!l) return 0; if(l.total_hours) return parseFloat(l.total_hours); let t=0; const tm=s=>{if(!s)return null;const[h,m]=(s+':00').split(':').map(Number);return h*60+(m||0);}; const ai=tm(l.am_in),ao=tm(l.am_out),pi=tm(l.pm_in),po=tm(l.pm_out); if(ai&&ao&&ao>ai)t+=ao-ai; if(pi&&po&&po>pi)t+=po-pi; return t>0?t/60:0; }
+function dateRange(days){ const r=[]; for(let i=days-1;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); r.push(d.toISOString().split('T')[0]); } return r; }
+function weekStart(){ const d=new Date(); d.setDate(d.getDate()-d.getDay()); return d.toISOString().split('T')[0]; }
+function monthStart(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01'; }
+
+// ── My Performance Chart (personal user) ──────────────────────────────────
+let myPerfChartInst=null, myPerfLogs=[], myPerfPeriod='daily';
+
+async function loadMyPerfChart(){
+  const { data: logs } = await sb.from('time_logs').select('date,am_in,am_out,pm_in,pm_out,total_hours').eq('user_id', currentUser.id).order('date',{ascending:true});
+  myPerfLogs = logs || [];
+  renderMyPerfChart('daily');
+  document.getElementById('perfChartCard').style.display = '';
+}
+
+function switchMyPerf(period, btn){
+  myPerfPeriod = period;
+  document.querySelectorAll('#myPerfTabs .perf-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMyPerfChart(period);
+}
+
+function renderMyPerfChart(period){
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const textColor = isDark ? '#7d8590' : '#57606a';
+  const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+
+  let labels=[], dataPoints=[], summaryHtml='';
+  const today = new Date().toISOString().split('T')[0];
+
+  if(period==='daily'){
+    const days = dateRange(30);
+    const logMap = {}; myPerfLogs.forEach(l=>{ logMap[l.date]=calcL(l); });
+    labels = days.map(d=>{ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString([],{month:'short',day:'numeric'}); });
+    dataPoints = days.map(d=>+(logMap[d]||0).toFixed(2));
+    const total = dataPoints.reduce((a,b)=>a+b,0);
+    const daysLogged = dataPoints.filter(v=>v>0).length;
+    const avg = daysLogged ? total/daysLogged : 0;
+    summaryHtml = `
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">30-Day Total</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--primary)">${fmtH(total)}</div></div>
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">Days Logged</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--text)">${daysLogged}</div></div>
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">Daily Average</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--blue)">${fmtH(avg)}</div></div>`;
+  } else if(period==='weekly'){
+    // Last 12 weeks
+    const weeks=[];
+    for(let i=11;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-d.getDay()-i*7); weeks.push(d.toISOString().split('T')[0]); }
+    labels = weeks.map((ws,idx)=>{ const d=new Date(ws+'T00:00:00'); return 'Wk '+d.toLocaleDateString([],{month:'short',day:'numeric'}); });
+    dataPoints = weeks.map((ws,idx)=>{
+      const nextWs = idx<weeks.length-1 ? weeks[idx+1] : today;
+      const wLogs = myPerfLogs.filter(l=>l.date>=ws && l.date<nextWs);
+      return +(wLogs.reduce((s,l)=>s+calcL(l),0)).toFixed(2);
+    });
+    const total=dataPoints.reduce((a,b)=>a+b,0);
+    const avg=dataPoints.filter(v=>v>0).length ? total/dataPoints.filter(v=>v>0).length : 0;
+    summaryHtml = `
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">12-Week Total</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--primary)">${fmtH(total)}</div></div>
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">Weekly Average</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--blue)">${fmtH(avg)}</div></div>`;
+  } else {
+    // Last 12 months
+    const months=[];
+    for(let i=11;i>=0;i--){ const d=new Date(); d.setMonth(d.getMonth()-i); months.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')); }
+    labels = months.map(m=>{ const[y,mo]=m.split('-'); return new Date(y,mo-1,1).toLocaleDateString([],{month:'short',year:'2-digit'}); });
+    dataPoints = months.map(m=>{ const mLogs=myPerfLogs.filter(l=>l.date.startsWith(m+'-')); return +(mLogs.reduce((s,l)=>s+calcL(l),0)).toFixed(2); });
+    const total=dataPoints.reduce((a,b)=>a+b,0);
+    summaryHtml = `
+      <div style="flex:1;min-width:100px"><div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px">12-Month Total</div><div style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--primary)">${fmtH(total)}</div></div>`;
+  }
+
+  document.getElementById('myPerfSummary').innerHTML = summaryHtml;
+
+  const ctx = document.getElementById('myPerfChart').getContext('2d');
+  if(myPerfChartInst){ myPerfChartInst.destroy(); }
+  myPerfChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Hours',
+        data: dataPoints,
+        backgroundColor: dataPoints.map(v=>v>0?'rgba(56,189,248,.35)':'rgba(56,189,248,.08)'),
+        borderColor: dataPoints.map(v=>v>0?'#38bdf8':'rgba(56,189,248,.2)'),
+        borderWidth: 1,
+        borderRadius: 4,
+        hoverBackgroundColor: '#38bdf8'
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx=>fmtH(ctx.raw) }, backgroundColor:'rgba(7,11,20,.9)', titleColor:'#e6edf3', bodyColor:'#7d8590', borderColor:'#30363d', borderWidth:1 }},
+      scales:{
+        x:{ ticks:{ color:textColor, font:{family:'JetBrains Mono, monospace',size:9}, maxRotation:45 }, grid:{color:gridColor} },
+        y:{ ticks:{ color:textColor, font:{family:'JetBrains Mono, monospace',size:9}, callback: v=>fmtH(v) }, grid:{color:gridColor}, beginAtZero:true }
+      }
+    }
+  });
+}
+
+// ── Admin Performance Rankings ─────────────────────────────────────────────
+let adminPerfData=null, adminPerfPeriod='daily';
+
+async function loadAdminPerf(){
+  const today = new Date().toISOString().split('T')[0];
+  const ws = weekStart(), ms = monthStart();
+  const { data: logs } = await sb.from('time_logs').select('user_id,date,am_in,am_out,pm_in,pm_out,total_hours').gte('date', ms);
+  const { data: users } = await sb.from('users').select('id,name,department').neq('role','admin').neq('role','disabled');
+  adminPerfData = { logs: logs||[], users: users||[], today, ws, ms };
+  renderAdminPerfList('daily');
+  document.getElementById('adminPerfCard').style.display='';
+}
+
+function switchAdminPerf(period, btn){
+  adminPerfPeriod = period;
+  document.querySelectorAll('#adminPerfTabs .perf-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAdminPerfList(period);
+}
+
+function renderAdminPerfList(period){
+  if(!adminPerfData) return;
+  const { logs, users, today, ws, ms } = adminPerfData;
+  let filteredLogs = logs;
+  if(period==='daily') filteredLogs = logs.filter(l=>l.date===today);
+  else if(period==='weekly') filteredLogs = logs.filter(l=>l.date>=ws);
+
+  const totals={};
+  filteredLogs.forEach(l=>{ totals[l.user_id]=(totals[l.user_id]||0)+calcL(l); });
+
+  const ranked = users
+    .map(u=>({ ...u, hours: totals[u.id]||0 }))
+    .filter(u=>u.hours>0)
+    .sort((a,b)=>b.hours-a.hours);
+
+  const el = document.getElementById('adminPerfList');
+  if(!ranked.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-sub">No hours logged '+(period==='daily'?'today':period==='weekly'?'this week':'this month')+'</div></div>';
+    return;
+  }
+  const numClass = i => i===0?'gold':i===1?'silver':i===2?'bronze':'';
+  el.innerHTML = ranked.slice(0,10).map((u,i)=>{
+    const col=avatarColor(u.name);
+    const av=`<div class="avatar avatar-sm" style="background:${col}20;color:${col};flex-shrink:0">${avatarInitials(u.name)}</div>`;
+    return `<div class="rank-item">
+      <span class="rank-num ${numClass(i)}">#${i+1}</span>
+      ${av}
+      <div class="rank-info"><div class="rank-name">${escHtml(u.name||'—')}</div><div class="rank-dept">${escHtml(u.department||'No Dept')}</div></div>
+      <span class="rank-hours">${fmtH(u.hours)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Admin Completion Lists ─────────────────────────────────────────────────
+async function loadAdminCompletion(){
+  const { data: users } = await sb.from('users').select('id,name,department,internship_hours').neq('role','admin').neq('role','disabled');
+  const { data: logs } = await sb.from('time_logs').select('user_id,am_in,am_out,pm_in,pm_out,total_hours');
+
+  const logTotals={};
+  (logs||[]).forEach(l=>{ logTotals[l.user_id]=(logTotals[l.user_id]||0)+calcL(l); });
+
+  const withHours = (users||[]).filter(u=>u.internship_hours && u.internship_hours>0);
+  const completed = withHours.filter(u=>logTotals[u.id]>=u.internship_hours).map(u=>({...u,logged:logTotals[u.id]||0,pct:Math.min(100,(logTotals[u.id]/u.internship_hours)*100)}));
+  const nearly = withHours.filter(u=>{ const p=(logTotals[u.id]||0)/u.internship_hours; return p>=0.7 && p<1; }).map(u=>({...u,logged:logTotals[u.id]||0,pct:(logTotals[u.id]||0)/u.internship_hours*100})).sort((a,b)=>b.pct-a.pct);
+
+  document.getElementById('nearlyBadge').textContent = nearly.length + ' intern' + (nearly.length!==1?'s':'');
+  document.getElementById('completedBadge').textContent = completed.length + ' intern' + (completed.length!==1?'s':'');
+
+  const nearEl = document.getElementById('nearlyCompletingList');
+  nearEl.innerHTML = nearly.length ? nearly.map(u=>{
+    const remaining = Math.max(0, u.internship_hours - u.logged).toFixed(1);
+    const col = avatarColor(u.name);
+    return `<div class="comp-item">
+      <div class="avatar avatar-sm" style="background:${col}20;color:${col};flex-shrink:0">${avatarInitials(u.name)}</div>
+      <div class="comp-info">
+        <div class="comp-name">${escHtml(u.name||'—')}</div>
+        <div class="comp-meta">${escHtml(u.department||'')} · ${remaining}h left</div>
+        <div class="comp-bar"><div class="comp-bar-fill" style="width:${u.pct.toFixed(1)}%"></div></div>
+      </div>
+      <span class="comp-pct near">${Math.round(u.pct)}%</span>
+    </div>`;
+  }).join('') : '<div class="empty-state"><div class="empty-sub">No interns near completion</div></div>';
+
+  const compEl = document.getElementById('completedList');
+  compEl.innerHTML = completed.length ? completed.sort((a,b)=>b.pct-a.pct).map(u=>{
+    const col = avatarColor(u.name);
+    return `<div class="comp-item">
+      <div class="avatar avatar-sm" style="background:${col}20;color:${col};flex-shrink:0">${avatarInitials(u.name)}</div>
+      <div class="comp-info">
+        <div class="comp-name">${escHtml(u.name||'—')}</div>
+        <div class="comp-meta">${escHtml(u.department||'')} · ${u.logged.toFixed(1)}h / ${u.internship_hours}h</div>
+        <div class="comp-bar"><div class="comp-bar-fill done" style="width:100%"></div></div>
+      </div>
+      <span class="comp-pct done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em"><polyline points="20 6 9 17 4 12"/></svg> Done</span>
+    </div>`;
+  }).join('') : '<div class="empty-state"><div class="empty-sub">No completions yet</div></div>';
+
+  document.getElementById('adminCompletionSection').style.display='';
+}
 
 async function loadAnnouncements(){
   const {data} = await sb.from('announcements').select('*,users!created_by(name)').order('created_at',{ascending:false}).limit(3);
@@ -238,7 +533,13 @@ async function boot(){
   // ── Enable sidebar profile click ──
   enableSidebarProfileClick(sb, currentUser.id, p);
 
-  await Promise.all([loadAnnouncements(), loadRecentMessages(), loadStats()]);
+  if(isAdmin){
+    document.getElementById('adminPerfCard').style.display='none';
+    document.getElementById('adminCompletionSection').style.display='none';
+    await Promise.all([loadAnnouncements(), loadRecentMessages(), loadStats(), loadAdminPerf(), loadAdminCompletion()]);
+  } else {
+    await Promise.all([loadAnnouncements(), loadRecentMessages(), loadStats(), loadMyPerfChart()]);
+  }
   document.getElementById('loadingOverlay').classList.add('hidden');
   await HubAnnouncements.checkOnLogin(sb, currentUser.id);
   HubMsgPoller.start(sb, currentUser.id);

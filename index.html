@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){var t=localStorage.getItem('hub-theme');if(!t){t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -162,11 +165,11 @@
 }
 .total-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
 .total-value { font-family: var(--font-display); font-size: clamp(42px,7vw,64px); font-weight: 800; color: var(--primary); line-height: 1; letter-spacing: .03em; }
-.total-sub   { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.total-sub   { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 .total-right { display: flex; gap: 28px; flex-wrap: wrap; }
 .tstat { text-align: center; }
 .tstat-val { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: .03em; line-height: 1; }
-.tstat-lbl { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
+.tstat-lbl { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
 
 /* ── App Body ─────────────────────────────────────────── */
 .app-body { padding: 20px 24px 40px; }
@@ -224,7 +227,7 @@
 .log-val.empty { color: var(--text-dim); font-style: italic; }
 .log-val.done  { color: var(--green); }
 .hours-row { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--glass-border); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; }
-.h-item label { display: block; font-family: var(--font-mono); font-size: 8px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
+.h-item label { display: block; font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 3px; }
 .h-item span  { font-family: var(--font-mono); font-size: 14px; color: var(--primary); font-weight: 700; }
 
 /* ── Clock Buttons ───────────────────────────────────── */
@@ -273,7 +276,7 @@
   padding: 18px 22px; margin-bottom: 20px;
   display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 14px;
 }
-.wstat label { display: block; font-family: var(--font-mono); font-size: 8px; letter-spacing: .18em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.wstat label { display: block; font-family: var(--font-mono); font-size: 8px; letter-spacing: .18em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
 .wstat span  { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: .04em; }
 
 /* ── Past Panel ───────────────────────────────────────── */
@@ -565,6 +568,18 @@
   </div>
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="sideNavLinks"></div>
+  <div class="snav-theme-row">
+    <label class="theme-switch" title="Toggle light/dark mode">
+        <input class="theme-switch-input" type="checkbox" onchange="hubToggleTheme()">
+        <span class="theme-switch-track">
+          <span class="theme-switch-thumb">
+            <svg class="theme-switch-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="theme-switch-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+        </span>
+        <span class="theme-switch-label-text snav-label">Dark</span>
+      </label>
+  </div>
   <div class="snav-footer">
     <div class="snav-user">
       <div class="snav-user-avatar" id="navAvatar"></div>
@@ -573,7 +588,14 @@
         <div class="snav-user-role" id="sideNavRole">intern</div>
       </div>
     </div>
-    <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+    <div class="snav-footer-actions">
+      <button class="btn-logout-nav" onclick="doLogout()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:-0.1em;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
+      </button>
+    </div>
+      <button class="btn-logout-rail" onclick="doLogout()" title="Sign out">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
   </div>
 </nav>
 <div class="main-content" id="mainContent">
@@ -1336,7 +1358,7 @@ function renderClockSideNav(isAdmin){
           <span class="snav-label">Clock</span>
         </a>
         <div class="snav-sub">
-          <button class="snav-subitem active" id="navClock" onclick="gotoPage('clock')">⏱ Time Clock</button>
+          <button class="snav-subitem active" id="navClock" onclick="gotoPage('clock')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em;margin-right:5px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time Clock</button>
           <button class="snav-subitem" id="navLog"     onclick="gotoPage('log')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Log Past Day</button>
           <button class="snav-subitem" id="navHistory" onclick="gotoPage('history')">↺ History</button>
         </div>

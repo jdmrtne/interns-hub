@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+(function(){var t=localStorage.getItem("hub-theme");if(!t){t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,7 +46,7 @@
 .intern-card:hover .intern-avatar{border-color:var(--primary);}
 .intern-name{font-family:var(--font-mono);font-size:14px;color:var(--text);letter-spacing:.06em;}
 .intern-dept{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-6px;}
-.results-count{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:16px;}
+.results-count{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.08em;margin-bottom:16px;}
 @media(max-width:768px){.sidebar-nav.open{transform:translateX(0);}.sidebar-overlay.show{display:block;}}
 
 /* ── INTERN PROFILE POPUP ───────────────────────────────────────── */
@@ -62,28 +65,28 @@
 .iprofile-name{font-family:var(--font-body);font-size:18px;font-weight:700;color:var(--text,#e6edf3);}
 .iprofile-dept{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted,#7d8590);}
 .iprofile-actions{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:4px;}
-.iprofile-you-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim,#484f58);margin-top:4px;}
-.iprofile-records-link{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text-dim,#484f58);cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:4px;background:none;border:none;padding:0;}
+.iprofile-you-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text-muted);margin-top:4px;}
+.iprofile-records-link{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text-muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:4px;background:none;border:none;padding:0;}
 .iprofile-records-link:hover{color:var(--primary,#38bdf8);}
 
 /* Admin detail panel inside popup */
 .ip-detail{width:100%;text-align:left;}
 .ip-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .ip-stat-grid.three{grid-template-columns:1fr 1fr 1fr;}
-.ip-stat{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:8px;padding:10px 12px;}
-.ip-stat-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim,#484f58);margin-bottom:4px;}
+.ip-stat{background:var(--glass);border:1px solid var(--glass-border-b);border-radius:8px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,40,100,.06);}
+.ip-stat-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
 .ip-stat-value{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--text,#e6edf3);}
 .ip-stat-value.accent{color:var(--primary,#38bdf8);}
-.ip-stat-value.green{color:#34d399;}
-.ip-stat-value.amber{color:#fbbf24;}
+.ip-stat-value.green{color:var(--green);}
+.ip-stat-value.amber{color:var(--amber);}
 .ip-stat-value.muted{color:var(--text-muted,#7d8590);font-size:13px;}
-.ip-section-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#484f58);margin-bottom:8px;}
-.ip-progress-bar{width:100%;height:7px;background:var(--glass);border-radius:99px;overflow:hidden;margin:6px 0;}
+.ip-section-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.ip-progress-bar{width:100%;height:7px;background:var(--glass-track);border-radius:99px;overflow:hidden;margin:6px 0;}
 .ip-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .6s ease;}
 .ip-progress-fill.done{background:linear-gradient(90deg,#34d399,#38bdf8);}
-.ip-progress-meta{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--text-dim,#484f58);}
+.ip-progress-meta{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--text-muted);}
 .ip-divider{width:100%;height:1px;background:var(--glass-border-b);margin:4px 0;}
-.ip-loading{text-align:center;padding:24px;font-family:var(--font-mono);font-size:10px;color:var(--text-dim,#484f58);}
+.ip-loading{text-align:center;padding:24px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);}
 
 /* ── LIGHT MODE: intern profile popup ──────────────────────────── */
 @media(prefers-color-scheme:light){
@@ -167,13 +170,33 @@
 .card-progress-label{font-family:var(--font-mono);font-size:9px;color:var(--text-muted);letter-spacing:.06em;}
 .card-progress-pct{font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--primary);}
 .card-progress-pct.done{color:#34d399;}
-.card-progress-track{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.card-progress-track{width:100%;height:5px;background:var(--glass-track);border-radius:99px;overflow:hidden;border:1px solid var(--glass-border-b);}
 .card-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .5s ease;}
 .card-progress-fill.done{background:linear-gradient(90deg,#34d399,#38bdf8);}
-@media(prefers-color-scheme:light){
-  .card-progress-track{background:rgba(0,0,0,.08);}
-  .card-progress-label{color:#57606a;}
-}
+
+
+/* ── ADMIN PROFILE EXTRA ─────────────────────────────────────────── */
+.iprofile-box.admin-view{max-width:560px;}
+.ip-mini-chart{width:100%;padding:8px 0 4px;}
+.ip-mini-chart canvas{display:block;}
+.ip-badge-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:-4px;}
+.ip-pill{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;border-radius:20px;padding:3px 10px;border:none;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+.ip-pill.amber{background:#d97706;color:#fff;}
+.ip-pill.red{background:#dc2626;color:#fff;}
+.ip-pill.green{background:#059669;color:#fff;}
+.ip-pill.blue{background:#2563eb;color:#fff;}
+[data-theme="dark"] .ip-pill.amber{background:#f59e0b;color:#1a1000;}
+[data-theme="dark"] .ip-pill.red{background:#f87171;color:#2d0000;}
+[data-theme="dark"] .ip-pill.green{background:#34d399;color:#002a1a;}
+[data-theme="dark"] .ip-pill.blue{background:#60a5fa;color:#001233;}
+.ip-recent-log{display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--glass-border);font-family:var(--font-mono);font-size:10px;}
+.ip-recent-log:last-child{border-bottom:none;}
+.ip-recent-log .date{color:var(--text-muted);font-size:9px;}
+.ip-recent-log .t{color:var(--text-muted);text-align:center;}
+.ip-recent-log .t.am{color:var(--blue);}
+.ip-recent-log .t.pm{color:var(--primary);}
+.ip-recent-log .total{color:var(--green);font-weight:700;text-align:right;}
+.ip-section-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:6px;}
 .snav-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .snav-icon svg{width:18px;height:18px;display:block;}
 .snav-item{color:var(--text-muted);}
@@ -184,6 +207,7 @@
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 <script src="./nav.js"></script>
@@ -208,6 +232,18 @@
   </div>
   <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
   <div class="snav-links" id="navLinks"></div>
+  <div class="snav-theme-row">
+    <label class="theme-switch" title="Toggle light/dark mode">
+        <input class="theme-switch-input" type="checkbox" onchange="hubToggleTheme()">
+        <span class="theme-switch-track">
+          <span class="theme-switch-thumb">
+            <svg class="theme-switch-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="theme-switch-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+        </span>
+        <span class="theme-switch-label-text snav-label">Dark</span>
+      </label>
+  </div>
   <div class="snav-footer">
     <div class="snav-user">
       <div class="snav-user-avatar" id="navAvatar"></div>
@@ -216,7 +252,12 @@
         <div class="snav-user-role" id="navUserRole">intern</div>
       </div>
     </div>
-    <button class="btn-logout-nav" onclick="doLogout()">⏻ Sign Out</button>
+    <div class="snav-footer-actions">
+      <button class="btn-logout-nav" onclick="doLogout()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:-0.1em;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+    </div>
+      <button class="btn-logout-rail" onclick="doLogout()" title="Sign out">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
   </div>
 </nav>
 
@@ -385,98 +426,204 @@ async function openInternProfile(internId) {
 
   if (isAdmin && !isSelf) {
     box.classList.add('admin-view');
-    document.getElementById('ipHeaderTitle').textContent = 'Intern Details';
-    detailEl.innerHTML = '<div class="ip-loading">Loading details…</div>';
+    document.getElementById('ipHeaderTitle').textContent = 'Intern Analytics';
+    detailEl.innerHTML = '<div class="ip-loading">Loading analytics…</div>';
     document.getElementById('internProfileOv').classList.add('open');
 
-    // Fetch logs
+    // Destroy any existing mini chart
+    if(window._ipMiniChart){ window._ipMiniChart.destroy(); window._ipMiniChart=null; }
+
+    // Fetch logs (all time for this intern)
     const { data: logs } = await sb.from('time_logs')
       .select('*').eq('user_id', intern.id).order('date', { ascending: true });
 
-    // Compute stats
-    let totalHrs = 0;
-    (logs || []).forEach(l => { totalHrs += calcLogHours(l) || 0; });
-    const days = (logs || []).length;
-    const avgHrs = days ? totalHrs / days : 0;
-    const firstLog = logs && logs.length ? logs[0].date : null;
-    const lastLog  = logs && logs.length ? logs[logs.length - 1].date : null;
-    const joined   = intern.created_at ? new Date(intern.created_at).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—';
-    const startedStr = firstLog ? new Date(firstLog + 'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : 'No logs yet';
-    const lastStr    = lastLog  ? new Date(lastLog  + 'T00:00:00').toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—';
+    const logList = logs || [];
+
+    // ── Core stats ──────────────────────────────────────────────────
+    let totalHrs = 0, bestDayHrs = 0;
+    const AM_LATE_T = '08:01', PM_LATE_T = '13:01';
+    let lateCount = 0, firstLog = null, lastLog = null;
+
+    const logMap = {}; // date → log for streak calc
+    logList.forEach(l => {
+      const h = calcLogHours(l) || 0;
+      totalHrs += h;
+      if(h > bestDayHrs) bestDayHrs = h;
+      if(!firstLog) firstLog = l.date;
+      lastLog = l.date;
+      logMap[l.date] = l;
+      // Late check
+      if((l.am_in && l.am_in >= AM_LATE_T) || (l.pm_in && l.pm_in >= PM_LATE_T)) lateCount++;
+    });
+
+    const daysLogged = logList.length;
+    const avgHrs = daysLogged ? totalHrs / daysLogged : 0;
+
+    // Attendance rate: days present / calendar days since first log (excl. weekends)
+    let workDaysSinceStart = 0;
+    if(firstLog){
+      const start = new Date(firstLog+'T00:00:00');
+      const end = new Date();
+      for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)){
+        const dow = d.getDay();
+        if(dow!==0 && dow!==6) workDaysSinceStart++;
+      }
+    }
+    const attendanceRate = workDaysSinceStart > 0 ? Math.min(100, Math.round((daysLogged/workDaysSinceStart)*100)) : null;
+    const absenceCount = workDaysSinceStart > 0 ? Math.max(0, workDaysSinceStart - daysLogged) : null;
+
+    // Current streak (consecutive logged days ending at latest log, going backwards)
+    let streak = 0;
+    if(lastLog){
+      let d = new Date(lastLog+'T00:00:00');
+      while(logMap[d.toISOString().split('T')[0]]){
+        streak++;
+        d.setDate(d.getDate()-1);
+        // skip weekends
+        while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()-1);
+      }
+    }
 
     // Progress
     const totalRequired = intern.internship_hours || 0;
     const remaining = totalRequired ? Math.max(0, totalRequired - totalHrs) : null;
     const pct = totalRequired ? Math.min(100, (totalHrs / totalRequired) * 100) : null;
     const complete = totalRequired && totalHrs >= totalRequired;
+    const joined = intern.created_at ? new Date(intern.created_at).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—';
 
-    // Estimate finish date based on avg pace
+    // Estimate finish date
     let estFinishHtml = '—';
-    if (totalRequired && !complete && avgHrs > 0) {
+    if(totalRequired && !complete && avgHrs > 0){
       const daysLeft = Math.ceil(remaining / avgHrs);
-      const est = new Date();
-      est.setDate(est.getDate() + daysLeft);
-      estFinishHtml = est.toLocaleDateString([], {month:'short', day:'numeric', year:'numeric'});
-    } else if (complete) {
-      estFinishHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01M22 8h.01M15 2h.01M22 20h.01"/><path d="m22 2-2.24 2.24M20 12l2.24 2.24M12 20l2.24 2.24"/><path d="M2.5 6.5 5 4l6 1-1 6-2.5 2.5"/><path d="M14 8.5 9.5 13"/></svg> Complete';
+      const est = new Date(); est.setDate(est.getDate()+daysLeft);
+      estFinishHtml = est.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+    } else if(complete){
+      estFinishHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.1em"><polyline points="20 6 9 17 4 12"/></svg> Complete';
     }
 
-    // Build progress section HTML
+    const fmtH = h => { const hr=Math.floor(h),m=Math.round((h%1)*60); return hr+'h '+String(m).padStart(2,'0')+'m'; };
+
+    // ── Status badges ────────────────────────────────────────────────
+    const badges = [];
+    if(complete) badges.push('<span class="ip-pill green"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.1em"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>');
+    if(streak>=5) badges.push(`<span class="ip-pill blue"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.1em"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> ${streak}-day streak</span>`);
+    if(lateCount===0 && daysLogged>0) badges.push('<span class="ip-pill green">⭐ Never Late</span>');
+    if(lateCount>0) badges.push(`<span class="ip-pill amber"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.1em"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${lateCount} late${lateCount!==1?'s':''}</span>`);
+    if(absenceCount>3) badges.push(`<span class="ip-pill red"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.1em"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${absenceCount} absences</span>`);
+
+    // ── Last 30 days data for mini chart ────────────────────────────
+    const last30 = [];
+    for(let i=29;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); last30.push(d.toISOString().split('T')[0]); }
+    const chartVals = last30.map(d=>{ const l=logMap[d]; return l ? +(calcLogHours(l)||0).toFixed(2) : 0; });
+    const chartLabels = last30.map(d=>{ const dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString([],{month:'short',day:'numeric'}); });
+
+    // ── Recent logs (last 5) ─────────────────────────────────────────
+    const recentLogs = [...logList].reverse().slice(0,5);
+
+    // ── Progress section ─────────────────────────────────────────────
     const progressSection = totalRequired ? `
       <div class="ip-divider"></div>
       <div class="ip-section-label" style="margin-top:4px">Internship Progress</div>
       <div class="ip-stat-grid three">
-        <div class="ip-stat">
-          <div class="ip-stat-label">Logged</div>
-          <div class="ip-stat-value accent">${totalHrs.toFixed(1)}h</div>
-        </div>
-        <div class="ip-stat">
-          <div class="ip-stat-label">Required</div>
-          <div class="ip-stat-value">${totalRequired}h</div>
-        </div>
-        <div class="ip-stat">
-          <div class="ip-stat-label">Remaining</div>
-          <div class="ip-stat-value ${complete?'green':'amber'}">${complete ? '0h' : remaining.toFixed(1)+'h'}</div>
-        </div>
+        <div class="ip-stat"><div class="ip-stat-label">Logged</div><div class="ip-stat-value accent">${totalHrs.toFixed(1)}h</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Required</div><div class="ip-stat-value">${totalRequired}h</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Remaining</div><div class="ip-stat-value ${complete?'green':'amber'}">${complete?'0h':remaining.toFixed(1)+'h'}</div></div>
       </div>
       <div style="width:100%">
-        <div class="ip-progress-bar">
-          <div class="ip-progress-fill ${complete?'done':''}" style="width:${pct.toFixed(1)}%"></div>
-        </div>
-        <div class="ip-progress-meta">
-          <span>${Math.round(pct)}% complete</span>
-          <span>Est. finish: ${estFinishHtml}</span>
-        </div>
+        <div class="ip-progress-bar"><div class="ip-progress-fill ${complete?'done':''}" style="width:${pct.toFixed(1)}%"></div></div>
+        <div class="ip-progress-meta"><span>${Math.round(pct)}% complete</span><span>Est. finish: ${estFinishHtml}</span></div>
       </div>` : '';
 
+    // ── Build full detail HTML ────────────────────────────────────────
     detailEl.innerHTML = `
+      ${badges.length ? `<div class="ip-badge-row">${badges.join('')}</div>` : ''}
+
       <div class="ip-divider"></div>
-      <div class="ip-section-label" style="margin-top:4px">Time Summary</div>
+      <div class="ip-section-hdr">
+        <div class="ip-section-label" style="margin-bottom:0">Performance — Last 30 Days</div>
+        <span style="font-family:var(--font-mono);font-size:8px;color:var(--text-muted)">${chartVals.filter(v=>v>0).length} active days</span>
+      </div>
+      <div class="ip-mini-chart"><canvas id="ipMiniChart" height="80"></canvas></div>
+
+      <div class="ip-divider"></div>
+      <div class="ip-section-label" style="margin-top:2px">Attendance & Punctuality</div>
       <div class="ip-stat-grid">
-        <div class="ip-stat">
-          <div class="ip-stat-label">Started</div>
-          <div class="ip-stat-value ${firstLog?'':'muted'}">${startedStr}</div>
-        </div>
-        <div class="ip-stat">
-          <div class="ip-stat-label">Last Active</div>
-          <div class="ip-stat-value ${lastLog?'':'muted'}">${lastStr}</div>
-        </div>
-        <div class="ip-stat">
-          <div class="ip-stat-label">Days Logged</div>
-          <div class="ip-stat-value accent">${days}</div>
-        </div>
-        <div class="ip-stat">
-          <div class="ip-stat-label">Avg / Day</div>
-          <div class="ip-stat-value">${days ? (Math.floor(avgHrs)+'h '+String(Math.round((avgHrs%1)*60)).padStart(2,'0')+'m') : '—'}</div>
-        </div>
+        <div class="ip-stat"><div class="ip-stat-label">Days Logged</div><div class="ip-stat-value accent">${daysLogged}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Avg / Day</div><div class="ip-stat-value">${daysLogged ? fmtH(avgHrs) : '—'}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Lates</div><div class="ip-stat-value ${lateCount>0?'amber':'green'}">${lateCount}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Absences</div><div class="ip-stat-value ${absenceCount>3?'red':''}"> ${absenceCount!==null?absenceCount:'—'}</div></div>
       </div>
-      <div class="ip-stat-grid" style="grid-template-columns:1fr">
-        <div class="ip-stat">
-          <div class="ip-stat-label">Joined Platform</div>
-          <div class="ip-stat-value muted">${joined}</div>
-        </div>
+      <div class="ip-stat-grid three">
+        <div class="ip-stat"><div class="ip-stat-label">Best Day</div><div class="ip-stat-value ${bestDayHrs>0?'green':'muted'}">${bestDayHrs>0?fmtH(bestDayHrs):'—'}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Attendance</div><div class="ip-stat-value ${attendanceRate!==null&&attendanceRate<70?'amber':''}">${attendanceRate!==null?attendanceRate+'%':'—'}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Streak</div><div class="ip-stat-value ${streak>=3?'blue':''}">${streak>0?streak+' day'+( streak!==1?'s':''):'—'}</div></div>
       </div>
-      ${progressSection}`;
+
+      <div class="ip-divider"></div>
+      <div class="ip-section-label" style="margin-top:2px">Recent Logs</div>
+      <div style="width:100%">
+        ${recentLogs.length ? `
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr auto;gap:4px 8px;padding:4px 0;border-bottom:1px solid var(--glass-border-b);font-family:var(--font-mono);font-size:8px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase">
+          <span>Date</span><span style="text-align:center">AM In</span><span style="text-align:center">AM Out</span><span style="text-align:center">PM In</span><span style="text-align:center">PM Out</span><span style="text-align:right">Total</span>
+        </div>
+        ${recentLogs.map(l=>{
+          const isLt = (l.am_in&&l.am_in>=AM_LATE_T)||(l.pm_in&&l.pm_in>=PM_LATE_T);
+          const h = calcLogHours(l)||0;
+          const dt = new Date(l.date+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric'});
+          return `<div class="ip-recent-log ${isLt?'late':''}">
+            <span class="date">${dt}</span>
+            <span class="t am" style="${l.am_in&&l.am_in>=AM_LATE_T?'color:#fbbf24':''}">${l.am_in||'—'}</span>
+            <span class="t am">${l.am_out||'—'}</span>
+            <span class="t pm" style="${l.pm_in&&l.pm_in>=PM_LATE_T?'color:#fbbf24':''}">${l.pm_in||'—'}</span>
+            <span class="t pm">${l.pm_out||'—'}</span>
+            <span class="total">${h>0?fmtH(h):'—'}</span>
+          </div>`;
+        }).join('')}` : '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);padding:8px 0;text-align:center">No logs yet</div>'}
+      </div>
+
+      ${progressSection}
+
+      <div class="ip-divider"></div>
+      <div class="ip-stat-grid" style="grid-template-columns:1fr 1fr">
+        <div class="ip-stat"><div class="ip-stat-label">Started</div><div class="ip-stat-value muted" style="font-size:12px">${firstLog ? new Date(firstLog+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}) : 'No logs'}</div></div>
+        <div class="ip-stat"><div class="ip-stat-label">Last Active</div><div class="ip-stat-value muted" style="font-size:12px">${lastLog ? new Date(lastLog+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'}) : '—'}</div></div>
+      </div>`;
+
+    // ── Render mini chart after DOM update ────────────────────────────
+    requestAnimationFrame(() => {
+      const canvas = document.getElementById('ipMiniChart');
+      if(!canvas) return;
+      const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+      const barFill   = isDark ? '#38bdf8'              : '#0284c7';
+      const barEmpty  = isDark ? 'rgba(56,189,248,.10)' : 'rgba(2,132,199,.10)';
+      const barHover  = isDark ? '#7dd3fc'              : '#0369a1';
+      const tickColor = isDark ? '#7a8ba0'              : '#3a5070';
+      const gridColor = isDark ? 'rgba(255,255,255,.07)': 'rgba(0,40,100,.09)';
+      const ttBg      = isDark ? 'rgba(7,11,20,.96)'   : 'rgba(15,28,46,.93)';
+      const ttTitle   = isDark ? '#e6edf3'              : '#f0f6ff';
+      const ttBody    = isDark ? '#38bdf8'              : '#7dd3fc';
+      const ttBorder  = isDark ? '#30363d'              : '#1e3a5f';
+      window._ipMiniChart = new Chart(canvas.getContext('2d'), {
+        type:'bar',
+        data:{
+          labels: chartLabels,
+          datasets:[{
+            data: chartVals,
+            backgroundColor: chartVals.map(v=>v>0 ? barFill : barEmpty),
+            borderColor:     chartVals.map(v=>v>0 ? barFill : barEmpty),
+            borderWidth:0, borderRadius:4, hoverBackgroundColor: barHover
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=>c.raw>0?fmtH(c.raw):'No log', title: items=>chartLabels[items[0].dataIndex] }, backgroundColor:ttBg, titleColor:ttTitle, bodyColor:ttBody, borderColor:ttBorder, borderWidth:1 }},
+          scales:{
+            x:{ display:false },
+            y:{ ticks:{color:tickColor,font:{family:'JetBrains Mono, monospace',size:8},callback:v=>v>0?Math.floor(v)+'h':''}, grid:{color:gridColor}, border:{color:'transparent'}, beginAtZero:true }
+          }
+        }
+      });
+    });
 
     // Actions
     document.getElementById('ipActions').innerHTML = `
@@ -492,7 +639,7 @@ async function openInternProfile(internId) {
     if (isSelf) {
       actionsEl.innerHTML = `
         <div class="iprofile-you-tag">This is you</div>
-        <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); enableSidebarProfileClick(sb, currentUser.id, currentUserProfile);" style="font-size:11px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>️ Edit My Profile</button>`;
+        <button class="btn btn-ghost btn-sm" onclick="closeInternProfile(); hubOpenProfileModal(sb, currentUser.id, currentUserProfile);" style="font-size:11px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>️ Edit My Profile</button>`;
     } else {
       actionsEl.innerHTML = `<a href="chat.html?uid=${intern.id}" class="btn btn-primary" style="width:100%;text-align:center" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Message</a>`;
     }
@@ -502,6 +649,7 @@ async function openInternProfile(internId) {
 
 function closeInternProfile(){
   document.getElementById('internProfileOv').classList.remove('open');
+  if(window._ipMiniChart){ window._ipMiniChart.destroy(); window._ipMiniChart=null; }
 }
 function handleIPBgClick(e){
   if(e.target === document.getElementById('internProfileOv')) closeInternProfile();

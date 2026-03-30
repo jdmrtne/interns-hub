@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){var t=localStorage.getItem("hub-theme");if(!t){t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#070b14" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#e8eef8" media="(prefers-color-scheme:light)">
+<link rel="manifest" href="./manifest.json"><link rel="icon" href="./favicon.ico"><link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="stylesheet" href="./style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Performance — The Interns Hub</title>
+<style>
+.perf-header{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid var(--glass-border);border-radius:16px;padding:26px 30px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.perf-title{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--primary);margin-bottom:4px;}
+.perf-subtitle{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;}
+.perf-stats{display:flex;gap:20px;}
+.perf-stat{display:flex;flex-direction:column;gap:4px;}
+.perf-stat-label{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
+.perf-stat-value{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--primary);}
+.chart-container{background:var(--panel);border:1px solid var(--border-bright);border-radius:12px;padding:20px;margin-bottom:20px;}
+.chart-title{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text);margin-bottom:16px;}
+.chart-canvas{width:100%;height:300px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Loading Performance…</div></div>
+<div class="toasts" id="toasts"></div>
+<header class="mob-header" id="mobHeader"><span class="mob-page-title">Performance</span><button class="mob-menu-btn" onclick="toggleMobileNav()" aria-label="Open menu">&#9776;</button></header>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileNav()"></div>
+<div class="platform-layout">
+<nav class="sidebar-nav" id="sidebarNav">
+  <div class="snav-brand">
+    <div class="snav-brand-icon" onclick="toggleDesktopNav()" title="Toggle menu">◆</div>
+    <div style="flex:1;min-width:0">
+      <div class="snav-brand-name">The Interns Hub</div>
+      <div class="snav-brand-sub">Intern Portal</div>
+    </div>
+    <button class="collapse-btn" onclick="toggleDesktopNav()" title="Toggle menu">&#9776;</button>
+  </div>
+  <button class="collapse-btn-rail" onclick="toggleDesktopNav()" title="Expand menu">&#9776;</button>
+  <div class="snav-links" id="navLinks"></div>
+  <div class="snav-theme-row">
+    <label class="theme-switch" title="Toggle light/dark mode">
+        <input class="theme-switch-input" type="checkbox" onchange="hubToggleTheme()">
+        <span class="theme-switch-track">
+          <span class="theme-switch-thumb">
+            <svg class="theme-switch-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="theme-switch-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+        </span>
+        <span class="theme-switch-label-text snav-label">Dark</span>
+      </label>
+  </div>
+  <div class="snav-footer">
+    <div class="snav-user">
+      <div class="snav-user-avatar" id="navAvatar"></div>
+      <div style="overflow:hidden;min-width:0">
+        <div class="snav-user-name" id="navUserName">Loading…</div>
+        <div class="snav-user-role" id="navUserRole">intern</div>
+      </div>
+    </div>
+    <div class="snav-footer-actions">
+      <button class="btn-logout-nav" onclick="doLogout()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="vertical-align:-0.1em;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+    </div>
+      <button class="btn-logout-rail" onclick="doLogout()" title="Sign out">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+  </div>
+</nav>
+<main class="main-content">
+  <div class="page-header"><div><div class="page-title">Performance Dashboard</div><div class="page-subtitle">Track your internship progress</div></div></div>
+  <div class="page-body">
+    <div class="perf-header">
+      <div><h2 class="perf-title">Your Performance</h2><p class="perf-subtitle">Weekly & Monthly Analytics</p></div>
+      <div class="perf-stats" id="perfStats"></div>
+    </div>
+    <div class="two-col">
+      <div class="chart-container">
+        <div class="chart-title">Weekly Attendance & Hours</div>
+        <canvas id="weeklyChart" class="chart-canvas"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">Monthly Summary</div>
+        <canvas id="monthlyChart" class="chart-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script src="./nav.js"></script>
+<script src="./profile.js"></script>
+<script src="./notifications.js"></script>
+<script src="./push.js"></script>
+<script>
+let currentUser, userProfile, weeklyChart, monthlyChart;
+
+function fmtHours(h){if(h===null||h===undefined||h==='')return'—';const hrs=Math.floor(h),mins=Math.round((h%1)*60);return hrs+'h '+String(mins).padStart(2,'0')+'m';}
+
+async function loadPerformanceData(){
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const {data:logs} = await sb.from('time_logs').select('*').eq('user_id', currentUser.id).gte('date', monthAgo.toISOString().split('T')[0]).order('date');
+
+  // Calculate attendance status
+  logs.forEach(log => {
+    if (!log.am_in && !log.pm_in) {
+      log.attendance_status = 'Absent';
+    } else {
+      const timeIn = log.am_in || log.pm_in;
+      const expected = '09:00'; // Assume 9am start
+      if (timeIn > expected) {
+        log.attendance_status = 'Late';
+      } else {
+        log.attendance_status = 'Present';
+      }
+    }
+  });
+
+  // Weekly data (last 7 days)
+  const weeklyLabels = [];
+  const weeklyAttendance = [];
+  const weeklyHours = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const dateStr = date.toISOString().split('T')[0];
+    weeklyLabels.push(date.toLocaleDateString([], {weekday: 'short'}));
+    const log = logs.find(l => l.date === dateStr);
+    weeklyAttendance.push(log ? (log.attendance_status === 'Present' ? 1 : log.attendance_status === 'Late' ? 0.5 : 0) : 0);
+    weeklyHours.push(log ? (log.total_hours || 0) : 0);
+  }
+
+  // Monthly data
+  const present = logs.filter(l => l.attendance_status === 'Present').length;
+  const late = logs.filter(l => l.attendance_status === 'Late').length;
+  const absent = logs.filter(l => l.attendance_status === 'Absent').length;
+  const totalHours = logs.reduce((s, l) => s + (l.total_hours || 0), 0);
+
+  // Update stats
+  document.getElementById('perfStats').innerHTML = `
+    <div class="perf-stat"><div class="perf-stat-label">Total Hours</div><div class="perf-stat-value">${fmtHours(totalHours)}</div></div>
+    <div class="perf-stat"><div class="perf-stat-label">Present Days</div><div class="perf-stat-value">${present}</div></div>
+    <div class="perf-stat"><div class="perf-stat-label">Late Days</div><div class="perf-stat-value">${late}</div></div>
+    <div class="perf-stat"><div class="perf-stat-label">Absent Days</div><div class="perf-stat-value">${absent}</div></div>
+  `;
+
+  // Weekly Chart
+  const ctxWeekly = document.getElementById('weeklyChart').getContext('2d');
+  weeklyChart = new Chart(ctxWeekly, {
+    type: 'bar',
+    data: {
+      labels: weeklyLabels,
+      datasets: [{
+        label: 'Attendance (1=Present, 0.5=Late, 0=Absent)',
+        data: weeklyAttendance,
+        backgroundColor: weeklyAttendance.map(v => v === 1 ? 'rgba(34, 197, 94, 0.6)' : v === 0.5 ? 'rgba(251, 191, 36, 0.6)' : 'rgba(239, 68, 68, 0.6)'),
+        borderColor: weeklyAttendance.map(v => v === 1 ? '#22c55e' : v === 0.5 ? '#fbbf24' : '#ef4444'),
+        borderWidth: 1
+      }, {
+        label: 'Hours Rendered',
+        data: weeklyHours,
+        type: 'line',
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        yAxisID: 'y1'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 1,
+          ticks: {
+            callback: function(value) {
+              if (value === 1) return 'Present';
+              if (value === 0.5) return 'Late';
+              return 'Absent';
+            }
+          }
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  });
+
+  // Monthly Chart
+  const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
+  monthlyChart = new Chart(ctxMonthly, {
+    type: 'doughnut',
+    data: {
+      labels: ['Present', 'Late', 'Absent'],
+      datasets: [{
+        data: [present, late, absent],
+        backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(251, 191, 36, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+        borderColor: ['#22c55e', '#fbbf24', '#ef4444'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+}
+
+async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }
+
+async function boot(){
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const {data:{session}} = await sb.auth.getSession();
+  if (!session) { window.location.href='index.html'; return; }
+  currentUser = session.user;
+
+  const {data:p} = await sb.from('users').select('*').eq('id',currentUser.id).single();
+  userProfile = p;
+  const name = p?.name || currentUser.email?.split('@')[0] || 'Intern';
+  const isAdmin = p?.role === 'admin';
+
+  document.getElementById('navLinks').innerHTML = renderNav('performance', isAdmin);
+  setupSidebarUser(name, p?.role||'intern', isAdmin);
+
+  if (p?.avatar_url) {
+    const av = document.getElementById('navAvatar');
+    av.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  }
+
+  // ── Enable sidebar profile click ──
+  enableSidebarProfileClick(sb, currentUser.id, p);
+
+  await loadPerformanceData();
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  await HubAnnouncements.checkOnLogin(sb, currentUser.id);
+  HubMsgPoller.start(sb, currentUser.id);
+}
+boot();
+</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
+</body>
+</html>

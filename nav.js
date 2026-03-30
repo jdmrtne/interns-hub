@@ -48,3 +48,27 @@ document.addEventListener('DOMContentLoaded', function() {
   // Restore collapse state on desktop
   restoreNavState();
 });
+
+// ── Theme toggle (light / dark) ──────────────────────────────
+function hubToggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('hub-theme', next);
+  _hubSyncToggleUI(next);
+}
+
+function _hubSyncToggleUI(theme) {
+  const isDark = theme === 'dark';
+  // Update all toggle checkboxes on the page
+  document.querySelectorAll('.theme-switch-input').forEach(cb => { cb.checked = isDark; });
+  // Update all labels
+  document.querySelectorAll('.theme-switch-label-text').forEach(el => {
+    el.textContent = isDark ? 'Dark' : 'Light';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  _hubSyncToggleUI(theme);
+});

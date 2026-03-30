@@ -132,7 +132,7 @@ function _injectProfileModalHTML() {
           <input class="hub-field-input" id="hubInternHoursInput" type="number" min="1" max="9999" step="1"
             placeholder="e.g. 300" style="appearance:textfield;-moz-appearance:textfield"
             oninput="hubUpdateProgPreview()">
-          <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-dim,#484f58);margin-top:5px">
+          <div style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-muted,#7a8ba0);margin-top:5px">
             Enter your total required hours for this internship
           </div>
         </div>
@@ -144,10 +144,10 @@ function _injectProfileModalHTML() {
           <span id="hubProgHours" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;color:var(--text-muted,#7d8590)">0h / 0h</span>
           <span id="hubProgPct" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:11px;font-weight:600;color:var(--primary,#38bdf8)">0%</span>
         </div>
-        <div style="width:100%;height:8px;background:var(--glass,rgba(255,255,255,.06));border-radius:99px;overflow:hidden;border:1px solid var(--glass-border-b)">
+        <div style="width:100%;height:8px;background:var(--glass-track,rgba(0,40,100,0.10));border-radius:99px;overflow:hidden;border:1px solid var(--glass-border-b)">
           <div id="hubProgFill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#38bdf8,#60a5fa);transition:width .6s ease;width:0%"></div>
         </div>
-        <div id="hubProgMeta" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-dim,#484f58);margin-top:6px;text-align:right"></div>
+        <div id="hubProgMeta" style="font-family:var(--font-mono,'JetBrains Mono',monospace);font-size:9px;color:var(--text-muted,#7a8ba0);margin-top:6px;text-align:right"></div>
       </div>
     </div>
     <div class="hub-pmodal-msg" id="hubPModalMsg"></div>
