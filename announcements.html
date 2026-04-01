@@ -146,9 +146,7 @@ async function postAnn(){
   const title=document.getElementById('annTitle').value.trim(),msg=document.getElementById('annBody').value.trim();
   if(!title||!msg){toast('Fill in both fields','err');return;}
   const btn=document.getElementById('postBtn');btn.disabled=true;btn.textContent='Posting…';
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){toast('Session expired — signing you out…','err');btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post';setTimeout(()=>window.location.href='index.html',1500);return;}
-  currentUser=session.user;
+  if(!currentUser){toast('Session expired — signing you out…','err');btn.disabled=false;setTimeout(()=>window.location.href='index.html',1500);return;}
   const{error}=await sb.from('announcements').insert({title,message:msg,created_by:currentUser.id});
   btn.disabled=false;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="1em" height="1em" style="vertical-align:-0.15em" ><polyline points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Post';
   if(error){toast('Failed: '+error.message,'err');return;}
@@ -167,12 +165,12 @@ async function delAnn(id){
 
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
-
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
+  const resolved=await hubResolveSession(sb);
+  if(!resolved){window.location.href='index.html';return;}
+  const{user,profile:p,isOffline}=resolved;
+  currentUser=user;
   userProfile=p;
+  if(isOffline) hubShowOfflineBanner();
   const isAdmin=p?.role==='admin';
   document.getElementById('navLinks').innerHTML=renderNav('announcements',isAdmin);
   const name=p?.name||currentUser.email?.split('@')[0]||'Intern';

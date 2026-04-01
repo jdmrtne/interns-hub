@@ -297,21 +297,13 @@ async function sendMessage(){
   if(!text)return;
   const btn=document.getElementById('sendBtn');btn.disabled=true;inp.value='';inp.style.height='auto';
 
-  // ── Step 3 debug: verify session before sending ──
-  const{data:{session}}=await sb.auth.getSession();
-  console.log('[Chat] session:', session);
-  console.log('[Chat] sender_id:', session?.user?.id);
-  console.log('[Chat] receiver_id:', partnerUser?.id);
-
-  if(!session){
+  // Use currentUser set at boot — no re-fetch needed
+  if(!currentUser){
     toast('Session expired — please sign in again','err');
     btn.disabled=false;inp.value=text;
     setTimeout(()=>window.location.href='index.html',1500);
     return;
   }
-
-  // Keep currentUser in sync with the live session
-  currentUser=session.user;
 
   const{error}=await sb.from('messages').insert({
     sender_id:currentUser.id,
@@ -392,12 +384,13 @@ function setupRealtime(){
 }
 async function boot(){
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
+  const resolved=await hubResolveSession(sb);
+  if(!resolved){window.location.href='index.html';return;}
+  const{user,profile:p,isOffline}=resolved;
+  currentUser=user;
+  if(isOffline) hubShowOfflineBanner();
   const params=new URLSearchParams(window.location.search),pid=params.get('uid');
   if(!pid){window.location.href='messages.html';return;}
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
   const isAdmin=p?.role==='admin';
   currentUserIsAdmin=isAdmin;
   document.getElementById('navLinks').innerHTML=renderNav('messages',isAdmin);

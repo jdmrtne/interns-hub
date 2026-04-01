@@ -223,12 +223,12 @@ async function doLogout(){ await sb.auth.signOut(); window.location.href='index.
 
 async function boot(){
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const {data:{session}} = await sb.auth.getSession();
-  if (!session) { window.location.href='index.html'; return; }
-  currentUser = session.user;
-
-  const {data:p} = await sb.from('users').select('*').eq('id',currentUser.id).single();
+  const resolved = await hubResolveSession(sb);
+  if (!resolved) { window.location.href='index.html'; return; }
+  const { user, profile: p, isOffline } = resolved;
+  currentUser = user;
   userProfile = p;
+  if (isOffline) hubShowOfflineBanner();
   const name = p?.name || currentUser.email?.split('@')[0] || 'Intern';
   const isAdmin = p?.role === 'admin';
 

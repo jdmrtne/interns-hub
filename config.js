@@ -41,6 +41,71 @@ function renderNav(activePage, isAdmin = false) {
     </a>`).join('');
 }
 
+// ─── Offline session cache ────────────────────────────────────────────────────
+const HUB_USER_KEY    = 'tc2_session_user';   // same key index.html uses
+const HUB_PROFILE_KEY = 'tc2_profile_cache';
+
+function hubSaveUserCache(u, role) {
+  try { localStorage.setItem(HUB_USER_KEY, JSON.stringify({ id: u.id, email: u.email, user_metadata: u.user_metadata, role: role || 'intern' })); } catch(e) {}
+}
+function hubLoadUserCache() {
+  try { const d = localStorage.getItem(HUB_USER_KEY); return d ? JSON.parse(d) : null; } catch(e) { return null; }
+}
+function hubSaveProfileCache(p) {
+  try { localStorage.setItem(HUB_PROFILE_KEY, JSON.stringify(p)); } catch(e) {}
+}
+function hubLoadProfileCache() {
+  try { const d = localStorage.getItem(HUB_PROFILE_KEY); return d ? JSON.parse(d) : null; } catch(e) { return null; }
+}
+
+// hubResolveSession — call instead of getSession() on every page.
+// Online → fetches live session + profile, updates caches, returns both.
+// Offline → falls back to localStorage cache so the page can still render.
+// Returns null (→ redirect to login) only if both live session AND cache are absent.
+async function hubResolveSession(sbClient) {
+  const online = navigator.onLine;
+  if (online) {
+    try {
+      const { data: { session } } = await sbClient.auth.getSession();
+      if (!session) {
+        // Online but no session — check for a cached user (page refresh race)
+        const cached = hubLoadUserCache();
+        if (!cached) return null;
+        // Try refreshing the session once
+        const { data: { session: refreshed } } = await sbClient.auth.refreshSession();
+        if (!refreshed) return null;
+        const { data: p } = await sbClient.from('users').select('*').eq('id', refreshed.user.id).single();
+        if (p) hubSaveProfileCache(p);
+        hubSaveUserCache(refreshed.user, p?.role);
+        return { user: refreshed.user, profile: p, isOffline: false };
+      }
+      const { data: p } = await sbClient.from('users').select('*').eq('id', session.user.id).single();
+      if (p) { hubSaveProfileCache(p); hubSaveUserCache(session.user, p?.role); }
+      return { user: session.user, profile: p, isOffline: false };
+    } catch(err) {
+      // Network error even though navigator.onLine — fall through to cache
+    }
+  }
+  // Offline path
+  const cachedUser = hubLoadUserCache();
+  const cachedProfile = hubLoadProfileCache();
+  if (!cachedUser) return null;
+  // Merge: build a fake user object compatible with session.user shape
+  const user = { id: cachedUser.id, email: cachedUser.email, user_metadata: cachedUser.user_metadata || {} };
+  return { user, profile: cachedProfile, isOffline: true };
+}
+
+// Show a slim banner at the top of the page when running in offline mode
+function hubShowOfflineBanner() {
+  if (document.getElementById('hubOfflineBanner')) return;
+  const b = document.createElement('div');
+  b.id = 'hubOfflineBanner';
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#1c1917;text-align:center;font-size:13px;font-weight:600;padding:6px 12px;letter-spacing:.02em;';
+  b.textContent = '⚡ Offline mode — showing cached data. Changes will sync when you reconnect.';
+  document.body.prepend(b);
+  window.addEventListener('online', () => { b.remove(); location.reload(); }, { once: true });
+}
+
 // ─── Auth guard ───────────────────────────────────────────────────────────────
 async function requireAuth() {
   const client = initSupabase();

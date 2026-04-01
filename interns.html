@@ -699,12 +699,12 @@ document.addEventListener('keydown', e => {
 // ── Boot ───────────────────────────────────────────────────────────────────
 async function boot(){
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const {data:{session}} = await sb.auth.getSession();
-  if(!session){ window.location.href='index.html'; return; }
-  currentUser = session.user;
-
-  const {data:p} = await sb.from('users').select('*').eq('id',currentUser.id).single();
+  const resolved = await hubResolveSession(sb);
+  if(!resolved){ window.location.href='index.html'; return; }
+  const { user, profile: p, isOffline } = resolved;
+  currentUser = user;
   currentUserProfile = p;
+  if (isOffline) hubShowOfflineBanner();
 
   document.getElementById('navLinks').innerHTML = renderNav('interns', p?.role==='admin');
   if(p?.role==='admin') isAdmin = true;

@@ -185,11 +185,11 @@ async function loadConvos(){
 
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
-
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
+  const resolved=await hubResolveSession(sb);
+  if(!resolved){window.location.href='index.html';return;}
+  const{user,profile:p,isOffline}=resolved;
+  currentUser=user;
+  if(isOffline) hubShowOfflineBanner();
   const isAdmin=p?.role==='admin';
   document.getElementById('navLinks').innerHTML=renderNav('messages',isAdmin);
   const name=p?.name||currentUser.email?.split('@')[0]||'Intern';

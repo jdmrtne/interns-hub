@@ -544,11 +544,11 @@ async function doLogout(){await sb.auth.signOut();window.location.href='index.ht
 
 async function boot(){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='index.html';return;}
-  currentUser=session.user;
+  const resolved=await hubResolveSession(sb);
+  if(!resolved){window.location.href='index.html';return;}
+  const{user,profile:p,isOffline}=resolved;
+  currentUser=user;
 
-  const{data:p}=await sb.from('users').select('*').eq('id',currentUser.id).single();
   if(p?.role!=='admin'){toast('Admin access required','err');setTimeout(()=>window.location.href='dashboard.html',1500);document.getElementById('loadingOverlay').classList.add('hidden');return;}
 
   document.getElementById('navLinks').innerHTML=renderNav('admin',true);
@@ -562,6 +562,8 @@ async function boot(){
 
   // ── Enable sidebar profile click ──
   enableSidebarProfileClick(sb, currentUser.id, p);
+
+  if(isOffline){ hubShowOfflineBanner(); document.getElementById('loadingOverlay').classList.add('hidden'); toast('Admin panel requires an internet connection','inf'); return; }
 
   await Promise.all([loadLogs(),loadAnns()]);
   await loadUsers();
