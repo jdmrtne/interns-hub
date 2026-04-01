@@ -25,6 +25,30 @@
 .action-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;font-family:var(--font-mono);font-size:9px;color:var(--text-dim);}
 .action-legend span{display:flex;align-items:center;gap:5px;}
 .legend-dot{width:7px;height:7px;border-radius:50%;}
+
+/* Log cards: hidden on desktop, visible on mobile */
+.log-card-list { display: none; }
+
+/* Log card styles */
+.log-card {
+  background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.log-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 10px; padding-bottom: 9px; border-bottom: 1px solid var(--glass-border);
+}
+.log-card-name { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--text); }
+.log-card-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.log-card-total { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--green); letter-spacing: .03em; }
+.log-card-times { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.log-ct { display: flex; flex-direction: column; gap: 2px; }
+.log-ct-lbl { font-family: var(--font-mono); font-size: 8px; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; }
+.log-ct-val { font-family: var(--font-mono); font-size: 13px; }
+.log-ct-val.am { color: var(--blue); }
+.log-ct-val.pm { color: var(--primary); }
+.log-ct-val.empty { color: var(--text-dim); }
 @media(max-width:768px){
   .stat-grid{grid-template-columns:1fr 1fr !important;gap:10px;}
   .stat-value{font-size:24px;}
@@ -53,6 +77,9 @@
   #tab-announcements>div{display:flex;flex-direction:column-reverse;gap:16px;}
   .action-legend{gap:8px;}
   #tab-timelogs table{font-size:11px;}
+  /* Hide desktop table on mobile, show cards */
+  .log-tbl-desktop { display: none !important; }
+  .log-card-list { display: block; }
 }
 </style>
 </head>
@@ -208,12 +235,15 @@
         <input class="fi" type="month" id="logMonth" onchange="filterLogs()">
         <button class="btn btn-ghost btn-sm" onclick="clearLogFilters()">Clear</button>
       </div>
-      <div class="tbl-wrap"><div class="tbl-scroll">
+      <!-- Desktop table -->
+      <div class="tbl-wrap log-tbl-desktop"><div class="tbl-scroll">
         <table>
           <thead><tr><th>Name</th><th>Date</th><th>AM IN</th><th>AM OUT</th><th>PM IN</th><th>PM OUT</th><th>Total</th></tr></thead>
           <tbody id="logTbody"></tbody>
         </table>
       </div></div>
+      <!-- Mobile cards -->
+      <div class="log-card-list" id="logCardList"></div>
     </div>
     <!-- ANNOUNCEMENTS TAB -->
     <div class="tab-panel" id="tab-announcements">
@@ -414,7 +444,13 @@ function filterLogs(){
 function clearLogFilters(){document.getElementById('logSearch').value='';document.getElementById('logDate').value='';document.getElementById('logMonth').value='';renderLogs(allLogs);}
 function renderLogs(list){
   const tb=document.getElementById('logTbody');
-  if(!list.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">No logs found</td></tr>`;return;}
+  const cl=document.getElementById('logCardList');
+  const emptyMsg = `No logs found`;
+  if(!list.length){
+    tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">${emptyMsg}</td></tr>`;
+    if(cl) cl.innerHTML=`<div style="text-align:center;color:var(--text-dim);padding:30px;font-family:var(--font-mono);font-size:11px">${emptyMsg}</div>`;
+    return;
+  }
   tb.innerHTML=list.map(l=>`<tr>
     <td style="color:var(--text)">${escHtml(l.users?.name||'—')}</td>
     <td style="color:var(--text-muted)">${l.date||'—'}</td>
@@ -424,6 +460,27 @@ function renderLogs(list){
     <td style="color:var(--primary)">${l.pm_out||'—'}</td>
     <td style="color:var(--green);font-weight:700">${fmtHours(calcLogHours(l))}</td>
   </tr>`).join('');
+  // Mobile cards
+  if(cl) cl.innerHTML=list.map(l=>{
+    const name=escHtml(l.users?.name||'—');
+    const hrs=fmtHours(calcLogHours(l));
+    const v=(val,cls)=>val?`<span class="log-ct-val ${cls}">${val}</span>`:`<span class="log-ct-val empty">—</span>`;
+    return`<div class="log-card">
+      <div class="log-card-head">
+        <div>
+          <div class="log-card-name">${name}</div>
+          <div class="log-card-date">${l.date||'—'}</div>
+        </div>
+        <div class="log-card-total">${hrs}</div>
+      </div>
+      <div class="log-card-times">
+        <div class="log-ct"><span class="log-ct-lbl">AM IN</span>${v(l.am_in,'am')}</div>
+        <div class="log-ct"><span class="log-ct-lbl">AM OUT</span>${v(l.am_out,'am')}</div>
+        <div class="log-ct"><span class="log-ct-lbl">PM IN</span>${v(l.pm_in,'pm')}</div>
+        <div class="log-ct"><span class="log-ct-lbl">PM OUT</span>${v(l.pm_out,'pm')}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 async function postAnn(){
@@ -454,12 +511,22 @@ function renderAdminAnns(){
 async function loadUsers(){
   const [{data: usersData}, {data: logSums}] = await Promise.all([
     sb.from('users').select('*').order('created_at',{ascending:false}),
-    sb.from('time_logs').select('user_id, total_hours')
+    sb.from('time_logs').select('user_id, total_hours, am_in, am_out, pm_in, pm_out')
   ]);
-  // Build per-user log totals
+  // Build per-user log totals — use total_hours if available, else compute from in/out times
   allLogTotals = {};
   (logSums||[]).forEach(l => {
-    allLogTotals[l.user_id] = (allLogTotals[l.user_id]||0) + (parseFloat(l.total_hours)||0);
+    let hrs = parseFloat(l.total_hours) || 0;
+    if (!hrs) {
+      // compute manually
+      const toM = t => { if(!t) return null; const [h,m]=t.split(':').map(Number); return h*60+m; };
+      const ai=toM(l.am_in),ao=toM(l.am_out),pi=toM(l.pm_in),po=toM(l.pm_out);
+      let mins=0;
+      if(ai!==null&&ao!==null&&ao>ai) mins+=ao-ai;
+      if(pi!==null&&po!==null&&po>pi) mins+=po-pi;
+      hrs = mins/60;
+    }
+    allLogTotals[l.user_id] = (allLogTotals[l.user_id]||0) + hrs;
   });
   allUsers=usersData||[];renderInternTable(allUsers);
   const total=allUsers.length,interns=allUsers.filter(u=>u.role==='intern').length,admins=allUsers.filter(u=>u.role==='admin').length,disabled=allUsers.filter(u=>u.role==='disabled').length;
